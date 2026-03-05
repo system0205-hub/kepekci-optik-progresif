@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Hasta Kullanım Talimatı - Kepekçi Optik</title>
   <style>
-    /* Yazdırma için optimize edilmiş A4 tasarım */
+    /* Yazdırma için optimize edilmiş A4 tasarım - tam sayfa doldurma */
     @page {
       size: A4;
-      margin: 10mm 12mm;
+      margin: 7mm 9mm;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -16,7 +16,7 @@
     body {
       font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
       color: #1e293b;
-      line-height: 1.45;
+      line-height: 1.33;
       background: #f1f5f9;
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
@@ -24,10 +24,9 @@
 
     .sayfa {
       max-width: 210mm;
-      min-height: 287mm;
       margin: 20px auto;
       background: #fff;
-      padding: 20px 24px;
+      padding: 14px 18px;
       box-shadow: 0 4px 24px rgba(0,0,0,0.1);
     }
 
@@ -37,55 +36,55 @@
       justify-content: space-between;
       align-items: center;
       border-bottom: 3px solid #1e3a5f;
-      padding-bottom: 12px;
-      margin-bottom: 14px;
+      padding-bottom: 8px;
+      margin-bottom: 8px;
     }
 
     .logo-alan {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 9px;
     }
 
     .logo-alan svg {
-      width: 36px;
-      height: 36px;
+      width: 30px;
+      height: 30px;
       color: #1e3a5f;
     }
 
     .logo-alan h1 {
-      font-size: 1.3rem;
+      font-size: 1.15rem;
       color: #1e3a5f;
       letter-spacing: -0.5px;
     }
 
     .logo-alan .alt-baslik {
-      font-size: 0.72rem;
+      font-size: 0.68rem;
       color: #64748b;
       font-weight: 400;
     }
 
     .iletisim-bilgi {
       text-align: right;
-      font-size: 0.73rem;
+      font-size: 0.68rem;
       color: #64748b;
-      line-height: 1.6;
+      line-height: 1.5;
     }
 
     /* İsim Soyisim Alanı */
     .isim-alani {
       display: flex;
       align-items: center;
-      gap: 10px;
-      margin-bottom: 12px;
-      padding: 8px 14px;
+      gap: 9px;
+      margin-bottom: 8px;
+      padding: 5px 11px;
       background: #f8fafc;
       border: 1px solid #e2e8f0;
-      border-radius: 8px;
+      border-radius: 7px;
     }
 
     .isim-alani label {
-      font-size: 0.85rem;
+      font-size: 0.78rem;
       font-weight: 600;
       color: #1e3a5f;
       white-space: nowrap;
@@ -94,7 +93,7 @@
     .isim-alani .isim-cizgi {
       flex: 1;
       border-bottom: 1px solid #94a3b8;
-      min-height: 22px;
+      min-height: 19px;
     }
 
     .isim-alani input {
@@ -102,8 +101,8 @@
       border: none;
       border-bottom: 1px solid #94a3b8;
       background: transparent;
-      font-size: 0.85rem;
-      padding: 4px 0;
+      font-size: 0.78rem;
+      padding: 3px 0;
       outline: none;
       font-family: inherit;
     }
@@ -113,65 +112,65 @@
       text-align: center;
       background: linear-gradient(135deg, #1e3a5f, #2563eb);
       color: #fff;
-      padding: 12px 16px;
-      border-radius: 10px;
-      margin-bottom: 14px;
+      padding: 9px 13px;
+      border-radius: 9px;
+      margin-bottom: 9px;
     }
 
     .ana-baslik h2 {
-      font-size: 1.2rem;
-      margin-bottom: 3px;
+      font-size: 1.05rem;
+      margin-bottom: 2px;
     }
 
     .ana-baslik p {
-      font-size: 0.76rem;
+      font-size: 0.7rem;
       opacity: 0.9;
     }
 
     /* Göz Bölgesi İllüstrasyonu */
     .goz-bolgeleri {
       display: flex;
-      gap: 16px;
-      margin-bottom: 14px;
+      gap: 12px;
+      margin-bottom: 9px;
       align-items: center;
     }
 
     .goz-illus {
-      flex: 0 0 140px;
+      flex: 0 0 112px;
       text-align: center;
     }
 
     .goz-illus svg {
-      width: 120px;
-      height: 175px;
+      width: 100px;
+      height: 145px;
     }
 
     .bolge-aciklamalar {
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 4px;
     }
 
     .bolge-kart {
       display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 6px 10px;
-      border-radius: 8px;
-      font-size: 0.78rem;
+      gap: 7px;
+      padding: 4px 9px;
+      border-radius: 7px;
+      font-size: 0.7rem;
     }
 
     .bolge-kart .renk-kutu {
-      width: 12px;
-      height: 12px;
+      width: 11px;
+      height: 11px;
       border-radius: 3px;
       flex-shrink: 0;
     }
 
     .bolge-kart strong {
       display: block;
-      font-size: 0.8rem;
+      font-size: 0.74rem;
     }
 
     .bolge-uzak { background: #eff6ff; border-left: 3px solid #3b82f6; }
@@ -188,33 +187,33 @@
 
     /* Kullanım Kılavuzu */
     .kilavuz-baslik {
-      font-size: 0.95rem;
+      font-size: 0.85rem;
       color: #1e3a5f;
       font-weight: 700;
-      margin-bottom: 8px;
-      padding-bottom: 4px;
+      margin-bottom: 5px;
+      padding-bottom: 3px;
       border-bottom: 2px solid #e2e8f0;
     }
 
     .kilavuz-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 14px;
+      gap: 5px;
+      margin-bottom: 9px;
     }
 
     .kilavuz-kart {
       display: flex;
-      gap: 8px;
-      padding: 7px 9px;
-      border-radius: 8px;
+      gap: 7px;
+      padding: 5px 7px;
+      border-radius: 7px;
       background: #f8fafc;
       border: 1px solid #e2e8f0;
     }
 
     .kilavuz-kart .numara {
-      width: 24px;
-      height: 24px;
+      width: 19px;
+      height: 19px;
       border-radius: 50%;
       background: #1e3a5f;
       color: #fff;
@@ -222,50 +221,50 @@
       align-items: center;
       justify-content: center;
       font-weight: 700;
-      font-size: 0.75rem;
+      font-size: 0.66rem;
       flex-shrink: 0;
     }
 
     .kilavuz-kart .icerik h4 {
-      font-size: 0.78rem;
+      font-size: 0.72rem;
       color: #1e3a5f;
       margin-bottom: 1px;
     }
 
     .kilavuz-kart .icerik p {
-      font-size: 0.7rem;
+      font-size: 0.64rem;
       color: #64748b;
-      line-height: 1.35;
+      line-height: 1.28;
     }
 
     /* Adaptasyon Süreci */
     .adaptasyon {
-      margin-bottom: 14px;
+      margin-bottom: 9px;
     }
 
     .adaptasyon-zaman-cizgisi {
       display: flex;
-      gap: 6px;
+      gap: 5px;
     }
 
     .adaptasyon-kart {
       flex: 1;
       text-align: center;
-      padding: 8px 6px;
-      border-radius: 8px;
+      padding: 5px 5px;
+      border-radius: 7px;
       border: 1px solid;
     }
 
     .adaptasyon-kart .gun {
-      font-size: 0.82rem;
+      font-size: 0.74rem;
       font-weight: 700;
       display: block;
-      margin-bottom: 3px;
+      margin-bottom: 2px;
     }
 
     .adaptasyon-kart p {
-      font-size: 0.65rem;
-      line-height: 1.3;
+      font-size: 0.6rem;
+      line-height: 1.22;
     }
 
     .ad-gun1 { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
@@ -284,18 +283,18 @@
     .yapmayin-kutu {
       background: #fef2f2;
       border: 2px solid #ef4444;
-      border-radius: 10px;
-      padding: 10px 14px;
-      margin-bottom: 14px;
+      border-radius: 9px;
+      padding: 7px 11px;
+      margin-bottom: 8px;
     }
 
     .yapmayin-kutu h3 {
       color: #ef4444;
-      font-size: 0.88rem;
-      margin-bottom: 6px;
+      font-size: 0.8rem;
+      margin-bottom: 4px;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
     }
 
     .yapmayin-kutu ul {
@@ -304,10 +303,10 @@
     }
 
     .yapmayin-kutu li {
-      font-size: 0.75rem;
+      font-size: 0.68rem;
       color: #991b1b;
-      padding: 2px 0;
-      padding-left: 18px;
+      padding: 1.5px 0;
+      padding-left: 15px;
       position: relative;
     }
 
@@ -322,60 +321,60 @@
     /* Optisyen Not Alanı */
     .not-alani {
       border: 1px dashed #94a3b8;
-      border-radius: 8px;
-      padding: 10px 14px;
-      margin-bottom: 12px;
+      border-radius: 7px;
+      padding: 7px 11px;
+      margin-bottom: 8px;
     }
 
     .not-alani h4 {
-      font-size: 0.8rem;
+      font-size: 0.72rem;
       color: #64748b;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .not-alani .not-satir {
       border-bottom: 1px dotted #cbd5e1;
-      height: 24px;
-      margin-bottom: 3px;
+      height: 20px;
+      margin-bottom: 2px;
     }
 
     /* Kişisel bilgilendirme (dinamik) */
     .kisisel-bilgi {
       background: #eff6ff;
       border: 1px solid #bfdbfe;
-      border-radius: 8px;
-      padding: 10px 14px;
-      margin-bottom: 12px;
+      border-radius: 7px;
+      padding: 6px 11px;
+      margin-bottom: 7px;
       display: none;
     }
 
     .kisisel-bilgi.goster { display: block; }
 
     .kisisel-bilgi h4 {
-      font-size: 0.8rem;
+      font-size: 0.72rem;
       color: #1e40af;
-      margin-bottom: 4px;
+      margin-bottom: 3px;
     }
 
     .kisisel-bilgi p, .kisisel-bilgi li {
-      font-size: 0.75rem;
+      font-size: 0.68rem;
       color: #1e3a8a;
-      line-height: 1.4;
+      line-height: 1.32;
     }
 
     .kisisel-bilgi ul {
-      padding-left: 16px;
+      padding-left: 15px;
     }
 
     /* Alt Kısım */
     .alt-kisim {
       border-top: 2px solid #1e3a5f;
-      padding-top: 10px;
+      padding-top: 5px;
       text-align: center;
     }
 
     .alt-kisim p {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       color: #64748b;
     }
 
@@ -414,7 +413,7 @@
 
     @media print {
       body { background: #fff; }
-      .sayfa { box-shadow: none; margin: 0; padding: 10mm 12mm; min-height: auto; }
+      .sayfa { box-shadow: none; margin: 0; padding: 7mm 9mm; }
       .ekran-butonlar { display: none; }
       .isim-alani input { border-bottom: 1px solid #94a3b8; }
     }

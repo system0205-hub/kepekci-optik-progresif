@@ -10,6 +10,7 @@ function analizEt(recete, cerceve, yasamTarziId, ilkKullanim) {
   const markaOnerileri = onerMarkalar(riskSonuc.skor, koridorSonuc, yasamTarziId, ilkKullanim, recete, cerceve);
   const uyarilar = kontrolEt(recete, cerceve, koridorSonuc);
   const hastaNotlari = olusturHastaBilgilendirme(riskSonuc.skor, ilkKullanim, recete, yasamTarziId);
+  const bilgiNotlari = olusturBilgiNotlari(recete, koridorSonuc, riskSonuc);
 
   // 1D: Birlesik risk "DUR" esigi — cok yuksek risk skorlarinda kesin uyari
   if (riskSonuc.skor >= 8) {
@@ -35,7 +36,8 @@ function analizEt(recete, cerceve, yasamTarziId, ilkKullanim) {
     oneriler: markaOnerileri,
     markaOneri: markaOneri,
     uyarilar: uyarilar,
-    hastaNotlari: hastaNotlari
+    hastaNotlari: hastaNotlari,
+    bilgiNotlari: bilgiNotlari
   };
 }
 
@@ -121,6 +123,21 @@ function hesaplaRiskSkoru(recete, cerceve, ilkKullanim) {
   } else if (sphFark >= 1.00) {
     skor += 1;
     detaylar.push("Gozler arasi numara farki var (" + sphFark.toFixed(2) + ") - Zorluk +1");
+  }
+
+  // Diferansiyel prizmatik etki riski (Prentice kurali)
+  // Not: Koridor henuz hesaplanmadi, varsayilan 16mm (1.6cm) kullanilir
+  var sphSagAbs = Math.abs(parseFloat(recete.sag.sph) || 0);
+  var sphSolAbs = Math.abs(parseFloat(recete.sol.sph) || 0);
+  var varsayilanKoridorCm = 1.6; // 16mm
+  var prizmaFarkTahmini = varsayilanKoridorCm * Math.abs(sphSagAbs - sphSolAbs);
+
+  if (prizmaFarkTahmini >= 2.00) {
+    skor += 2;
+    detaylar.push("Diferansiyel prizmatik etki yuksek (~" + prizmaFarkTahmini.toFixed(2) + "\u0394 tahmini) - Zorluk +2");
+  } else if (prizmaFarkTahmini >= 1.50) {
+    skor += 1;
+    detaylar.push("Diferansiyel prizmatik etki mevcut (~" + prizmaFarkTahmini.toFixed(2) + "\u0394 tahmini) - Zorluk +1");
   }
 
   // Cerceve riskleri
@@ -307,7 +324,8 @@ function belirleKoridorTipi(cerceve, riskSkoru, recete, ilkKullanim) {
   if (diopterGrubu !== "+/-") {
     // +/- grubunda zaten uyari verildi, tekrar etme
     if (sphFark >= 2.00) {
-      uyarilar.push("ONEMLI: Gozler arasi numara farki yuksek (" + sphFark.toFixed(2) + "D). Diferansiyel prizmatik etki nedeniyle uyum zorlasilabilir. Kisisel tasarim (FreeForm) onerilir.");
+      var _pFark = (idealKoridor / 10) * sphFark;
+      uyarilar.push("ONEMLI: Gozler arasi numara farki yuksek (" + sphFark.toFixed(2) + "D). Prentice kurali: ~" + _pFark.toFixed(2) + "\u0394 prizma farki olusur (" + idealKoridor + "mm koridorda). Kisisel tasarim (FreeForm) onerilir.");
     } else if (sphFark >= 1.00) {
       uyarilar.push("Gozler arasi numara farki mevcut (" + sphFark.toFixed(2) + "D). Montaj hassasiyeti onemli.");
     }
@@ -1428,4 +1446,209 @@ function montajKontrolListesiOlustur(recete, cerceve, sonuc, ilkKullanim) {
   }
 
   return liste;
+}
+
+/**
+ * BILGI NOTLARI: Oblik, Minkwitz vb. egitici aciklamalar
+ */
+function olusturBilgiNotlari(recete, koridorSonuc, riskSonuc) {
+  var notlar = [];
+
+  // --- OBLIK ASTIGMATIZMA NOTU ---
+  var sagOblik = oblicMi(recete.sag.ax);
+  var solOblik = oblicMi(recete.sol.ax);
+  var sagKismenOblik = kismenOblicMi(recete.sag.ax);
+  var solKismenOblik = kismenOblicMi(recete.sol.ax);
+
+  if (sagOblik || solOblik) {
+    var oblikGozler = [];
+    if (sagOblik) oblikGozler.push("Sag goz: " + recete.sag.ax + "\u00b0");
+    if (solOblik) oblikGozler.push("Sol goz: " + recete.sol.ax + "\u00b0");
+
+    var cylMax = Math.max(Math.abs(parseFloat(recete.sag.cyl) || 0), Math.abs(parseFloat(recete.sol.cyl) || 0));
+
+    notlar.push({
+      id: "oblik",
+      baslik: "Oblik (Capraz) Astigmatizma Nedir?",
+      ikon: "warning",
+      renk: cylMax >= 1.50 ? "kritik" : "uyari",
+      gozDegerleri: oblikGozler.join(" | "),
+      icerik: [
+        {
+          soru: "Oblik astigmatizma ne demektir?",
+          cevap: "Goz astigmatizmasinin ekseni 30\u00b0-60\u00b0 veya 120\u00b0-150\u00b0 arasindadir. Bu capraz konumdaki silindir, progresif cam tasariminda en zor uyum senaryosunu olusturur."
+        },
+        {
+          soru: "Neden sorun cikarir?",
+          cevap: "Progresif camlarin zaten daralan gecis bolgesinde, oblik silindir ek bir bozulma (distorsiyon) yaratir. Kenar bulanikligi artar, yuzme etkisi belirginlesir ve gecis bolgesi daha da daralir."
+        },
+        {
+          soru: "Ne yapilmali?",
+          cevap: cylMax >= 1.50
+            ? "KRITIK: Silindir degeri " + cylMax.toFixed(2) + "D ile oblik birlesimi en zor senaryo. FreeForm kisisel tasarim ZORUNLU. Standart progresif KESINLIKLE KULLANAMAYIN. Hastaya 3-4 hafta alisma sureci aciklanmali."
+            : "FreeForm kisisel tasarim KESINLIKLE onerilir. Uzun koridor (min 16mm) tercih edin. Hastaya alisma suresinin 2-3 hafta olabilecegini belirtin."
+        }
+      ],
+      svgTip: "aks-dairesi",
+      sagAks: parseFloat(recete.sag.ax) || 0,
+      solAks: parseFloat(recete.sol.ax) || 0
+    });
+  } else if (sagKismenOblik || solKismenOblik) {
+    var kGozler = [];
+    if (sagKismenOblik) kGozler.push("Sag goz: " + recete.sag.ax + "\u00b0");
+    if (solKismenOblik) kGozler.push("Sol goz: " + recete.sol.ax + "\u00b0");
+
+    notlar.push({
+      id: "kismen-oblik",
+      baslik: "Kismen Oblik Aks Tespit Edildi",
+      ikon: "info",
+      renk: "bilgi",
+      gozDegerleri: kGozler.join(" | "),
+      icerik: [
+        {
+          soru: "Kismen oblik ne demektir?",
+          cevap: "Silindir ekseni 61\u00b0-89\u00b0 veya 91\u00b0-119\u00b0 arasindadir. Tam oblik (30\u00b0-60\u00b0 / 120\u00b0-150\u00b0) kadar zorlayici degildir ama yine de dikkat gerektirir."
+        },
+        {
+          soru: "Ne yapilmali?",
+          cevap: "FreeForm tasarim tercih edilir. Hastaya alisma suresi hakkinda bilgi verilmelidir."
+        }
+      ],
+      svgTip: "aks-dairesi",
+      sagAks: parseFloat(recete.sag.ax) || 0,
+      solAks: parseFloat(recete.sol.ax) || 0
+    });
+  }
+
+  // --- MINKWITZ TEOREMI NOTU ---
+  var addMax = Math.max(parseFloat(recete.sag.add) || 0, parseFloat(recete.sol.add) || 0);
+  var koridor = koridorSonuc.koridor || 14;
+  var gucDegisimHizi = addMax > 0 && koridor > 0 ? addMax / koridor : 0;
+
+  if (addMax >= 2.00 || gucDegisimHizi > 0.14) {
+    var gdhYorum, gdhRenk;
+    if (gucDegisimHizi > 0.18) {
+      gdhYorum = "YUKSEK — Periferik distorsiyon belirgin olacak. FreeForm + yuzme etkisi azaltma kesinlikle gerekli.";
+      gdhRenk = "kritik";
+    } else if (gucDegisimHizi > 0.14) {
+      gdhYorum = "ORTA — Kabul edilebilir duzey. FreeForm tercih edilmeli.";
+      gdhRenk = "uyari";
+    } else {
+      gdhYorum = "DUSUK — Rahat gecis beklenir. Genis ara bolge.";
+      gdhRenk = "bilgi";
+    }
+
+    notlar.push({
+      id: "minkwitz",
+      baslik: "Minkwitz Teoremi ve Kenar Bulanikligi",
+      ikon: "info",
+      renk: gdhRenk,
+      gozDegerleri: "ADD: " + addMax.toFixed(2) + " D | Koridor: " + koridor + " mm | Guc degisim hizi: " + gucDegisimHizi.toFixed(3) + " D/mm",
+      icerik: [
+        {
+          soru: "Minkwitz teoremi nedir?",
+          cevap: "Alman matematikci Minkwitz'in 1963'te kanitladigi teorem: Progresif camda periferik astigmatizma (kenar bulanikligi), yakin ilave (ADD) degerinin 2 katidir ve koridor uzunlugu ile ters orantilidir. Formul: Periferik Astigmatizma = 2 x ADD / Koridor Uzunlugu"
+        },
+        {
+          soru: "Pratik anlami nedir?",
+          cevap: "ADD degeri arttikca kenar bulanikligi MATEMATIKSEL olarak artar. Bu bir tasarim hatasi degildir, fizik kanunudur. Hicbir cam bu bulanikligi tamamen ortadan kaldiramaz, ancak FreeForm tasarimlar minimize edebilir."
+        },
+        {
+          soru: "Guc degisim hizi ne demek?",
+          cevap: "ADD / Koridor orani guc degisim hizini verir. Sizin degeriniz: " + gucDegisimHizi.toFixed(3) + " D/mm. Ideal: 0.14 D/mm alti. Kabul edilebilir: 0.14-0.18 D/mm. Sorunlu: 0.18 D/mm ustu. Degeriniz: " + gdhYorum
+        },
+        {
+          soru: "Neden uzun koridor gerekli?",
+          cevap: "Koridor uzadikca ADD degeri daha yumusak dagilir ve guc degisim hizi duser. Ornek: ADD 2.50 / 14mm koridor = 0.179 D/mm (yuksek). ADD 2.50 / 18mm koridor = 0.139 D/mm (ideal). Bu yuzden yuksek ADD'de uzun koridor MATEMATIK olarak zorunludur."
+        }
+      ],
+      svgTip: "minkwitz-grafik",
+      addDeger: addMax,
+      koridorDeger: koridor,
+      gucDegisimHizi: gucDegisimHizi
+    });
+  }
+
+  // --- DIFERANSIYEL PRIZMATIK ETKI NOTU (Prentice Kurali) ---
+  var sphSag = Math.abs(parseFloat(recete.sag.sph) || 0);
+  var sphSol = Math.abs(parseFloat(recete.sol.sph) || 0);
+  var pKoridor = koridorSonuc.idealKoridor;
+  var pKoridorCm = pKoridor / 10; // mm → cm
+
+  // Prentice kurali: P = c x F (c = santimetre, F = diyoptri)
+  var prizmaSag = pKoridorCm * sphSag;
+  var prizmaSol = pKoridorCm * sphSol;
+  var prizmaFark = Math.abs(prizmaSag - prizmaSol);
+
+  if (prizmaFark >= 1.00) {
+    // Alternatif koridor hesabi (kisa koridor ile ne olur?)
+    var altKoridor = Math.min(pKoridor, 14);
+    var altKoridorCm = altKoridor / 10;
+    var altPrizmaSag = altKoridorCm * sphSag;
+    var altPrizmaSol = altKoridorCm * sphSol;
+    var altPrizmaFark = Math.abs(altPrizmaSag - altPrizmaSol);
+
+    // Renk: >=1.50delta kritik, 1.00-1.50delta uyari
+    var prizmaRenk = prizmaFark >= 1.50 ? "kritik" : "uyari";
+    var slabOffGerekli = prizmaFark >= 1.50;
+
+    // Risk seviyesi metni
+    var prizmaRiskYorum = "";
+    if (prizmaFark >= 2.00) {
+      prizmaRiskYorum = "YUKSEK RISK — Cift gorme (diplopi) olasiligi var. Slab-off veya prizma kompanzasyonu degerlendirilmeli.";
+    } else if (prizmaFark >= 1.50) {
+      prizmaRiskYorum = "ORTA-YUKSEK RISK — Hastada bas agrisi ve uyum guclugu olasiligi yuksek. Slab-off prizmasi degerlendirilmeli.";
+    } else {
+      prizmaRiskYorum = "DIKKAT — Hassas hastalarda uyum sorunu olusabilir. Kisisel tasarim (FreeForm) onerilir.";
+    }
+
+    // Koridor kisaltma karsilastirmasi
+    var koridorKarsilastirma = "";
+    if (altKoridor < pKoridor) {
+      koridorKarsilastirma = "Mevcut koridor " + pKoridor + "mm → fark: " + prizmaFark.toFixed(2) + " prizma. " +
+        altKoridor + "mm kisa koridor secilirse → fark: " + altPrizmaFark.toFixed(2) + " prizmaya duser. " +
+        "Ancak kisa koridor periferik distorsiyonu artirir (Minkwitz). ADD 2.00D uzerindeyse cok kisa koridor onerilmez.";
+    } else {
+      koridorKarsilastirma = "Koridor zaten " + pKoridor + "mm (kisa). Daha fazla kisaltma yapilamaz. Slab-off veya prizma kompanzasyonu dusunulmelidir.";
+    }
+
+    notlar.push({
+      id: "prentice",
+      baslik: "Diferansiyel Prizmatik Etki",
+      ikon: "warning",
+      renk: prizmaRenk,
+      gozDegerleri: "Sag: " + prizmaSag.toFixed(2) + "\u0394 | Sol: " + prizmaSol.toFixed(2) + "\u0394 | Fark: " + prizmaFark.toFixed(2) + "\u0394",
+      icerik: [
+        {
+          soru: "Diferansiyel prizmatik etki nedir?",
+          cevap: "Prentice kurali: Prizma = Mesafe (cm) x Guc (D). Progresif camda okuma noktasina bakarken gozler koridor uzunlugu kadar asagi bakar. Her gozun numarasi farkli oldugunda, farkli miktarda prizmatik etki olusur. Bu fark binokuler gorme uyumunu bozar."
+        },
+        {
+          soru: "Bu recetede ne oluyor?",
+          cevap: "Sag goz: " + pKoridorCm.toFixed(1) + " cm x " + sphSag.toFixed(2) + " D = " + prizmaSag.toFixed(2) + " prizma. " +
+            "Sol goz: " + pKoridorCm.toFixed(1) + " cm x " + sphSol.toFixed(2) + " D = " + prizmaSol.toFixed(2) + " prizma. " +
+            "Fark: " + prizmaFark.toFixed(2) + " prizma diyoptri. " + prizmaRiskYorum
+        },
+        {
+          soru: "Koridor kisaltilirsa ne olur?",
+          cevap: koridorKarsilastirma
+        },
+        {
+          soru: "Slab-off gerekli mi?",
+          cevap: slabOffGerekli
+            ? "Prizma farki " + prizmaFark.toFixed(2) + " diyoptri (>= 1.50). Slab-off prizmasi veya prizma kompanzasyonlu cam degerlendirilmelidir. Slab-off, camin alt kisminda prizma uygulayarak iki goz arasindaki farki dengeler."
+            : "Prizma farki " + prizmaFark.toFixed(2) + " diyoptri (< 1.50). Slab-off genellikle gerekmez. Ancak hasta hassassa veya sikayeti varsa degerlendirilmelidir."
+        }
+      ],
+      svgTip: "prizma-grafik",
+      prizmaSag: prizmaSag,
+      prizmaSol: prizmaSol,
+      prizmaFark: prizmaFark,
+      altKoridor: altKoridor,
+      altPrizmaFark: altPrizmaFark,
+      slabOffGerekli: slabOffGerekli
+    });
+  }
+
+  return notlar;
 }

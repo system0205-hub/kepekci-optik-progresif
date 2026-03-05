@@ -2001,6 +2001,276 @@ p {
 }
 
 
+/* ============================================================
+   BILGI NOTLARI (Oblik, Minkwitz)
+   ============================================================ */
+.info-note {
+    border-radius: var(--radius-md, 12px);
+    margin-bottom: 0.8rem;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.info-note--kritik {
+    border-left: 4px solid var(--danger, #ef4444);
+    background: #fef2f2;
+}
+
+.info-note--uyari {
+    border-left: 4px solid var(--warning, #f97316);
+    background: #fff7ed;
+}
+
+.info-note--bilgi {
+    border-left: 4px solid var(--info, #3b82f6);
+    background: #eaf2f8;
+}
+
+.info-note__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.8rem 1rem;
+    cursor: pointer;
+    user-select: none;
+    gap: 0.8rem;
+}
+
+.info-note__header:hover {
+    background: rgba(0,0,0,0.03);
+}
+
+.info-note__baslik {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #1e293b;
+}
+
+.info-note__ikon {
+    font-size: 1.3rem;
+    line-height: 1;
+}
+
+.info-note--kritik .info-note__ikon { color: #ef4444; }
+.info-note--uyari .info-note__ikon { color: #f97316; }
+.info-note--bilgi .info-note__ikon { color: #3b82f6; }
+
+.info-note__degerler {
+    font-size: 0.8rem;
+    color: #64748b;
+    flex-shrink: 0;
+}
+
+.info-note__chevron {
+    font-size: 0.7rem;
+    color: #94a3b8;
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+}
+
+.info-note.acik .info-note__chevron {
+    transform: rotate(180deg);
+}
+
+.info-note__body {
+    display: none;
+    padding: 0 1rem 1rem;
+}
+
+.info-note.acik .info-note__body {
+    display: flex;
+    gap: 1.2rem;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.info-note__svg {
+    flex-shrink: 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 0.5rem;
+}
+
+.info-note__icerik {
+    flex: 1;
+}
+
+.info-note__qa {
+    margin-bottom: 0.8rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+
+.info-note__qa:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.info-note__soru {
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #1e3a5f;
+    margin-bottom: 0.25rem;
+}
+
+.info-note__cevap {
+    font-size: 0.82rem;
+    color: #475569;
+    line-height: 1.55;
+}
+
+/* ============================================================
+   CAM KARSILASTIRMA TABLOLARI
+   ============================================================ */
+.karsilastirma-tabs {
+    display: flex;
+    gap: 0.25rem;
+    border-bottom: 2px solid #e2e8f0;
+    margin-bottom: 1rem;
+}
+
+.karsilastirma-tab {
+    padding: 0.6rem 1.2rem;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: #64748b;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.karsilastirma-tab:hover {
+    color: #1e3a5f;
+    background: #f8fafc;
+}
+
+.karsilastirma-tab.active {
+    color: #1e3a5f;
+    border-bottom-color: #1e3a5f;
+    font-weight: 600;
+}
+
+.karsilastirma-icerik {
+    display: none;
+}
+
+.karsilastirma-icerik.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+.karsilastirma-tablo-wrapper {
+    overflow-x: auto;
+    border-radius: var(--radius-md, 12px);
+    border: 1px solid #e2e8f0;
+}
+
+.karsilastirma-tablo {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+.karsilastirma-tablo thead th {
+    background: #1e3a5f;
+    color: #fff;
+    padding: 0.7rem 0.8rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.82rem;
+    white-space: nowrap;
+}
+
+.karsilastirma-tablo thead th:first-child {
+    border-radius: var(--radius-md, 12px) 0 0 0;
+}
+
+.karsilastirma-tablo thead th:last-child {
+    border-radius: 0 var(--radius-md, 12px) 0 0;
+}
+
+.karsilastirma-tablo tbody td {
+    padding: 0.6rem 0.8rem;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: top;
+    line-height: 1.45;
+}
+
+.karsilastirma-tablo tbody tr:hover {
+    background: #f8fafc;
+}
+
+.karsilastirma-tablo tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.karsilastirma-tablo tbody td:first-child {
+    font-weight: 600;
+    color: #1e3a5f;
+    white-space: nowrap;
+    min-width: 140px;
+}
+
+.kt-premium { background: rgba(34, 197, 94, 0.04); }
+.kt-mid { background: rgba(234, 179, 8, 0.04); }
+.kt-entry { background: rgba(239, 68, 68, 0.04); }
+
+.kt-badge {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.kt-badge--success {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.kt-badge--warning {
+    background: #fef9c3;
+    color: #854d0e;
+}
+
+.kt-badge--danger {
+    background: #fef2f2;
+    color: #991b1b;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .info-note.acik .info-note__body {
+        flex-direction: column;
+    }
+    .info-note__svg {
+        align-items: center;
+    }
+    .karsilastirma-tabs {
+        overflow-x: auto;
+    }
+    .karsilastirma-tab {
+        font-size: 0.8rem;
+        padding: 0.5rem 0.8rem;
+    }
+}
+
+
 /* -------------------------------------------------------
    24. Responsive Adjustments
    ------------------------------------------------------- */

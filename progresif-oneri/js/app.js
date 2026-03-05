@@ -245,6 +245,12 @@ function sonuclariGoster(sonuc) {
   // Uyarilar
   gosterUyarilar(sonuc.uyarilar);
 
+  // Bilgi notlari (Oblik, Minkwitz vb.)
+  gosterBilgiNotlari(sonuc.bilgiNotlari);
+
+  // Cam karsilastirma tablolari
+  olusturKarsilastirmaTablolari();
+
   // Siparis kontrol listesi
   gosterSiparisKontrol(sonuc.siparisBilgileri);
 
@@ -821,6 +827,328 @@ function gosterUyarilar(uyarilar) {
         (uyari.oneri ? '<div>' + uyari.oneri + '</div>' : '') +
       '</div>';
     list.appendChild(div);
+  });
+}
+
+// ===== BILGI NOTLARI (OBLIK, MINKWITZ) =====
+function gosterBilgiNotlari(notlar) {
+  var section = document.getElementById("bilgi-notlari-section");
+  var list = document.getElementById("bilgi-notlari-list");
+  if (!section || !list) return;
+
+  if (!notlar || notlar.length === 0) {
+    section.style.display = "none";
+    return;
+  }
+
+  section.style.display = "block";
+  list.innerHTML = "";
+
+  notlar.forEach(function(not) {
+    var kartDiv = document.createElement("div");
+    kartDiv.className = "info-note info-note--" + not.renk;
+
+    var svgHtml = "";
+    if (not.svgTip === "aks-dairesi") {
+      svgHtml = olusturAksDairesiSvg(not.sagAks, not.solAks);
+    } else if (not.svgTip === "minkwitz-grafik") {
+      svgHtml = olusturMinkwitzGrafikSvg(not.addDeger, not.koridorDeger, not.gucDegisimHizi);
+    } else if (not.svgTip === "prizma-grafik") {
+      svgHtml = olusturPrizmaSvg(not.prizmaSag, not.prizmaSol, not.prizmaFark);
+    }
+
+    var icerikHtml = "";
+    not.icerik.forEach(function(item) {
+      icerikHtml +=
+        '<div class="info-note__qa">' +
+          '<div class="info-note__soru">' + item.soru + '</div>' +
+          '<div class="info-note__cevap">' + item.cevap + '</div>' +
+        '</div>';
+    });
+
+    kartDiv.innerHTML =
+      '<div class="info-note__header" onclick="this.parentElement.classList.toggle(\'acik\')">' +
+        '<div class="info-note__baslik">' +
+          '<span class="info-note__ikon">&#9432;</span>' +
+          '<span>' + not.baslik + '</span>' +
+        '</div>' +
+        '<div class="info-note__degerler">' + not.gozDegerleri + '</div>' +
+        '<span class="info-note__chevron">&#9660;</span>' +
+      '</div>' +
+      '<div class="info-note__body">' +
+        (svgHtml ? '<div class="info-note__svg">' + svgHtml + '</div>' : '') +
+        '<div class="info-note__icerik">' + icerikHtml + '</div>' +
+      '</div>';
+
+    list.appendChild(kartDiv);
+  });
+}
+
+function olusturAksDairesiSvg(sagAks, solAks) {
+  var r = 55;
+  var cx = 65;
+  var cy = 65;
+
+  function aksArc(aks, renk, etiket) {
+    // Oblik bolgeler: 30-60 ve 120-150
+    var oblikMi_ = (aks >= 30 && aks <= 60) || (aks >= 120 && aks <= 150);
+    var ibreRenk = oblikMi_ ? "#ef4444" : "#22c55e";
+    var rad = (90 - aks) * Math.PI / 180;
+    var x2 = cx + r * 0.85 * Math.cos(rad);
+    var y2 = cy - r * 0.85 * Math.sin(rad);
+    return '<line x1="' + cx + '" y1="' + cy + '" x2="' + x2.toFixed(1) + '" y2="' + y2.toFixed(1) + '" stroke="' + ibreRenk + '" stroke-width="3" stroke-linecap="round"/>' +
+           '<text x="' + (x2 + (x2 > cx ? 5 : -15)).toFixed(1) + '" y="' + (y2 + (y2 > cy ? 12 : -4)).toFixed(1) + '" font-size="9" fill="' + ibreRenk + '" font-weight="700">' + etiket + '</text>';
+  }
+
+  // Oblik bolgeleri kirmizi arc olarak goster
+  function oblikArc(start, end) {
+    var r2 = r - 3;
+    var s = (90 - start) * Math.PI / 180;
+    var e = (90 - end) * Math.PI / 180;
+    var x1 = cx + r2 * Math.cos(s);
+    var y1 = cy - r2 * Math.sin(s);
+    var x2 = cx + r2 * Math.cos(e);
+    var y2 = cy - r2 * Math.sin(e);
+    return '<path d="M' + x1.toFixed(1) + ' ' + y1.toFixed(1) + ' A' + r2 + ' ' + r2 + ' 0 0 1 ' + x2.toFixed(1) + ' ' + y2.toFixed(1) + '" fill="none" stroke="#ef4444" stroke-width="6" opacity="0.25"/>';
+  }
+
+  var svg = '<svg viewBox="0 0 130 130" width="130" height="130">' +
+    '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="#cbd5e1" stroke-width="1.5"/>' +
+    // Derece isaretleri
+    '<text x="' + cx + '" y="8" text-anchor="middle" font-size="9" fill="#64748b">90\u00b0</text>' +
+    '<text x="125" y="' + (cy + 4) + '" text-anchor="end" font-size="9" fill="#64748b">0\u00b0</text>' +
+    '<text x="' + cx + '" y="128" text-anchor="middle" font-size="9" fill="#64748b">270\u00b0</text>' +
+    '<text x="5" y="' + (cy + 4) + '" font-size="9" fill="#64748b">180\u00b0</text>' +
+    // Oblik bolgeler (kirmizi arc)
+    oblikArc(30, 60) +
+    oblikArc(120, 150) +
+    // Oblik etiketleri
+    '<text x="105" y="30" font-size="7" fill="#ef4444" font-weight="600">OBL\u0130K</text>' +
+    '<text x="5" y="30" font-size="7" fill="#ef4444" font-weight="600">OBL\u0130K</text>' +
+    // Aks ibreleri
+    aksArc(sagAks, "R:" + sagAks + "\u00b0") +
+    aksArc(solAks, "L:" + solAks + "\u00b0") +
+    // Merkez nokta
+    '<circle cx="' + cx + '" cy="' + cy + '" r="3" fill="#1e3a5f"/>' +
+    '</svg>';
+  return svg;
+}
+
+function olusturMinkwitzGrafikSvg(addDeger, koridor, gdh) {
+  var w = 220;
+  var h = 100;
+  var barH = 20;
+
+  // Guc degisim hizi bar grafigi
+  var gdhPct = Math.min(gdh / 0.25, 1) * 160;
+  var barRenk = gdh > 0.18 ? "#ef4444" : (gdh > 0.14 ? "#f97316" : "#22c55e");
+
+  // Ideal ve limit cizgileri
+  var idealX = (0.14 / 0.25) * 160 + 30;
+  var limitX = (0.18 / 0.25) * 160 + 30;
+
+  var svg = '<svg viewBox="0 0 ' + w + ' ' + h + '" width="' + w + '" height="' + h + '">' +
+    // Baslik
+    '<text x="5" y="14" font-size="9" fill="#1e3a5f" font-weight="700">Guc Degisim Hizi (D/mm)</text>' +
+    // Arka plan bar
+    '<rect x="30" y="25" width="160" height="' + barH + '" rx="4" fill="#f1f5f9" stroke="#e2e8f0"/>' +
+    // Ideal bolge (yesil)
+    '<rect x="30" y="25" width="' + (idealX - 30) + '" height="' + barH + '" rx="4" fill="#dcfce7" opacity="0.5"/>' +
+    // Deger bar
+    '<rect x="30" y="25" width="' + gdhPct + '" height="' + barH + '" rx="4" fill="' + barRenk + '" opacity="0.7"/>' +
+    // Deger yazisi
+    '<text x="' + (30 + gdhPct + 4) + '" y="39" font-size="10" fill="' + barRenk + '" font-weight="700">' + gdh.toFixed(3) + '</text>' +
+    // Ideal cizgisi
+    '<line x1="' + idealX + '" y1="22" x2="' + idealX + '" y2="48" stroke="#22c55e" stroke-width="1.5" stroke-dasharray="3,2"/>' +
+    '<text x="' + idealX + '" y="58" text-anchor="middle" font-size="7" fill="#22c55e">0.14 ideal</text>' +
+    // Limit cizgisi
+    '<line x1="' + limitX + '" y1="22" x2="' + limitX + '" y2="48" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="3,2"/>' +
+    '<text x="' + limitX + '" y="58" text-anchor="middle" font-size="7" fill="#ef4444">0.18 limit</text>' +
+    // Formul
+    '<text x="5" y="80" font-size="8" fill="#64748b">Formul: ADD (' + addDeger.toFixed(2) + ') / Koridor (' + koridor + 'mm) = ' + gdh.toFixed(3) + ' D/mm</text>' +
+    '<text x="5" y="93" font-size="8" fill="#64748b">Periferik astigmatizma = 2 x ' + gdh.toFixed(3) + ' = ' + (gdh * 2).toFixed(3) + ' D/mm</text>' +
+    '</svg>';
+  return svg;
+}
+
+function olusturPrizmaSvg(prizmaSag, prizmaSol, prizmaFark) {
+  var w = 170;
+  var h = 130;
+  var barW = 40;
+  var maxPrizma = Math.max(prizmaSag, prizmaSol, 3); // Min 3 olcek
+
+  // Bar yukseklikleri (max 70px)
+  var sagBarH = Math.min((prizmaSag / maxPrizma) * 70, 70);
+  var solBarH = Math.min((prizmaSol / maxPrizma) * 70, 70);
+
+  // Renkler
+  var sagRenk = prizmaSag > prizmaSol ? "#ef4444" : "#3b82f6";
+  var solRenk = prizmaSol > prizmaSag ? "#ef4444" : "#3b82f6";
+  var farkRenk = prizmaFark >= 1.50 ? "#ef4444" : "#f97316";
+
+  // Pozisyonlar
+  var baseY = 90;
+  var sagX = 25;
+  var solX = 95;
+
+  // Referans cizgisi: 1.00 prizma
+  var refY = baseY - ((1.00 / maxPrizma) * 70);
+
+  var svg = '<svg viewBox="0 0 ' + w + ' ' + h + '" width="' + w + '" height="' + h + '">' +
+    // Baslik
+    '<text x="' + (w / 2) + '" y="14" text-anchor="middle" font-size="9" fill="#1e3a5f" font-weight="700">Prizmatik Etki (\u0394)</text>' +
+
+    // Referans cizgisi (1.00 tolerans)
+    '<line x1="15" y1="' + refY + '" x2="' + (w - 15) + '" y2="' + refY + '" stroke="#94a3b8" stroke-width="0.8" stroke-dasharray="4,3"/>' +
+    '<text x="' + (w - 12) + '" y="' + (refY + 3) + '" font-size="6" fill="#94a3b8" text-anchor="end">1.0\u0394</text>' +
+
+    // Sag goz bar
+    '<rect x="' + sagX + '" y="' + (baseY - sagBarH) + '" width="' + barW + '" height="' + sagBarH + '" rx="4" fill="' + sagRenk + '" opacity="0.75"/>' +
+    '<text x="' + (sagX + barW / 2) + '" y="' + (baseY - sagBarH - 4) + '" text-anchor="middle" font-size="10" fill="' + sagRenk + '" font-weight="700">' + prizmaSag.toFixed(2) + '</text>' +
+    '<text x="' + (sagX + barW / 2) + '" y="' + (baseY + 12) + '" text-anchor="middle" font-size="8" fill="#475569">Sag</text>' +
+
+    // Sol goz bar
+    '<rect x="' + solX + '" y="' + (baseY - solBarH) + '" width="' + barW + '" height="' + solBarH + '" rx="4" fill="' + solRenk + '" opacity="0.75"/>' +
+    '<text x="' + (solX + barW / 2) + '" y="' + (baseY - solBarH - 4) + '" text-anchor="middle" font-size="10" fill="' + solRenk + '" font-weight="700">' + prizmaSol.toFixed(2) + '</text>' +
+    '<text x="' + (solX + barW / 2) + '" y="' + (baseY + 12) + '" text-anchor="middle" font-size="8" fill="#475569">Sol</text>' +
+
+    // Fark gostergesi (iki bar arasinda ok)
+    '<line x1="' + (sagX + barW + 3) + '" y1="' + (baseY - sagBarH / 2) + '" x2="' + (solX - 3) + '" y2="' + (baseY - solBarH / 2) + '" stroke="' + farkRenk + '" stroke-width="1.5" stroke-dasharray="3,2"/>' +
+    '<text x="' + ((sagX + barW + solX) / 2) + '" y="' + (baseY - Math.max(sagBarH, solBarH) / 2 - 6) + '" text-anchor="middle" font-size="9" fill="' + farkRenk + '" font-weight="700">\u0394' + prizmaFark.toFixed(2) + '</text>' +
+
+    // Alt formul
+    '<text x="' + (w / 2) + '" y="' + (h - 4) + '" text-anchor="middle" font-size="7" fill="#94a3b8">P = mesafe(cm) x guc(D)</text>' +
+    '</svg>';
+
+  return svg;
+}
+
+// ===== CAM KARSILASTIRMA =====
+function olusturKarsilastirmaTablolari() {
+  olusturMarkaKarsilastirma();
+  olusturOzellikKarsilastirma();
+  baslatKarsilastirmaTabGecisleri();
+}
+
+function olusturMarkaKarsilastirma() {
+  var container = document.getElementById("marka-karsilastirma-tablo");
+  if (!container || !window.LENS_DATABASE) return;
+
+  var markalar = window.LENS_DATABASE.markalar;
+  var markaKeys = Object.keys(markalar).sort(function(a, b) {
+    return (markalar[a].oncelik || 99) - (markalar[b].oncelik || 99);
+  });
+
+  // En fazla 5 marka goster
+  markaKeys = markaKeys.slice(0, 5);
+
+  var thead = '<tr><th>Ozellik</th>';
+  markaKeys.forEach(function(key) {
+    thead += '<th>' + markalar[key].kisaAd + '</th>';
+  });
+  thead += '</tr>';
+
+  // Seviye bazli modelleri bul
+  var seviyeler = ["premium", "orta", "giris"];
+  var seviyeAdlari = { premium: "Premium Model", orta: "Orta Seviye Model", giris: "Giris Seviye Model" };
+
+  var tbody = "";
+  seviyeler.forEach(function(seviye) {
+    tbody += '<tr><td><strong>' + seviyeAdlari[seviye] + '</strong></td>';
+    markaKeys.forEach(function(key) {
+      var model = markalar[key].modeller.find(function(m) { return m.seviye === seviye; });
+      tbody += '<td>' + (model ? model.ad : '-') + '</td>';
+    });
+    tbody += '</tr>';
+  });
+
+  // Teknoloji sayisi
+  tbody += '<tr><td>Toplam Model Sayisi</td>';
+  markaKeys.forEach(function(key) {
+    tbody += '<td>' + markalar[key].modeller.length + '</td>';
+  });
+  tbody += '</tr>';
+
+  // Tasarim tipleri
+  tbody += '<tr><td>FreeForm Model Sayisi</td>';
+  markaKeys.forEach(function(key) {
+    var ff = markalar[key].modeller.filter(function(m) { return m.tasarim === "freeform"; }).length;
+    tbody += '<td>' + ff + '</td>';
+  });
+  tbody += '</tr>';
+
+  // Min fitting height
+  tbody += '<tr><td>Min Fitting Height</td>';
+  markaKeys.forEach(function(key) {
+    var mins = markalar[key].modeller.map(function(m) { return m.minFittingHeight || 99; });
+    var minFH = Math.min.apply(null, mins);
+    tbody += '<td>' + (minFH < 99 ? minFH + 'mm' : '-') + '</td>';
+  });
+  tbody += '</tr>';
+
+  // Uyum garantisi
+  tbody += '<tr><td>Uyum Garantisi</td>';
+  markaKeys.forEach(function(key) {
+    var garanti = markalar[key].uyumGarantisi;
+    tbody += '<td>' + (garanti ? '<span class="kt-badge kt-badge--success">Var</span>' : '<span class="kt-badge kt-badge--danger">Yok</span>') + '</td>';
+  });
+  tbody += '</tr>';
+
+  container.innerHTML = '<table class="karsilastirma-tablo"><thead>' + thead + '</thead><tbody>' + tbody + '</tbody></table>';
+}
+
+function olusturOzellikKarsilastirma() {
+  var container = document.getElementById("ozellik-karsilastirma-tablo");
+  if (!container || !window.LENS_DATABASE) return;
+
+  var markalar = window.LENS_DATABASE.markalar;
+  var ozellikAdlari = {
+    yuzmeEtkisiAzaltma: "Yuzme Etkisi Azaltma",
+    surusOptimize: "Surus Optimizasyonu",
+    dijitalCihazOptimize: "Dijital Cihaz Optimizasyonu",
+    genisMesafe: "Genis Mesafe Alani",
+    genisYakin: "Genis Yakin Alani",
+    genisOrta: "Genis Ara Mesafe Alani"
+  };
+
+  var tbody = "";
+  Object.keys(ozellikAdlari).forEach(function(ozellikKey) {
+    var modeller = [];
+    Object.keys(markalar).forEach(function(markaKey) {
+      markalar[markaKey].modeller.forEach(function(model) {
+        if (model.ozellikler && model.ozellikler[ozellikKey]) {
+          modeller.push(markalar[markaKey].kisaAd + " " + model.ad);
+        }
+      });
+    });
+    tbody += '<tr>' +
+      '<td><strong>' + ozellikAdlari[ozellikKey] + '</strong></td>' +
+      '<td>' + (modeller.length > 0 ? modeller.join(', ') : '-') + '</td>' +
+      '</tr>';
+  });
+
+  container.innerHTML =
+    '<table class="karsilastirma-tablo">' +
+    '<thead><tr><th>Ozellik</th><th>Bu Ozellige Sahip Modeller</th></tr></thead>' +
+    '<tbody>' + tbody + '</tbody>' +
+    '</table>';
+}
+
+function baslatKarsilastirmaTabGecisleri() {
+  var tablar = document.querySelectorAll(".karsilastirma-tab");
+  var icerikler = document.querySelectorAll(".karsilastirma-icerik");
+
+  tablar.forEach(function(tab) {
+    tab.addEventListener("click", function() {
+      var hedef = this.getAttribute("data-ktab");
+
+      tablar.forEach(function(t) { t.classList.remove("active"); });
+      icerikler.forEach(function(i) { i.classList.remove("active"); });
+
+      this.classList.add("active");
+      var hedefIcerik = document.getElementById("ktab-" + hedef);
+      if (hedefIcerik) hedefIcerik.classList.add("active");
+    });
   });
 }
 
