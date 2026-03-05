@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hasta Kullanim Talimati - Kepekci Optik</title>
+  <style>
+    /* Yazdirma icin optimize edilmis A4 tasarim */
+    @page {
+      size: A4;
+      margin: 12mm 15mm;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      color: #1e293b;
+      line-height: 1.5;
+      background: #f1f5f9;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .sayfa {
+      max-width: 210mm;
+      margin: 20px auto;
+      background: #fff;
+      padding: 28px 32px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+    }
+
+    /* Ust Kisim - Logo ve Bilgiler */
+    .ust-kisim {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 3px solid #1e3a5f;
+      padding-bottom: 16px;
+      margin-bottom: 20px;
+    }
+
+    .logo-alan {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-alan svg {
+      width: 40px;
+      height: 40px;
+      color: #1e3a5f;
+    }
+
+    .logo-alan h1 {
+      font-size: 1.4rem;
+      color: #1e3a5f;
+      letter-spacing: -0.5px;
+    }
+
+    .logo-alan .alt-baslik {
+      font-size: 0.75rem;
+      color: #64748b;
+      font-weight: 400;
+    }
+
+    .iletisim-bilgi {
+      text-align: right;
+      font-size: 0.75rem;
+      color: #64748b;
+      line-height: 1.6;
+    }
+
+    /* Ana Baslik */
+    .ana-baslik {
+      text-align: center;
+      background: linear-gradient(135deg, #1e3a5f, #2563eb);
+      color: #fff;
+      padding: 14px 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    .ana-baslik h2 {
+      font-size: 1.3rem;
+      margin-bottom: 4px;
+    }
+
+    .ana-baslik p {
+      font-size: 0.8rem;
+      opacity: 0.9;
+    }
+
+    /* Goz Bolgesi Illüstrasyonu */
+    .goz-bolgeleri {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+      align-items: center;
+    }
+
+    .goz-illus {
+      flex: 0 0 160px;
+      text-align: center;
+    }
+
+    .goz-illus svg {
+      width: 140px;
+      height: 200px;
+    }
+
+    .bolge-aciklamalar {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .bolge-kart {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+    }
+
+    .bolge-kart .renk-kutu {
+      width: 14px;
+      height: 14px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .bolge-kart strong {
+      display: block;
+      font-size: 0.85rem;
+    }
+
+    .bolge-uzak { background: #eff6ff; border-left: 3px solid #3b82f6; }
+    .bolge-uzak .renk-kutu { background: #3b82f6; }
+
+    .bolge-ara { background: #f0fdf4; border-left: 3px solid #22c55e; }
+    .bolge-ara .renk-kutu { background: #22c55e; }
+
+    .bolge-yakin { background: #fefce8; border-left: 3px solid #eab308; }
+    .bolge-yakin .renk-kutu { background: #eab308; }
+
+    .bolge-yan { background: #fef2f2; border-left: 3px solid #ef4444; }
+    .bolge-yan .renk-kutu { background: #ef4444; }
+
+    /* Kullanim Kilavuzu */
+    .kilavuz-baslik {
+      font-size: 1.05rem;
+      color: #1e3a5f;
+      font-weight: 700;
+      margin-bottom: 12px;
+      padding-bottom: 6px;
+      border-bottom: 2px solid #e2e8f0;
+    }
+
+    .kilavuz-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .kilavuz-kart {
+      display: flex;
+      gap: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+    }
+
+    .kilavuz-kart .numara {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #1e3a5f;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.8rem;
+      flex-shrink: 0;
+    }
+
+    .kilavuz-kart .icerik h4 {
+      font-size: 0.82rem;
+      color: #1e3a5f;
+      margin-bottom: 2px;
+    }
+
+    .kilavuz-kart .icerik p {
+      font-size: 0.75rem;
+      color: #64748b;
+      line-height: 1.4;
+    }
+
+    /* Adaptasyon Sureci */
+    .adaptasyon {
+      margin-bottom: 20px;
+    }
+
+    .adaptasyon-zaman-cizgisi {
+      display: flex;
+      gap: 8px;
+    }
+
+    .adaptasyon-kart {
+      flex: 1;
+      text-align: center;
+      padding: 10px 8px;
+      border-radius: 8px;
+      border: 1px solid;
+    }
+
+    .adaptasyon-kart .gun {
+      font-size: 0.9rem;
+      font-weight: 700;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .adaptasyon-kart p {
+      font-size: 0.7rem;
+      line-height: 1.3;
+    }
+
+    .ad-gun1 { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
+    .ad-gun1 .gun { color: #ef4444; }
+
+    .ad-gun2 { background: #fff7ed; border-color: #fed7aa; color: #9a3412; }
+    .ad-gun2 .gun { color: #f97316; }
+
+    .ad-gun3 { background: #fefce8; border-color: #fef08a; color: #854d0e; }
+    .ad-gun3 .gun { color: #eab308; }
+
+    .ad-gun4 { background: #f0fdf4; border-color: #bbf7d0; color: #166534; }
+    .ad-gun4 .gun { color: #22c55e; }
+
+    /* Uyari Kutusu */
+    .yapmayin-kutu {
+      background: #fef2f2;
+      border: 2px solid #ef4444;
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 20px;
+    }
+
+    .yapmayin-kutu h3 {
+      color: #ef4444;
+      font-size: 0.95rem;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .yapmayin-kutu ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .yapmayin-kutu li {
+      font-size: 0.8rem;
+      color: #991b1b;
+      padding: 3px 0;
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .yapmayin-kutu li::before {
+      content: "\2717";
+      position: absolute;
+      left: 0;
+      color: #ef4444;
+      font-weight: 700;
+    }
+
+    /* Optisyen Not Alani */
+    .not-alani {
+      border: 1px dashed #94a3b8;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+    }
+
+    .not-alani h4 {
+      font-size: 0.85rem;
+      color: #64748b;
+      margin-bottom: 8px;
+    }
+
+    .not-alani .not-satir {
+      border-bottom: 1px dotted #cbd5e1;
+      height: 28px;
+      margin-bottom: 4px;
+    }
+
+    /* Kisisel bilgilendirme (dinamik) */
+    .kisisel-bilgi {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .kisisel-bilgi.goster { display: block; }
+
+    .kisisel-bilgi h4 {
+      font-size: 0.85rem;
+      color: #1e40af;
+      margin-bottom: 6px;
+    }
+
+    .kisisel-bilgi p, .kisisel-bilgi li {
+      font-size: 0.8rem;
+      color: #1e3a8a;
+      line-height: 1.5;
+    }
+
+    .kisisel-bilgi ul {
+      padding-left: 16px;
+    }
+
+    /* Alt Kisim */
+    .alt-kisim {
+      border-top: 2px solid #1e3a5f;
+      padding-top: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .alt-kisim p {
+      font-size: 0.75rem;
+      color: #64748b;
+    }
+
+    .alt-kisim .randevu {
+      background: #1e3a5f;
+      color: #fff;
+      padding: 6px 16px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    /* Ekran gorunumu icin butonlar */
+    .ekran-butonlar {
+      max-width: 210mm;
+      margin: 16px auto;
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .ekran-butonlar button {
+      padding: 10px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-yazdir {
+      background: #1e3a5f;
+      color: #fff;
+    }
+
+    .btn-yazdir:hover { background: #2563eb; }
+
+    .btn-geri {
+      background: #e2e8f0;
+      color: #1e293b;
+    }
+
+    .btn-geri:hover { background: #cbd5e1; }
+
+    @media print {
+      body { background: #fff; }
+      .sayfa { box-shadow: none; margin: 0; padding: 0; }
+      .ekran-butonlar { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Ekran Butonlari -->
+  <div class="ekran-butonlar">
+    <button class="btn-yazdir" onclick="window.print()">Yazdir</button>
+    <button class="btn-geri" onclick="window.close(); window.location.href='index.html';">Geri Don</button>
+  </div>
+
+  <div class="sayfa">
+    <!-- Ust Kisim -->
+    <div class="ust-kisim">
+      <div class="logo-alan">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M2 12s4-8 10-8 10 8 10 8-4 8-10 8-10-8-10-8z"/>
+        </svg>
+        <div>
+          <h1>Kepekci Optik</h1>
+          <span class="alt-baslik">Uzman Goz Bakimi</span>
+        </div>
+      </div>
+      <div class="iletisim-bilgi">
+        <strong>Kepekci Optik</strong><br/>
+        Tel: (XXX) XXX XX XX<br/>
+        Adres: ...
+      </div>
+    </div>
+
+    <!-- Ana Baslik -->
+    <div class="ana-baslik">
+      <h2>Progresif Gozlugunuzu Taniyin</h2>
+      <p>Bu kilavuz, yeni gozlugunuze en hizli sekilde alismaniz icin hazirlanmistir</p>
+    </div>
+
+    <!-- Goz Bolgeleri Illustrasyonu -->
+    <div class="goz-bolgeleri">
+      <div class="goz-illus">
+        <svg viewBox="0 0 120 180" fill="none">
+          <!-- Cerceve -->
+          <rect x="10" y="10" width="100" height="160" rx="16" ry="16" stroke="#1e3a5f" stroke-width="2.5" fill="none"/>
+          <!-- Uzak bolge -->
+          <path d="M20 30 Q60 20 100 30 L100 65 Q60 75 20 65 Z" fill="#dbeafe" stroke="#3b82f6" stroke-width="1"/>
+          <text x="60" y="52" text-anchor="middle" font-size="10" fill="#1e40af" font-weight="600">UZAK</text>
+          <!-- Ara bolge -->
+          <path d="M30 70 Q60 65 90 70 L85 105 Q60 110 35 105 Z" fill="#dcfce7" stroke="#22c55e" stroke-width="1"/>
+          <text x="60" y="92" text-anchor="middle" font-size="9" fill="#166534" font-weight="600">ARA</text>
+          <!-- Yakin bolge -->
+          <path d="M35 110 Q60 105 85 110 L80 145 Q60 150 40 145 Z" fill="#fef9c3" stroke="#eab308" stroke-width="1"/>
+          <text x="60" y="132" text-anchor="middle" font-size="9" fill="#854d0e" font-weight="600">YAKIN</text>
+          <!-- Periferik bulaniklik -->
+          <path d="M12 30 L20 30 L20 65 L12 65 Z" fill="#fee2e2" opacity="0.7"/>
+          <path d="M100 30 L108 30 L108 65 L100 65 Z" fill="#fee2e2" opacity="0.7"/>
+          <path d="M12 70 L30 70 L35 105 L12 105 Z" fill="#fee2e2" opacity="0.5"/>
+          <path d="M90 70 L108 70 L108 105 L85 105 Z" fill="#fee2e2" opacity="0.5"/>
+          <!-- Periferik etiketler -->
+          <text x="7" y="50" font-size="6" fill="#ef4444" transform="rotate(-90,7,50)">BULANIK</text>
+          <text x="113" y="50" font-size="6" fill="#ef4444" transform="rotate(90,113,50)">BULANIK</text>
+        </svg>
+      </div>
+      <div class="bolge-aciklamalar">
+        <div class="bolge-kart bolge-uzak">
+          <span class="renk-kutu"></span>
+          <div><strong>Uzak Gorus (Ust)</strong> Yol, televizyon, karsiyi izleme</div>
+        </div>
+        <div class="bolge-kart bolge-ara">
+          <span class="renk-kutu"></span>
+          <div><strong>Ara Mesafe (Orta)</strong> Bilgisayar ekrani, telefon</div>
+        </div>
+        <div class="bolge-kart bolge-yakin">
+          <span class="renk-kutu"></span>
+          <div><strong>Yakin Gorus (Alt)</strong> Kitap, gazete, yazi yazma</div>
+        </div>
+        <div class="bolge-kart bolge-yan">
+          <span class="renk-kutu"></span>
+          <div><strong>Yan Kisimlar</strong> Hafif bulaniklik normaldir, zamanla azalir</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kullanim Kilavuzu -->
+    <h3 class="kilavuz-baslik">Dogru Kullanim Kilavuzu</h3>
+    <div class="kilavuz-grid">
+      <div class="kilavuz-kart">
+        <span class="numara">1</span>
+        <div class="icerik">
+          <h4>Uzaga Bakarken</h4>
+          <p>Basinizi duz tutun, camin ust bolgesinden bakin. Ceneyi hafifce asagi indirin.</p>
+        </div>
+      </div>
+      <div class="kilavuz-kart">
+        <span class="numara">2</span>
+        <div class="icerik">
+          <h4>Bilgisayara Bakarken</h4>
+          <p>Ceneyi hafifce kaldirin, camin orta bolgesini kullanin. Ekrani goz hizasinda tutun.</p>
+        </div>
+      </div>
+      <div class="kilavuz-kart">
+        <span class="numara">3</span>
+        <div class="icerik">
+          <h4>Okurken / Telefonla</h4>
+          <p>Gozlerinizi asagi kaydirin, camin alt bolgesini kullanin. Kitabi gobeginiz hizasinda tutun.</p>
+        </div>
+      </div>
+      <div class="kilavuz-kart">
+        <span class="numara">4</span>
+        <div class="icerik">
+          <h4>Yanlara Bakarken</h4>
+          <p>Gozlerinizi degil, <strong>BASINIZI</strong> cevirin. Goz ucuyla bakmayin, bas hareketine alistin.</p>
+        </div>
+      </div>
+      <div class="kilavuz-kart">
+        <span class="numara">5</span>
+        <div class="icerik">
+          <h4>Merdiven Inerken</h4>
+          <p>Basinizi hafifce one egin ve asagi bakin. Camin alt kismindaki yakin bolge yerine ortayi kullanin.</p>
+        </div>
+      </div>
+      <div class="kilavuz-kart">
+        <span class="numara">6</span>
+        <div class="icerik">
+          <h4>Arac Kullanirken</h4>
+          <p>Aynalara bakarken basi cevirin. Ilk 1 haftada uzun yoldan kacinin, kisa mesafelerde alisin.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Adaptasyon Sureci -->
+    <div class="adaptasyon">
+      <h3 class="kilavuz-baslik">Alisma Sureci</h3>
+      <div class="adaptasyon-zaman-cizgisi">
+        <div class="adaptasyon-kart ad-gun1">
+          <span class="gun" id="adGun1">1-3 Gun</span>
+          <p>Hafif rahatsizlik normaldir. Sabirin!</p>
+        </div>
+        <div class="adaptasyon-kart ad-gun2">
+          <span class="gun" id="adGun2">4-7 Gun</span>
+          <p>Yogun alisma donemi. Gozlugu cikarmayin.</p>
+        </div>
+        <div class="adaptasyon-kart ad-gun3">
+          <span class="gun" id="adGun3">7-14 Gun</span>
+          <p>Buyuk olcude alisirsiniz. Hareket etmeye devam edin.</p>
+        </div>
+        <div class="adaptasyon-kart ad-gun4">
+          <span class="gun" id="adGun4">14+ Gun</span>
+          <p>Tam adaptasyon. Tebrikler!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kisisel Bilgilendirme (JS ile doldurulacak) -->
+    <div class="kisisel-bilgi" id="kisiselBilgi">
+      <h4>Size Ozel Notlar</h4>
+      <div id="kisiselIcerik"></div>
+    </div>
+
+    <!-- Yapmayin Kutusu -->
+    <div class="yapmayin-kutu">
+      <h3>&#9888; Yapmayin!</h3>
+      <ul>
+        <li>Gozlugu cikarip takip durmayin - surekli takili tutun</li>
+        <li>Eski gozlugunuzle karsilastirma yapmayin</li>
+        <li>Ilk gunlerde uzun mesafe arac kullanmayin</li>
+        <li>Yaniniza degil, basinizi cevirerek bakin</li>
+        <li>Alisma surecinde moralsizlenmeyin - bu normaldir</li>
+      </ul>
+    </div>
+
+    <!-- Optisyen Not Alani -->
+    <div class="not-alani">
+      <h4>Optisyen Notu:</h4>
+      <div class="not-satir"></div>
+      <div class="not-satir"></div>
+      <div class="not-satir"></div>
+    </div>
+
+    <!-- Alt Kisim -->
+    <div class="alt-kisim">
+      <div>
+        <p><strong>3 hafta sonra hala sorun yasiyorsaniz, bizi arayin.</strong></p>
+        <p>Kepekci Optik - Progresif cam uzmanligiyla yaninizdayiz.</p>
+      </div>
+      <div class="randevu">Randevu: (XXX) XXX XX XX</div>
+    </div>
+  </div>
+
+  <script>
+    // URL parametrelerinden kisisel bilgileri al
+    (function() {
+      var params = new URLSearchParams(window.location.search);
+      var risk = parseInt(params.get("risk")) || 0;
+      var ilk = params.get("ilk") === "true";
+      var meslek = params.get("meslek") || "";
+      var adaptasyonMin = params.get("adaptasyonMin") || "";
+      var adaptasyonMax = params.get("adaptasyonMax") || "";
+
+      var kisiselDiv = document.getElementById("kisiselBilgi");
+      var icerikDiv = document.getElementById("kisiselIcerik");
+      var notlar = [];
+
+      // Risk skoruna gore adaptasyon surelerini guncelle
+      if (risk >= 7) {
+        document.getElementById("adGun1").textContent = "1-5 Gun";
+        document.getElementById("adGun2").textContent = "5-10 Gun";
+        document.getElementById("adGun3").textContent = "10-21 Gun";
+        document.getElementById("adGun4").textContent = "21+ Gun";
+        notlar.push("Recete degerlerinize gore alisma sureci normalden biraz daha uzun olabilir. Sabirli olun, bu tamamen normaldir.");
+      } else if (risk >= 5) {
+        document.getElementById("adGun3").textContent = "7-18 Gun";
+        document.getElementById("adGun4").textContent = "18+ Gun";
+      }
+
+      // Ilk kullanim notu
+      if (ilk) {
+        notlar.push("Ilk defa progresif gozluk kullandiginiz icin alisma sureci biraz daha uzun olabilir. Gozlugunuzu gunden gune daha cok sevin, sabirin!");
+        notlar.push("Ilk gunlerde hafif bas donmesi veya dengesizlik hissi yasayabilirsiniz. Bu normaldir ve gecer.");
+      }
+
+      // Meslek bazli notlar
+      if (meslek === "ofis" || meslek === "bilgisayar") {
+        notlar.push("Bilgisayar basinda calisirken: Ekrani goz hizasina getirin, camin orta bolgesinden bakin. Her 20 dakikada uzaga bakin.");
+      } else if (meslek === "sofor") {
+        notlar.push("Arac kullanirken dikkat: Yan aynalara bakarken mutlaka basinizi cevirin. Ilk hafta uzun yolculuk yapmayin.");
+      } else if (meslek === "aktif" || meslek === "spor") {
+        notlar.push("Aktif yasaminizda: Ani bas hareketlerinden kacinin, spor yaparken gozluk kaymasin diye bant kullanabilirsiniz.");
+      }
+
+      if (adaptasyonMin && adaptasyonMax) {
+        notlar.push("Sizin icin beklenen alisma suresi: " + adaptasyonMin + " - " + adaptasyonMax + " gundur.");
+      }
+
+      if (notlar.length > 0) {
+        kisiselDiv.classList.add("goster");
+        var html = "<ul>";
+        for (var i = 0; i < notlar.length; i++) {
+          html += "<li>" + notlar[i] + "</li>";
+        }
+        html += "</ul>";
+        icerikDiv.innerHTML = html;
+      }
+    })();
+  </script>
+</body>
+</html>

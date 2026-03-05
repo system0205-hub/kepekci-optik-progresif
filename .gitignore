@@ -1,0 +1,20 @@
+# PDF dosyalari (fiyat kataloglari - buyuk dosyalar)
+*.pdf
+
+# Claude session verileri
+.claude/
+
+# Superpowers plugin cache
+superpowers/
+
+# Node modules
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/

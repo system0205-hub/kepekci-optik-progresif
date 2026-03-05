@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Olcek Karti - Kepekci Optik</title>
+  <style>
+    /* A4 yazdirilabilir olcek karti - %100 olcek zorunlu */
+    @page {
+      size: A4;
+      margin: 15mm;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      color: #1e293b;
+      background: #f1f5f9;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    /* Ekran butonlari */
+    .ekran-kontrol {
+      max-width: 600px;
+      margin: 20px auto;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .ekran-kontrol h2 {
+      font-size: 1.4rem;
+      color: #1e3a5f;
+      margin-bottom: 8px;
+    }
+
+    .ekran-kontrol p {
+      color: #64748b;
+      font-size: 0.9rem;
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+
+    .ekran-kontrol .uyari {
+      background: #fef2f2;
+      border: 2px solid #ef4444;
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 16px;
+      color: #991b1b;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .ekran-kontrol button {
+      padding: 12px 32px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 4px;
+    }
+
+    .btn-yazdir {
+      background: #1e3a5f;
+      color: #fff;
+    }
+
+    .btn-yazdir:hover { background: #2563eb; }
+
+    .btn-geri {
+      background: #e2e8f0;
+      color: #1e293b;
+    }
+
+    /* Kart alani - gercek boyutlar (mm cinsinden) */
+    .kart-alani {
+      width: 180mm;
+      margin: 0 auto;
+      background: #fff;
+      padding: 10mm;
+    }
+
+    /* Kesilecek kart - kesik cizgi ile cerceveli */
+    .kart {
+      border: 2px dashed #94a3b8;
+      border-radius: 4mm;
+      padding: 8mm;
+      position: relative;
+    }
+
+    .kart::before {
+      content: "Kesim Cizgisi";
+      position: absolute;
+      top: -6mm;
+      left: 4mm;
+      font-size: 7pt;
+      color: #94a3b8;
+      background: #fff;
+      padding: 0 2mm;
+    }
+
+    /* Kart basligi */
+    .kart-baslik {
+      text-align: center;
+      border-bottom: 0.5mm solid #1e3a5f;
+      padding-bottom: 4mm;
+      margin-bottom: 6mm;
+    }
+
+    .kart-baslik h1 {
+      font-size: 14pt;
+      color: #1e3a5f;
+      letter-spacing: -0.5px;
+    }
+
+    .kart-baslik p {
+      font-size: 8pt;
+      color: #64748b;
+      margin-top: 1mm;
+    }
+
+    /* Referans cizgisi - TAM 30mm */
+    .referans-alani {
+      text-align: center;
+      margin: 8mm 0;
+      padding: 6mm 0;
+      background: #f8fafc;
+      border-radius: 3mm;
+    }
+
+    .referans-etiket {
+      font-size: 10pt;
+      color: #1e3a5f;
+      font-weight: 700;
+      margin-bottom: 4mm;
+    }
+
+    .referans-cizgi-sarmalayici {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+    }
+
+    /* 30mm cizgi - gercek boyutta */
+    .referans-cizgi {
+      width: 30mm;
+      height: 3mm;
+      background: #000;
+      position: relative;
+    }
+
+    /* Sol ve sag ok isaretleri */
+    .referans-cizgi::before {
+      content: "";
+      position: absolute;
+      left: -2mm;
+      top: -2mm;
+      width: 0;
+      height: 0;
+      border-top: 3.5mm solid transparent;
+      border-bottom: 3.5mm solid transparent;
+      border-right: 3mm solid #000;
+    }
+
+    .referans-cizgi::after {
+      content: "";
+      position: absolute;
+      right: -2mm;
+      top: -2mm;
+      width: 0;
+      height: 0;
+      border-top: 3.5mm solid transparent;
+      border-bottom: 3.5mm solid transparent;
+      border-left: 3mm solid #000;
+    }
+
+    .referans-boyut {
+      font-size: 12pt;
+      font-weight: 700;
+      color: #000;
+      margin-top: 3mm;
+    }
+
+    /* Milimetrik cetvel (dogrulama icin) */
+    .cetvel {
+      display: flex;
+      justify-content: center;
+      margin-top: 4mm;
+    }
+
+    .cetvel-cizgi {
+      width: 30mm;
+      height: 6mm;
+      position: relative;
+      border-bottom: 0.5mm solid #000;
+      border-left: 0.5mm solid #000;
+      border-right: 0.5mm solid #000;
+    }
+
+    /* Her 1mm'de kucuk cizgi, her 5mm'de orta, her 10mm'de buyuk */
+    .cetvel-isaret {
+      position: absolute;
+      bottom: 0;
+      width: 0.3mm;
+      background: #000;
+    }
+
+    /* Talimatlar */
+    .talimatlar {
+      margin-top: 6mm;
+    }
+
+    .talimatlar h3 {
+      font-size: 10pt;
+      color: #1e3a5f;
+      margin-bottom: 3mm;
+    }
+
+    .talimat-adimlar {
+      display: flex;
+      gap: 4mm;
+    }
+
+    .talimat-adim {
+      flex: 1;
+      text-align: center;
+      padding: 3mm;
+      background: #f1f5f9;
+      border-radius: 2mm;
+    }
+
+    .talimat-adim .adim-no {
+      width: 6mm;
+      height: 6mm;
+      border-radius: 50%;
+      background: #1e3a5f;
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 8pt;
+      font-weight: 700;
+      margin-bottom: 2mm;
+    }
+
+    .talimat-adim p {
+      font-size: 7pt;
+      color: #475569;
+      line-height: 1.4;
+    }
+
+    /* Alt not */
+    .alt-not {
+      margin-top: 6mm;
+      padding-top: 3mm;
+      border-top: 0.3mm solid #e2e8f0;
+      text-align: center;
+      font-size: 7pt;
+      color: #94a3b8;
+    }
+
+    .alt-not strong {
+      color: #ef4444;
+    }
+
+    @media print {
+      body { background: #fff; }
+      .ekran-kontrol { display: none; }
+      .kart-alani { padding: 0; margin: 0; }
+    }
+
+    @media screen {
+      .kart-alani {
+        box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+        border-radius: 8px;
+        margin-bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Ekran Kontrolleri -->
+  <div class="ekran-kontrol">
+    <h2>Olcek Karti Yazdirma</h2>
+    <p>Bu karti A4 kagida yazdirip kesin. Fotograftan olcum alirken gozlugun yanina koyun.</p>
+    <div class="uyari">
+      &#9888; ONEMLI: Yazici ayarlarindan olceklendirmeyi <strong>%100 (Gercek Boyut)</strong> olarak secin!<br/>
+      "Sayfaya Sigdir" veya "Otomatik Kucult" secenegini KAPATINIZ.
+    </div>
+    <button class="btn-yazdir" onclick="window.print()">Yazdir</button>
+    <button class="btn-geri" onclick="window.location.href='foto-olcum.html'">Fotograftan Olcume Git</button>
+  </div>
+
+  <!-- Kesilecek Kart -->
+  <div class="kart-alani">
+    <div class="kart">
+      <!-- Baslik -->
+      <div class="kart-baslik">
+        <h1>Kepekci Optik - Olcum Karti</h1>
+        <p>Fotograftan olcum icin referans karti</p>
+      </div>
+
+      <!-- 30mm Referans Cizgisi -->
+      <div class="referans-alani">
+        <div class="referans-etiket">REFERANS CIZGISI</div>
+        <div class="referans-cizgi-sarmalayici">
+          <div class="referans-cizgi"></div>
+        </div>
+        <div class="referans-boyut">30 mm</div>
+
+        <!-- Milimetrik cetvel -->
+        <div class="cetvel">
+          <div class="cetvel-cizgi" id="cetvelCizgi"></div>
+        </div>
+      </div>
+
+      <!-- Talimatlar -->
+      <div class="talimatlar">
+        <h3>Nasil Kullanilir?</h3>
+        <div class="talimat-adimlar">
+          <div class="talimat-adim">
+            <div class="adim-no">1</div>
+            <p>Bu karti <strong>kesin</strong> ve gozlugun yanina koyun</p>
+          </div>
+          <div class="talimat-adim">
+            <div class="adim-no">2</div>
+            <p>Gozlukle birlikte <strong>fotograf cekin</strong> (referans cizgisi gorunsun)</p>
+          </div>
+          <div class="talimat-adim">
+            <div class="adim-no">3</div>
+            <p>"Fotograftan Olcum" sayfasina yukleyin ve <strong>noktalari isaretleyin</strong></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alt not -->
+      <div class="alt-not">
+        <strong>%100 olcekte yazdirin!</strong> Dogrulama: Referans cizgisi cetvel ile olcunde tam 30 mm olmali.<br/>
+        Kepekci Optik &copy; 2026
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Milimetrik cetvel olustur (30mm, her mm'de bir isaret)
+    (function() {
+      var cetvel = document.getElementById("cetvelCizgi");
+      if (!cetvel) return;
+
+      for (var i = 0; i <= 30; i++) {
+        var isaret = document.createElement("div");
+        isaret.className = "cetvel-isaret";
+        isaret.style.left = (i * (30 / 30)) + "mm";
+
+        if (i % 10 === 0) {
+          // Buyuk isaret (10mm)
+          isaret.style.height = "5mm";
+          // Numara ekle
+          if (i > 0) {
+            var num = document.createElement("span");
+            num.style.position = "absolute";
+            num.style.bottom = "5.5mm";
+            num.style.left = "-1.5mm";
+            num.style.fontSize = "6pt";
+            num.style.color = "#475569";
+            num.textContent = i;
+            isaret.appendChild(num);
+          }
+        } else if (i % 5 === 0) {
+          // Orta isaret (5mm)
+          isaret.style.height = "3.5mm";
+        } else {
+          // Kucuk isaret (1mm)
+          isaret.style.height = "2mm";
+        }
+
+        cetvel.appendChild(isaret);
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,2827 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Kepekci Optik - Progresif Cam Oneri Sistemi">
+    <meta http-equiv="Content-Language" content="tr">
+    <title>Kepekci Optik - Progresif Cam Oneri Sistemi</title>
+    <style>
+        /* ============================================================
+           CSS RESET & BASE
+           ============================================================ */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --primary: #1a5276;
+            --primary-light: #2980b9;
+            --primary-dark: #0e2f44;
+            --accent: #e67e22;
+            --accent-light: #f39c12;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --info: #3498db;
+            --bg: #f4f6f9;
+            --bg-card: #ffffff;
+            --text: #2c3e50;
+            --text-light: #7f8c8d;
+            --text-muted: #95a5a6;
+            --border: #dce1e8;
+            --border-light: #ecf0f1;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.12);
+            --radius: 10px;
+            --radius-sm: 6px;
+            --radius-lg: 14px;
+            --transition: 0.2s ease;
+        }
+
+        html {
+            font-size: 15px;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ============================================================
+           SVG ICON SYSTEM
+           ============================================================ */
+        .icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.2em;
+            height: 1.2em;
+            vertical-align: middle;
+            flex-shrink: 0;
+        }
+
+        .icon svg {
+            width: 100%;
+            height: 100%;
+            fill: currentColor;
+        }
+
+        .icon--lg {
+            width: 1.6em;
+            height: 1.6em;
+        }
+
+        .icon--sm {
+            width: 1em;
+            height: 1em;
+        }
+
+        /* ============================================================
+           HEADER
+           ============================================================ */
+        .header {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--primary-light) 100%);
+            color: #ffffff;
+            padding: 1.2rem 1.5rem;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header__inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        .header__brand {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header__title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .header__subtitle {
+            font-size: 0.85rem;
+            opacity: 0.85;
+            font-weight: 400;
+        }
+
+        .header__nav {
+            display: flex;
+            gap: 0.3rem;
+        }
+
+        .header__nav a {
+            color: rgba(255, 255, 255, 0.75);
+            text-decoration: none;
+            padding: 0.45rem 1rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .header__nav a:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .header__nav a.active {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.2);
+            font-weight: 600;
+        }
+
+        /* ============================================================
+           TABS
+           ============================================================ */
+        .tabs {
+            max-width: 1200px;
+            margin: 1.2rem auto 0;
+            padding: 0 1.5rem;
+            width: 100%;
+        }
+
+        .tabs__list {
+            display: flex;
+            gap: 0.25rem;
+            border-bottom: 2px solid var(--border);
+            list-style: none;
+        }
+
+        .tabs__item {
+            padding: 0.7rem 1.4rem;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--text-light);
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            transition: var(--transition);
+            user-select: none;
+        }
+
+        .tabs__item:hover {
+            color: var(--primary);
+        }
+
+        .tabs__item.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* ============================================================
+           MAIN CONTENT
+           ============================================================ */
+        .main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1.2rem 1.5rem 3rem;
+            width: 100%;
+            flex: 1;
+        }
+
+        /* ============================================================
+           CARDS
+           ============================================================ */
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-light);
+            padding: 1.4rem;
+            transition: box-shadow var(--transition);
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card__header {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 1.2rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .card__header .icon {
+            color: var(--primary);
+            width: 1.4em;
+            height: 1.4em;
+        }
+
+        .card__title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+
+        /* ============================================================
+           SECTION TITLES
+           ============================================================ */
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin: 1.8rem 0 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title .icon {
+            color: var(--primary);
+        }
+
+        .section-title:first-child {
+            margin-top: 0.5rem;
+        }
+
+        /* ============================================================
+           GRID LAYOUTS
+           ============================================================ */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.2rem;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.2rem;
+        }
+
+        @media (max-width: 900px) {
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .header__inner {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .header__nav {
+                width: 100%;
+                overflow-x: auto;
+            }
+        }
+
+        /* ============================================================
+           FORM FIELDS
+           ============================================================ */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 0.35rem;
+        }
+
+        .form-label .label-hint {
+            font-weight: 400;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+        }
+
+        .form-help {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-top: 0.3rem;
+            line-height: 1.4;
+        }
+
+        /* Number input with stepper buttons */
+        .stepper {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            background: var(--bg-card);
+            transition: border-color var(--transition);
+        }
+
+        .stepper:focus-within {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(41, 128, 185, 0.12);
+        }
+
+        .stepper__btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            background: var(--bg);
+            border: none;
+            cursor: pointer;
+            color: var(--primary);
+            font-size: 1.1rem;
+            font-weight: 700;
+            transition: var(--transition);
+            flex-shrink: 0;
+            user-select: none;
+        }
+
+        .stepper__btn:hover {
+            background: var(--primary);
+            color: #ffffff;
+        }
+
+        .stepper__btn:active {
+            transform: scale(0.95);
+        }
+
+        .stepper__input {
+            flex: 1;
+            border: none;
+            outline: none;
+            text-align: center;
+            font-size: 0.95rem;
+            font-weight: 600;
+            padding: 0.5rem 0.2rem;
+            color: var(--text);
+            background: transparent;
+            min-width: 0;
+            -moz-appearance: textfield;
+        }
+
+        .stepper__input::-webkit-outer-spin-button,
+        .stepper__input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .stepper__unit {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            padding-right: 0.5rem;
+            white-space: nowrap;
+        }
+
+        /* Plain number input */
+        .form-input {
+            width: 100%;
+            padding: 0.55rem 0.8rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            color: var(--text);
+            background: var(--bg-card);
+            transition: var(--transition);
+            -moz-appearance: textfield;
+        }
+
+        .form-input::-webkit-outer-spin-button,
+        .form-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary-light);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(41, 128, 185, 0.12);
+        }
+
+        .form-input--with-unit {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            background: var(--bg-card);
+            transition: border-color var(--transition);
+        }
+
+        .form-input--with-unit:focus-within {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(41, 128, 185, 0.12);
+        }
+
+        .form-input--with-unit input {
+            flex: 1;
+            border: none;
+            outline: none;
+            padding: 0.55rem 0.8rem;
+            font-size: 0.95rem;
+            color: var(--text);
+            background: transparent;
+            min-width: 0;
+            -moz-appearance: textfield;
+        }
+
+        .form-input--with-unit input::-webkit-outer-spin-button,
+        .form-input--with-unit input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .form-input--with-unit .input-unit {
+            padding: 0.55rem 0.7rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            background: var(--bg);
+            border-left: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        /* Select / Dropdown */
+        .form-select {
+            width: 100%;
+            padding: 0.55rem 2.2rem 0.55rem 0.8rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            color: var(--text);
+            background: var(--bg-card) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%237f8c8d' d='M6 8L1 3h10z'/%3E%3C/svg%3E") no-repeat right 0.8rem center;
+            appearance: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .form-select:focus {
+            border-color: var(--primary-light);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(41, 128, 185, 0.12);
+        }
+
+        /* Toggle switch */
+        .toggle-group {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .toggle {
+            position: relative;
+            width: 50px;
+            height: 28px;
+            flex-shrink: 0;
+        }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+        }
+
+        .toggle__slider {
+            position: absolute;
+            inset: 0;
+            background: var(--border);
+            border-radius: 14px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .toggle__slider::before {
+            content: '';
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            left: 3px;
+            bottom: 3px;
+            background: #ffffff;
+            border-radius: 50%;
+            transition: var(--transition);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .toggle input:checked + .toggle__slider {
+            background: var(--primary);
+        }
+
+        .toggle input:checked + .toggle__slider::before {
+            transform: translateX(22px);
+        }
+
+        .toggle-label {
+            font-size: 0.9rem;
+            color: var(--text);
+            cursor: pointer;
+        }
+
+        .toggle-status {
+            font-size: 0.85rem;
+            font-weight: 600;
+            min-width: 40px;
+        }
+
+        .toggle-status--yes {
+            color: var(--success);
+        }
+
+        .toggle-status--no {
+            color: var(--text-muted);
+        }
+
+        /* Tooltip */
+        .tooltip-trigger {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            cursor: help;
+            position: relative;
+        }
+
+        .tooltip-trigger .icon {
+            color: var(--info);
+            width: 0.9em;
+            height: 0.9em;
+        }
+
+        .tooltip-trigger .tooltip-text {
+            display: none;
+            position: absolute;
+            bottom: 130%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary-dark);
+            color: #ffffff;
+            padding: 0.5rem 0.8rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.78rem;
+            font-weight: 400;
+            white-space: nowrap;
+            max-width: 260px;
+            white-space: normal;
+            z-index: 10;
+            box-shadow: var(--shadow-lg);
+            line-height: 1.4;
+        }
+
+        .tooltip-trigger .tooltip-text::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: var(--primary-dark);
+        }
+
+        .tooltip-trigger:hover .tooltip-text {
+            display: block;
+        }
+
+        /* ============================================================
+           ACTION BUTTONS
+           ============================================================ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.65rem 1.4rem;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            white-space: nowrap;
+            user-select: none;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .btn--primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: #ffffff;
+            box-shadow: 0 3px 10px rgba(26, 82, 118, 0.3);
+        }
+
+        .btn--primary:hover {
+            box-shadow: 0 5px 18px rgba(26, 82, 118, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .btn--primary:active {
+            transform: translateY(0) scale(0.97);
+        }
+
+        .btn--lg {
+            padding: 0.9rem 2.5rem;
+            font-size: 1.1rem;
+            border-radius: var(--radius);
+        }
+
+        .btn--full {
+            width: 100%;
+        }
+
+        .btn--outline {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn--outline:hover {
+            background: var(--primary);
+            color: #ffffff;
+        }
+
+        .btn--ghost {
+            background: transparent;
+            color: var(--text-light);
+            border: 1px solid var(--border);
+        }
+
+        .btn--ghost:hover {
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .btn--accent {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+            color: #ffffff;
+        }
+
+        .btn--accent:hover {
+            box-shadow: 0 3px 12px rgba(230, 126, 34, 0.3);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
+
+        .analyze-wrapper {
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        /* ============================================================
+           RESULTS SECTION
+           ============================================================ */
+        #sonuc-section {
+            display: none;
+        }
+
+        #sonuc-section.visible {
+            display: block;
+            animation: fadeInUp 0.4s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Risk Gauge */
+        .risk-gauge {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1.5rem;
+        }
+
+        .risk-gauge__circle {
+            position: relative;
+            width: 140px;
+            height: 140px;
+        }
+
+        .risk-gauge__circle svg {
+            transform: rotate(-90deg);
+            width: 140px;
+            height: 140px;
+        }
+
+        .risk-gauge__bg {
+            fill: none;
+            stroke: var(--border-light);
+            stroke-width: 10;
+        }
+
+        .risk-gauge__fill {
+            fill: none;
+            stroke-width: 10;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s ease, stroke 0.5s ease;
+        }
+
+        .risk-gauge__value {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .risk-gauge__number {
+            font-size: 2.4rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .risk-gauge__of {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .risk-gauge__label {
+            margin-top: 0.8rem;
+            font-size: 1.05rem;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .risk-gauge__desc {
+            margin-top: 0.3rem;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            text-align: center;
+            max-width: 300px;
+        }
+
+        /* Risk factor list */
+        .risk-factors {
+            margin-top: 1rem;
+            border-top: 1px solid var(--border-light);
+            padding-top: 1rem;
+        }
+
+        .risk-factors__toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.85rem;
+            color: var(--primary);
+            font-weight: 500;
+            padding: 0.3rem 0;
+        }
+
+        .risk-factors__toggle .chevron {
+            transition: transform var(--transition);
+            font-size: 0.7rem;
+        }
+
+        .risk-factors__toggle.open .chevron {
+            transform: rotate(180deg);
+        }
+
+        .risk-factors__list {
+            display: none;
+            margin-top: 0.6rem;
+        }
+
+        .risk-factors__list.open {
+            display: block;
+        }
+
+        .risk-factor {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            padding: 0.45rem 0;
+            font-size: 0.85rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .risk-factor:last-child {
+            border-bottom: none;
+        }
+
+        .risk-factor__score {
+            font-weight: 700;
+            min-width: 28px;
+            text-align: center;
+            padding: 0.1rem 0.3rem;
+            border-radius: 4px;
+            font-size: 0.78rem;
+        }
+
+        .risk-factor__score--high {
+            background: #fdecea;
+            color: var(--danger);
+        }
+
+        .risk-factor__score--mid {
+            background: #fef5e7;
+            color: var(--warning);
+        }
+
+        .risk-factor__score--low {
+            background: #eafaf1;
+            color: var(--success);
+        }
+
+        /* Corridor recommendation */
+        .corridor-rec {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            padding: 1rem;
+        }
+
+        .corridor-rec__value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1;
+        }
+
+        .corridor-rec__unit {
+            font-size: 0.85rem;
+            font-weight: 400;
+            color: var(--text-muted);
+        }
+
+        .corridor-rec__info {
+            flex: 1;
+        }
+
+        .corridor-rec__reason {
+            font-size: 0.9rem;
+            color: var(--text);
+            margin-bottom: 0.3rem;
+        }
+
+        .corridor-rec__note {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* Recommendation cards */
+        .rec-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-light);
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .rec-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        .rec-card__tier-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.8rem;
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+        }
+
+        .rec-card__tier-header--premium {
+            background: linear-gradient(135deg, #f1c40f, #e67e22);
+        }
+
+        .rec-card__tier-header--orta {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+        }
+
+        .rec-card__tier-header--baslangic {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+        }
+
+        .tier-icon {
+            font-size: 1.3rem;
+        }
+
+        .rec-card--premium {
+            border-top: 3px solid #f1c40f;
+        }
+
+        .rec-card--orta {
+            border-top: 3px solid #3498db;
+        }
+
+        .rec-card--baslangic {
+            border-top: 3px solid #27ae60;
+        }
+
+        .rec-card__warning {
+            margin-top: 0.8rem;
+            padding: 0.6rem 0.8rem;
+            background: #fef5e7;
+            border-left: 3px solid #f39c12;
+            border-radius: 4px;
+            font-size: 0.78rem;
+            color: #7f6c3b;
+            line-height: 1.4;
+        }
+
+        .rec-card__body {
+            padding: 1.2rem;
+        }
+
+        .rec-card__brand {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+
+        .rec-card__model {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 0.6rem;
+        }
+
+        .rec-card__badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .badge--level {
+            background: #eaf2f8;
+            color: var(--primary);
+        }
+
+        .badge--design {
+            background: #fef5e7;
+            color: var(--accent);
+        }
+
+        .badge--corridor {
+            background: #eafaf1;
+            color: var(--success);
+        }
+
+        .rec-card__price {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 0.6rem;
+        }
+
+        .rec-card__features {
+            list-style: none;
+            margin-bottom: 0.8rem;
+        }
+
+        .rec-card__features li {
+            font-size: 0.82rem;
+            color: var(--text);
+            padding: 0.2rem 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.4rem;
+        }
+
+        .rec-card__features li .icon {
+            color: var(--success);
+            flex-shrink: 0;
+            margin-top: 0.15rem;
+        }
+
+        .rec-card__why {
+            font-size: 0.82rem;
+            color: var(--text-light);
+            padding-top: 0.6rem;
+            border-top: 1px solid var(--border-light);
+            font-style: italic;
+        }
+
+        /* Paket Detaylari toggle */
+        .rec-card__details-section {
+            margin-top: 0.8rem;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .rec-card__details-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 0.7rem 0;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .rec-card__details-toggle:hover {
+            opacity: 0.8;
+        }
+
+        .rec-card__details-toggle .chevron {
+            transition: transform var(--transition);
+            font-size: 0.7rem;
+        }
+
+        .rec-card__details-toggle.open .chevron {
+            transform: rotate(180deg);
+        }
+
+        .rec-card__details-content {
+            display: none;
+            padding-bottom: 0.5rem;
+        }
+
+        .rec-card__details-content.open {
+            display: block;
+        }
+
+        .detail-block {
+            margin-bottom: 0.8rem;
+        }
+
+        .detail-block__title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.3rem;
+        }
+
+        .detail-block__text {
+            font-size: 0.82rem;
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        .detail-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+        }
+
+        .detail-tag {
+            display: inline-block;
+            padding: 0.15rem 0.5rem;
+            background: var(--bg-secondary);
+            border-radius: 4px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .detail-param {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.3rem 0;
+            border-bottom: 1px dashed var(--border-light);
+            font-size: 0.8rem;
+        }
+
+        .detail-param__label {
+            color: var(--text-secondary);
+        }
+
+        .detail-param__value {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .detail-param__note {
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.2rem;
+        }
+
+        .detail-difficulty {
+            padding: 0.3rem 0.5rem;
+            margin-bottom: 0.3rem;
+            font-size: 0.78rem;
+            color: #92400e;
+            background: #fef3c7;
+            border-radius: 4px;
+            line-height: 1.4;
+        }
+
+        /* === MARKA TAB SISTEMI === */
+        .brand-tabs {
+            display: flex;
+            gap: 0.4rem;
+            overflow-x: auto;
+            padding: 0.3rem 0;
+            margin-bottom: 1rem;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .brand-tab-btn {
+            flex-shrink: 0;
+            padding: 0.5rem 1rem;
+            border: 2px solid var(--border-light);
+            border-radius: 8px;
+            background: var(--bg-card);
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text);
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .brand-tab-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .brand-tab-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+        }
+
+        .brand-tab-btn .brand-tab-count {
+            font-size: 0.7rem;
+            opacity: 0.7;
+            margin-left: 0.3rem;
+        }
+
+        .brand-selections {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        @media (max-width: 1100px) {
+            .brand-selections {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .brand-selections {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 4 kategori kart renkleri */
+        .brand-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .brand-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        .brand-card--ekonomik { border-top: 3px solid #3498db; }
+        .brand-card--enIyiSecim { border-top: 3px solid #27ae60; }
+        .brand-card--alternatif { border-top: 3px solid #e67e22; }
+        .brand-card--best { border-top: 3px solid #f1c40f; }
+
+        .brand-card__header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            padding: 0.6rem;
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: 0.3px;
+        }
+
+        .brand-card__header--ekonomik { background: linear-gradient(135deg, #3498db, #2980b9); }
+        .brand-card__header--enIyiSecim { background: linear-gradient(135deg, #27ae60, #2ecc71); }
+        .brand-card__header--alternatif { background: linear-gradient(135deg, #e67e22, #d35400); }
+        .brand-card__header--best { background: linear-gradient(135deg, #f1c40f, #e67e22); }
+
+        .brand-card__body {
+            padding: 1rem;
+        }
+
+        .brand-card__model-name {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 0.2rem;
+        }
+
+        .brand-card__level {
+            font-size: 0.78rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .brand-card__price {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .brand-card__features {
+            list-style: none;
+            margin-bottom: 0.6rem;
+        }
+
+        .brand-card__features li {
+            font-size: 0.78rem;
+            color: var(--text);
+            padding: 0.15rem 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.3rem;
+        }
+
+        .brand-card__features li .icon {
+            color: var(--success);
+            flex-shrink: 0;
+            margin-top: 0.1rem;
+        }
+
+        .brand-card__why {
+            font-size: 0.78rem;
+            color: var(--text-light);
+            font-style: italic;
+            padding-top: 0.4rem;
+            border-top: 1px solid var(--border-light);
+        }
+
+        .brand-card__empty {
+            padding: 1rem;
+            text-align: center;
+            color: var(--text-light);
+            font-size: 0.82rem;
+            font-style: italic;
+        }
+
+        /* Sorun / Avantaj bloklari */
+        .brand-card__issues {
+            margin-top: 0.5rem;
+        }
+
+        .brand-issue-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 0.4rem 0;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .brand-issue-toggle .chevron {
+            transition: transform var(--transition);
+            font-size: 0.6rem;
+        }
+
+        .brand-issue-toggle.open .chevron {
+            transform: rotate(180deg);
+        }
+
+        .brand-issue-content {
+            display: none;
+            padding-bottom: 0.4rem;
+        }
+
+        .brand-issue-content.open {
+            display: block;
+        }
+
+        .issue-item {
+            padding: 0.35rem 0.5rem;
+            margin-bottom: 0.25rem;
+            font-size: 0.75rem;
+            border-radius: 4px;
+            line-height: 1.4;
+        }
+
+        .issue-item--sorun {
+            background: #fef3c7;
+            border-left: 3px solid #f39c12;
+            color: #92400e;
+        }
+
+        .issue-item--avantaj {
+            background: #d1fae5;
+            border-left: 3px solid #27ae60;
+            color: #065f46;
+        }
+
+        /* Tum modeller acilir bolum */
+        .brand-all-models {
+            margin-top: 0.5rem;
+        }
+
+        .brand-all-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 0.7rem 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .brand-all-toggle:hover {
+            background: var(--bg-alt);
+        }
+
+        .brand-all-toggle .chevron {
+            transition: transform var(--transition);
+            font-size: 0.7rem;
+        }
+
+        .brand-all-toggle.open .chevron {
+            transform: rotate(180deg);
+        }
+
+        .brand-all-list {
+            display: none;
+            margin-top: 0.5rem;
+        }
+
+        .brand-all-list.open {
+            display: block;
+        }
+
+        .brand-model-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.6rem 0.8rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            margin-bottom: 0.4rem;
+            transition: var(--transition);
+        }
+
+        .brand-model-row:hover {
+            background: var(--bg-alt);
+        }
+
+        .brand-model-row__info {
+            flex: 1;
+        }
+
+        .brand-model-row__name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .brand-model-row__level {
+            font-size: 0.72rem;
+            color: var(--text-light);
+        }
+
+        .brand-model-row__score {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--primary);
+            min-width: 3rem;
+            text-align: right;
+        }
+
+        .brand-model-row__detail-btn {
+            margin-left: 0.5rem;
+            padding: 0.2rem 0.5rem;
+            border: 1px solid var(--border-light);
+            border-radius: 4px;
+            background: none;
+            cursor: pointer;
+            font-size: 0.72rem;
+            color: var(--text-light);
+        }
+
+        .brand-model-row__detail-btn:hover {
+            background: var(--bg-alt);
+            color: var(--primary);
+        }
+
+        .brand-model-detail {
+            display: none;
+            padding: 0.5rem 0.8rem;
+            margin: -0.2rem 0 0.4rem 0;
+            background: var(--bg-alt);
+            border: 1px solid var(--border-light);
+            border-top: none;
+            border-radius: 0 0 6px 6px;
+            font-size: 0.75rem;
+        }
+
+        .brand-model-detail.open {
+            display: block;
+        }
+
+        /* Analiz hata listesi (butonun uzerinde) */
+        .analiz-hata-listesi {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.82rem;
+            color: #991b1b;
+        }
+        .analiz-hata-listesi strong {
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+        .analiz-hata-listesi ul {
+            margin: 0;
+            padding-left: 1.2rem;
+        }
+        .analiz-hata-listesi li {
+            margin-bottom: 0.15rem;
+        }
+
+        /* Input hata durumu */
+        .input--error {
+            border-color: #ef4444 !important;
+            box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important;
+        }
+
+        /* Warning cards */
+        .warnings {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .warning-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+            padding: 1rem;
+            border-radius: var(--radius-sm);
+            border-left: 4px solid;
+        }
+
+        .warning-card--kritik {
+            background: #fdecea;
+            border-left-color: var(--danger);
+            color: #922b21;
+        }
+
+        .warning-card--uyari {
+            background: #fef5e7;
+            border-left-color: var(--warning);
+            color: #7d6608;
+        }
+
+        .warning-card--bilgi {
+            background: #eaf2f8;
+            border-left-color: var(--info);
+            color: #1a5276;
+        }
+
+        .warning-card .icon {
+            flex-shrink: 0;
+            margin-top: 0.1rem;
+        }
+
+        .warning-card__text {
+            font-size: 0.88rem;
+            line-height: 1.5;
+        }
+
+        .warning-card__title {
+            font-weight: 700;
+            margin-bottom: 0.15rem;
+        }
+
+        /* Patient notes */
+        .patient-notes {
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        .patient-notes__toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 1rem 1.2rem;
+            background: var(--bg);
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text);
+            transition: var(--transition);
+        }
+
+        .patient-notes__toggle:hover {
+            background: var(--border-light);
+        }
+
+        .patient-notes__toggle .chevron {
+            transition: transform var(--transition);
+        }
+
+        .patient-notes__toggle.open .chevron {
+            transform: rotate(180deg);
+        }
+
+        .patient-notes__content {
+            display: none;
+            padding: 1.2rem;
+        }
+
+        .patient-notes__content.open {
+            display: block;
+        }
+
+        .patient-note {
+            margin-bottom: 1rem;
+        }
+
+        .patient-note:last-child {
+            margin-bottom: 0;
+        }
+
+        .patient-note__title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 0.3rem;
+        }
+
+        .patient-note__text {
+            font-size: 0.85rem;
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        /* ============================================================
+           FOOTER
+           ============================================================ */
+        .footer {
+            background: var(--primary-dark);
+            color: rgba(255, 255, 255, 0.7);
+            padding: 1.5rem;
+            text-align: center;
+            font-size: 0.82rem;
+            margin-top: auto;
+        }
+
+        .footer__title {
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 0.3rem;
+        }
+
+        .footer__disclaimer {
+            font-style: italic;
+            opacity: 0.7;
+        }
+
+        /* ============================================================
+           PRINT STYLES
+           ============================================================ */
+        @media print {
+            .header,
+            .tabs,
+            .footer,
+            #form-section,
+            .btn-group,
+            .analyze-wrapper {
+                display: none !important;
+            }
+
+            #sonuc-section {
+                display: block !important;
+            }
+
+            .main {
+                padding: 0;
+            }
+
+            body {
+                background: #ffffff;
+                font-size: 12pt;
+            }
+
+            .card, .rec-card {
+                box-shadow: none;
+                border: 1px solid #ccc;
+                break-inside: avoid;
+            }
+        }
+
+        /* ============================================================
+           LOADING SPINNER
+           ============================================================ */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #ffffff;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ============================================================
+           MUSTERI SISTEMI
+           ============================================================ */
+        .musteri-section {
+            max-width: 1200px;
+            margin: 1.5rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .musteri-container {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-light);
+            padding: 1.5rem;
+        }
+
+        .musteri-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        .musteri-arama {
+            margin-bottom: 1rem;
+        }
+
+        .musteri-kart {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1rem 1.2rem;
+            margin-bottom: 0.6rem;
+            transition: var(--transition);
+        }
+
+        .musteri-kart:hover {
+            border-color: var(--primary-light);
+            box-shadow: var(--shadow);
+        }
+
+        .musteri-kart__ust {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.4rem;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+
+        .musteri-kart__ad {
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--primary-dark);
+        }
+
+        .musteri-kart__telefon {
+            color: var(--text-light);
+            font-size: 0.88rem;
+        }
+
+        .musteri-kart__alt {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .musteri-kart__bilgi {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .musteri-kart__butonlar {
+            display: flex;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+        }
+
+        .btn--sm {
+            padding: 0.35rem 0.8rem;
+            font-size: 0.82rem;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.15rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .badge--danger { background: var(--danger); }
+        .badge--warning { background: var(--warning); }
+        .badge--success { background: var(--success); }
+
+        /* Musteri Detay */
+        .musteri-detay-header {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .musteri-detay-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .musteri-detay-sol, .musteri-detay-sag {
+            min-width: 0;
+        }
+
+        .analiz-kart {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .analiz-kart__tarih {
+            font-weight: 600;
+            color: var(--primary-dark);
+            margin-bottom: 0.3rem;
+        }
+
+        .analiz-kart__detay {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            line-height: 1.5;
+        }
+
+        .sorun-kart {
+            border-left: 4px solid var(--border);
+            background: var(--bg);
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .sorun-kart--acik { border-left-color: var(--danger); }
+        .sorun-kart--takipte { border-left-color: var(--warning); }
+        .sorun-kart--cozuldu { border-left-color: var(--success); }
+
+        .sorun-kart__ust {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.3rem;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+        }
+
+        .sorun-kart__kategori {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .sorun-kart__tarih {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .sorun-kart__aciklama {
+            font-size: 0.88rem;
+            color: var(--text);
+            margin-bottom: 0.4rem;
+        }
+
+        .sorun-kart__cozum {
+            font-size: 0.85rem;
+            color: var(--success);
+            font-style: italic;
+        }
+
+        .sorun-kart__butonlar {
+            display: flex;
+            gap: 0.3rem;
+            margin-top: 0.4rem;
+        }
+
+        .btn--xs {
+            padding: 0.2rem 0.5rem;
+            font-size: 0.75rem;
+            border-radius: 4px;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .modal-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 1.2rem;
+        }
+
+        /* Istatistik */
+        .istatistik-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .istatistik-kart {
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .istatistik-kart__sayi {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .istatistik-kart__etiket {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-top: 0.3rem;
+        }
+
+        .musteri-bos {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        @media (max-width: 768px) {
+            .musteri-detay-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================================
+         INLINE SVG ICON DEFINITIONS
+         ============================================================ -->
+    <svg xmlns="http://www.w3.org/2000/svg" style="display:none;">
+        <!-- Eye icon -->
+        <symbol id="icon-eye" viewBox="0 0 24 24">
+            <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+        </symbol>
+        <!-- Glasses / Frame icon -->
+        <symbol id="icon-glasses" viewBox="0 0 24 24">
+            <path d="M12 11.5c-.92 0-1.75.5-2.2 1.25-.3-.15-.64-.25-1.05-.25-1.24 0-2.25 1.01-2.25 2.25S7.51 17 8.75 17c.97 0 1.8-.62 2.11-1.48.09.01.18.02.27.02h1.74c.09 0 .18-.01.27-.02.31.86 1.14 1.48 2.11 1.48 1.24 0 2.25-1.01 2.25-2.25s-1.01-2.25-2.25-2.25c-.41 0-.75.1-1.05.25-.45-.75-1.28-1.25-2.2-1.25zM3 10v1.5h1.06c.42-1.33 1.57-2.36 3-2.61L7.5 7H6V5.5h12V7h-1.5l.44 1.89c1.43.25 2.58 1.28 3 2.61H21V10H3z"/>
+        </symbol>
+        <!-- Warning triangle icon -->
+        <symbol id="icon-warning" viewBox="0 0 24 24">
+            <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+        </symbol>
+        <!-- Check mark icon -->
+        <symbol id="icon-check" viewBox="0 0 24 24">
+            <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+        </symbol>
+        <!-- Info circle icon -->
+        <symbol id="icon-info" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+        </symbol>
+        <!-- Print icon -->
+        <symbol id="icon-print" viewBox="0 0 24 24">
+            <path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/>
+        </symbol>
+        <!-- Copy icon -->
+        <symbol id="icon-copy" viewBox="0 0 24 24">
+            <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+        </symbol>
+        <!-- Plus icon -->
+        <symbol id="icon-plus" viewBox="0 0 24 24">
+            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+        </symbol>
+        <!-- Minus icon -->
+        <symbol id="icon-minus" viewBox="0 0 24 24">
+            <path d="M19 13H5v-2h14v2z"/>
+        </symbol>
+        <!-- Ruler / measurement icon -->
+        <symbol id="icon-ruler" viewBox="0 0 24 24">
+            <path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 10H3V8h2v4h2V8h2v4h2V8h2v4h2V8h2v4h2V8h2v8z"/>
+        </symbol>
+        <!-- User / lifestyle icon -->
+        <symbol id="icon-user" viewBox="0 0 24 24">
+            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+        </symbol>
+        <!-- Document icon -->
+        <symbol id="icon-document" viewBox="0 0 24 24">
+            <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+        </symbol>
+        <!-- Star icon -->
+        <symbol id="icon-star" viewBox="0 0 24 24">
+            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+        </symbol>
+        <!-- Chevron down -->
+        <symbol id="icon-chevron-down" viewBox="0 0 24 24">
+            <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/>
+        </symbol>
+        <!-- Camera icon -->
+        <symbol id="icon-camera" viewBox="0 0 24 24">
+            <path d="M12 15.2a3.2 3.2 0 100-6.4 3.2 3.2 0 000 6.4z"/>
+            <path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
+        </symbol>
+    </svg>
+
+    <!-- ============================================================
+         HEADER
+         ============================================================ -->
+    <header class="header">
+        <div class="header__inner">
+            <div class="header__brand">
+                <div class="header__title">Kepekci Optik</div>
+                <div class="header__subtitle">Progresif Cam Oneri Sistemi</div>
+            </div>
+            <nav class="header__nav">
+                <a href="index.html" class="active">
+                    <span class="icon icon--sm"><svg><use href="#icon-eye"/></svg></span>
+                    Ana Sayfa
+                </a>
+                <a href="foto-olcum.html">
+                    <span class="icon icon--sm"><svg><use href="#icon-camera"/></svg></span>
+                    Fotograftan Olcum
+                </a>
+                <a href="kamera-olcum.html">
+                    <span class="icon icon--sm"><svg><use href="#icon-camera"/></svg></span>
+                    Kameradan Olcum
+                </a>
+                <a href="olcum-rehberi.html">
+                    <span class="icon icon--sm"><svg><use href="#icon-ruler"/></svg></span>
+                    Olcum Rehberi
+                </a>
+                <a href="#" id="nav-musteriler" onclick="musteriListesiGoster(); return false;">
+                    <span class="icon icon--sm"><svg><use href="#icon-document"/></svg></span>
+                    Musteriler
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ============================================================
+         TABS
+         ============================================================ -->
+    <div class="tabs">
+        <ul class="tabs__list">
+            <li class="tabs__item active" data-tab="elle-giris">
+                <span class="icon icon--sm"><svg><use href="#icon-document"/></svg></span>
+                Elle Giris
+            </li>
+            <li class="tabs__item" data-tab="foto-olcum">
+                <span class="icon icon--sm"><svg><use href="#icon-camera"/></svg></span>
+                Fotograftan Olcum
+            </li>
+        </ul>
+    </div>
+
+    <!-- ============================================================
+         MAIN CONTENT
+         ============================================================ -->
+    <main class="main">
+
+        <!-- ========== FORM SECTION ========== -->
+        <section id="form-section">
+
+            <!-- ---- Recete Girisi ---- -->
+            <h2 class="section-title">
+                <span class="icon"><svg><use href="#icon-eye"/></svg></span>
+                Recete Girisi
+            </h2>
+
+            <div class="grid-2">
+                <!-- Sag Goz (OD) -->
+                <div class="card">
+                    <div class="card__header">
+                        <span class="icon"><svg><use href="#icon-eye"/></svg></span>
+                        <h3 class="card__title">Sag Goz (OD)</h3>
+                    </div>
+
+                    <!-- SPH -->
+                    <div class="form-group">
+                        <label class="form-label" for="od_sph">SPH <span class="label-hint">(Uzak Numara)</span></label>
+                        <div class="stepper">
+                            <button type="button" class="stepper__btn" data-action="decrement" data-target="od_sph" data-step="0.25" aria-label="Azalt">
+                                <span class="icon icon--sm"><svg><use href="#icon-minus"/></svg></span>
+                            </button>
+                            <input type="number" class="stepper__input" id="od_sph" name="od_sph" value="0.00" step="0.25" min="-20" max="20">
+                            <button type="button" class="stepper__btn" data-action="increment" data-target="od_sph" data-step="0.25" aria-label="Artir">
+                                <span class="icon icon--sm"><svg><use href="#icon-plus"/></svg></span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- CYL -->
+                    <div class="form-group">
+                        <label class="form-label" for="od_cyl">CYL <span class="label-hint">(Silindir)</span></label>
+                        <div class="stepper">
+                            <button type="button" class="stepper__btn" data-action="decrement" data-target="od_cyl" data-step="0.25" aria-label="Azalt">
+                                <span class="icon icon--sm"><svg><use href="#icon-minus"/></svg></span>
+                            </button>
+                            <input type="number" class="stepper__input" id="od_cyl" name="od_cyl" value="0.00" step="0.25" min="-6" max="6">
+                            <button type="button" class="stepper__btn" data-action="increment" data-target="od_cyl" data-step="0.25" aria-label="Artir">
+                                <span class="icon icon--sm"><svg><use href="#icon-plus"/></svg></span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- AX -->
+                    <div class="form-group">
+                        <label class="form-label" for="od_ax">AX <span class="label-hint">(Derece)</span></label>
+                        <div class="form-input--with-unit">
+                            <input type="number" id="od_ax" name="od_ax" value="0" step="1" min="0" max="180">
+                            <span class="input-unit">&deg;</span>
+                        </div>
+                    </div>
+
+                    <!-- ADD -->
+                    <div class="form-group">
+                        <label class="form-label" for="od_add">ADD <span class="label-hint">(Yakin Ilave)</span></label>
+                        <div class="stepper">
+                            <button type="button" class="stepper__btn" data-action="decrement" data-target="od_add" data-step="0.25" aria-label="Azalt">
+                                <span class="icon icon--sm"><svg><use href="#icon-minus"/></svg></span>
+                            </button>
+                            <input type="number" class="stepper__input" id="od_add" name="od_add" value="1.00" step="0.25" min="0.50" max="4.00">
+                            <button type="button" class="stepper__btn" data-action="increment" data-target="od_add" data-step="0.25" aria-label="Artir">
+                                <span class="icon icon--sm"><svg><use href="#icon-plus"/></svg></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sol Goz (OS) -->
+                <div class="card">
+                    <div class="card__header">
+                        <span class="icon"><svg><use href="#icon-eye"/></svg></span>
+                        <h3 class="card__title">Sol Goz (OS)</h3>
+                    </div>
+
+                    <!-- SPH -->
+                    <div class="form-group">
+                        <label class="form-label" for="os_sph">SPH <span class="label-hint">(Uzak Numara)</span></label>
+                        <div class="stepper">
+                            <button type="button" class="stepper__btn" data-action="decrement" data-target="os_sph" data-step="0.25" aria-label="Azalt">
+                                <span class="icon icon--sm"><svg><use href="#icon-minus"/></svg></span>
+                            </button>
+                            <input type="number" class="stepper__input" id="os_sph" name="os_sph" value="0.00" step="0.25" min="-20" max="20">
+                            <button type="button" class="stepper__btn" data-action="increment" data-target="os_sph" data-step="0.25" aria-label="Artir">
+                                <span class="icon icon--sm"><svg><use href="#icon-plus"/></svg></span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- CYL -->
+                    <div class="form-group">
+                        <label class="form-label" for="os_cyl">CYL <span class="label-hint">(Silindir)</span></label>
+                        <div class="stepper">
+                            <button type="button" class="stepper__btn" data-action="decrement" data-target="os_cyl" data-step="0.25" aria-label="Azalt">
+                                <span class="icon icon--sm"><svg><use href="#icon-minus"/></svg></span>
+                            </button>
+                            <input type="number" class="stepper__input" id="os_cyl" name="os_cyl" value="0.00" step="0.25" min="-6" max="6">
+                            <button type="button" class="stepper__btn" data-action="increment" data-target="os_cyl" data-step="0.25" aria-label="Artir">
+                                <span class="icon icon--sm"><svg><use href="#icon-plus"/></svg></span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- AX -->
+                    <div class="form-group">
+                        <label class="form-label" for="os_ax">AX <span class="label-hint">(Derece)</span></label>
+                        <div class="form-input--with-unit">
+                            <input type="number" id="os_ax" name="os_ax" value="0" step="1" min="0" max="180">
+                            <span class="input-unit">&deg;</span>
+                        </div>
+                    </div>
+
+                    <!-- ADD -->
+                    <div class="form-group">
+                        <label class="form-label" for="os_add">ADD <span class="label-hint">(Yakin Ilave)</span></label>
+                        <div class="stepper">
+                            <button type="button" class="stepper__btn" data-action="decrement" data-target="os_add" data-step="0.25" aria-label="Azalt">
+                                <span class="icon icon--sm"><svg><use href="#icon-minus"/></svg></span>
+                            </button>
+                            <input type="number" class="stepper__input" id="os_add" name="os_add" value="1.00" step="0.25" min="0.50" max="4.00">
+                            <button type="button" class="stepper__btn" data-action="increment" data-target="os_add" data-step="0.25" aria-label="Artir">
+                                <span class="icon icon--sm"><svg><use href="#icon-plus"/></svg></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ---- Goz Mesafesi ve Cerceve ---- -->
+            <h2 class="section-title">
+                <span class="icon"><svg><use href="#icon-ruler"/></svg></span>
+                Goz Mesafesi ve Cerceve
+            </h2>
+
+            <div class="grid-2">
+                <!-- Goz Mesafesi (PD) -->
+                <div class="card">
+                    <div class="card__header">
+                        <span class="icon"><svg><use href="#icon-ruler"/></svg></span>
+                        <h3 class="card__title">Goz Mesafesi (PD)</h3>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="pd_sag">Sag Goz Mesafesi</label>
+                        <div class="form-input--with-unit">
+                            <input type="number" id="pd_sag" name="pd_sag" step="0.5" min="25" max="40" placeholder="orn: 31.5">
+                            <span class="input-unit">mm</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="pd_sol">Sol Goz Mesafesi</label>
+                        <div class="form-input--with-unit">
+                            <input type="number" id="pd_sol" name="pd_sol" step="0.5" min="25" max="40" placeholder="orn: 32.0">
+                            <span class="input-unit">mm</span>
+                        </div>
+                    </div>
+
+                    <p class="form-help">
+                        <span class="icon icon--sm"><svg><use href="#icon-info"/></svg></span>
+                        Burundan her goze olan mesafe, ayri ayri olcun.
+                    </p>
+                </div>
+
+                <!-- Cerceve Olculeri -->
+                <div class="card">
+                    <div class="card__header">
+                        <span class="icon"><svg><use href="#icon-glasses"/></svg></span>
+                        <h3 class="card__title">Cerceve Olculeri</h3>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label tooltip-trigger" for="fitting_height">
+                            Odak Yuksekligi
+                            <span class="icon"><svg><use href="#icon-info"/></svg></span>
+                            <span class="tooltip-text">Gozbebeginizden cerceve alt kenarina olan mesafe. Cerceve takili halde olculmelidir.</span>
+                        </label>
+                        <div class="form-input--with-unit">
+                            <input type="number" id="fitting_height" name="fitting_height" step="0.5" min="10" max="45" placeholder="orn: 18">
+                            <span class="input-unit">mm</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label tooltip-trigger" for="b_measure">
+                            Cerceve Yuksekligi (dikey)
+                            <span class="icon"><svg><use href="#icon-info"/></svg></span>
+                            <span class="tooltip-text">Cercevenin dikey yuksekligi (B olcusu). Cam yuvasinin en yuksek noktasindan en alcak noktasina olan mesafe.</span>
+                        </label>
+                        <div class="form-input--with-unit">
+                            <input type="number" id="b_measure" name="b_measure" step="1" min="20" max="60" placeholder="orn: 35">
+                            <span class="input-unit">mm</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="a_measure">
+                            Cerceve Genisligi (yatay)
+                            <span class="label-hint">(istege bagli)</span>
+                        </label>
+                        <div class="form-input--with-unit">
+                            <input type="number" id="a_measure" name="a_measure" step="1" min="40" max="70" placeholder="orn: 52">
+                            <span class="input-unit">mm</span>
+                        </div>
+                    </div>
+
+                    <!-- 1E: Opsiyonel POW Parametreleri -->
+                    <div class="pow-section" style="margin-top: 16px; padding-top: 16px; border-top: 1px dashed var(--border);">
+                        <p class="form-help" style="margin-bottom: 12px; font-size: 0.85rem; color: var(--text-light);">
+                            FreeForm cam icin onerilen olcumler (istege bagli)
+                        </p>
+                        <div class="grid-3" style="grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+                            <div class="form-group">
+                                <label class="form-label tooltip-trigger" for="vertex_mesafe">
+                                    Vertex Mesafesi
+                                    <span class="icon"><svg><use href="#icon-info"/></svg></span>
+                                    <span class="tooltip-text">Cam arka yuzeyinden kornea tepesine olan mesafe. Normal: 12-14mm.</span>
+                                </label>
+                                <div class="form-input--with-unit">
+                                    <input type="number" id="vertex_mesafe" name="vertex_mesafe" step="0.5" min="8" max="22" placeholder="13.5">
+                                    <span class="input-unit">mm</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label tooltip-trigger" for="pantoskopik_egim">
+                                    Pantoskopik Egim
+                                    <span class="icon"><svg><use href="#icon-info"/></svg></span>
+                                    <span class="tooltip-text">Cercevenin yuz duzlemine gore egimi. Ideal: 8-12 derece.</span>
+                                </label>
+                                <div class="form-input--with-unit">
+                                    <input type="number" id="pantoskopik_egim" name="pantoskopik_egim" step="1" min="0" max="25" placeholder="10">
+                                    <span class="input-unit">&deg;</span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label tooltip-trigger" for="yuz_sarma">
+                                    Yuz Sarma Acisi
+                                    <span class="icon"><svg><use href="#icon-info"/></svg></span>
+                                    <span class="tooltip-text">Cercevenin yuz etrafindaki egimi (wrap angle). > 10 derece sorun yaratabilir.</span>
+                                </label>
+                                <div class="form-input--with-unit">
+                                    <input type="number" id="yuz_sarma" name="yuz_sarma" step="1" min="0" max="25" placeholder="5">
+                                    <span class="input-unit">&deg;</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ---- Ek Bilgiler ---- -->
+            <h2 class="section-title">
+                <span class="icon"><svg><use href="#icon-user"/></svg></span>
+                Ek Bilgiler
+            </h2>
+
+            <div class="card">
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label class="form-label" for="yasam_tarzi">Yasam Tarzi</label>
+                        <select class="form-select" id="yasam_tarzi" name="yasam_tarzi">
+                            <option value="">-- Seciniz --</option>
+                            <option value="ofis">Ofis Calisani (Bilgisayar)</option>
+                            <option value="sofor">Sofor / Arac Kullanici</option>
+                            <option value="ogretmen">Ogretmen</option>
+                            <option value="ev_hanimi">Ev Hanimi / Ev Islerinde</option>
+                            <option value="sporcu">Sporcu / Aktif Yasam</option>
+                            <option value="emekli">Emekli</option>
+                            <option value="esnaf">Esnaf / Dukkan Sahibi</option>
+                            <option value="muhendis">Muhendis / Tasarimci / Mimar</option>
+                            <option value="diger">Diger / Genel Kullanim</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Ilk kez progresif cam mi kullanacak?</label>
+                        <div class="toggle-group">
+                            <label class="toggle">
+                                <input type="checkbox" id="ilk_progresif" name="ilk_progresif">
+                                <span class="toggle__slider"></span>
+                            </label>
+                            <span class="toggle-label" id="ilk_progresif_label">
+                                <span class="toggle-status toggle-status--no" id="toggle-status-text">Hayir</span>
+                            </span>
+                        </div>
+                        <p class="form-help">Daha once progresif cam kullanmadiysa "Evet" konumuna getirin.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ---- Analiz Et Butonu ---- -->
+            <div class="analyze-wrapper">
+                <button type="button" class="btn btn--primary btn--lg btn--full" id="btn-analiz">
+                    <span class="icon"><svg><use href="#icon-eye"/></svg></span>
+                    ANALIZ ET
+                </button>
+            </div>
+
+        </section>
+        <!-- END form-section -->
+
+        <!-- ========== RESULTS SECTION ========== -->
+        <section id="sonuc-section">
+
+            <!-- ---- Zorluk Derecesi ---- -->
+            <h2 class="section-title">
+                <span class="icon"><svg><use href="#icon-warning"/></svg></span>
+                Zorluk Derecesi
+            </h2>
+
+            <div class="card">
+                <div class="risk-gauge">
+                    <div class="risk-gauge__circle">
+                        <svg viewBox="0 0 140 140">
+                            <circle class="risk-gauge__bg" cx="70" cy="70" r="58"></circle>
+                            <circle class="risk-gauge__fill" id="risk-circle" cx="70" cy="70" r="58"
+                                stroke-dasharray="364.42"
+                                stroke-dashoffset="364.42"></circle>
+                        </svg>
+                        <div class="risk-gauge__value">
+                            <span class="risk-gauge__number" id="risk-number">-</span>
+                            <span class="risk-gauge__of">/ 10</span>
+                        </div>
+                    </div>
+                    <div class="risk-gauge__label" id="risk-label">-</div>
+                    <div class="risk-gauge__desc" id="risk-desc"></div>
+                </div>
+
+                <div class="risk-factors">
+                    <button type="button" class="risk-factors__toggle" id="risk-factors-toggle">
+                        <span class="icon icon--sm"><svg><use href="#icon-info"/></svg></span>
+                        Detaylari Goster
+                        <span class="chevron">&#9660;</span>
+                    </button>
+                    <div class="risk-factors__list" id="risk-factors-list">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- ---- Gecis Bolgesi Onerisi ---- -->
+            <h2 class="section-title">
+                <span class="icon"><svg><use href="#icon-ruler"/></svg></span>
+                Gecis Bolgesi Onerisi
+            </h2>
+
+            <div class="card">
+                <div class="corridor-rec">
+                    <div>
+                        <div class="corridor-rec__value" id="corridor-value">-</div>
+                        <div class="corridor-rec__unit">mm koridor</div>
+                    </div>
+                    <div class="corridor-rec__info">
+                        <div class="corridor-rec__reason" id="corridor-reason"></div>
+                        <div class="corridor-rec__note" id="corridor-note"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ---- Yakin Gozluk Numarasi ---- -->
+            <h2 class="section-title">
+                <span class="icon"><svg><use href="#icon-eye"/></svg></span>
+                Yakin Gozluk Numarasi
+            </h2>
+
+            <div class="card" id="yakin-gozluk-card">
+                <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:12px;">
+                    Uzak numaraya yakin ilave (ADD) eklenerek hesaplanir. Doktor farkli yazmissa elle duzeltebilirsiniz.
+                </p>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                    <!-- Sag Goz -->
+                    <div style="background:var(--bg-secondary);border-radius:8px;padding:14px;">
+                        <div style="font-weight:700;color:var(--primary);margin-bottom:10px;font-size:0.95rem;">Sag Goz (OD)</div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+                            <div>
+                                <label style="font-size:0.75rem;color:var(--text-secondary);display:block;margin-bottom:2px;">SPH</label>
+                                <input type="text" id="yakin_sph_sag" class="input" style="text-align:center;font-weight:600;font-size:0.95rem;" readonly />
+                            </div>
+                            <div>
+                                <label style="font-size:0.75rem;color:var(--text-secondary);display:block;margin-bottom:2px;">CYL</label>
+                                <input type="text" id="yakin_cyl_sag" class="input" style="text-align:center;font-weight:600;font-size:0.95rem;" readonly />
+                            </div>
+                            <div>
+                                <label style="font-size:0.75rem;color:var(--text-secondary);display:block;margin-bottom:2px;">AX</label>
+                                <input type="text" id="yakin_ax_sag" class="input" style="text-align:center;font-weight:600;font-size:0.95rem;" readonly />
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Sol Goz -->
+                    <div style="background:var(--bg-secondary);border-radius:8px;padding:14px;">
+                        <div style="font-weight:700;color:var(--primary);margin-bottom:10px;font-size:0.95rem;">Sol Goz (OS)</div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+                            <div>
+                                <label style="font-size:0.75rem;color:var(--text-secondary);display:block;margin-bottom:2px;">SPH</label>
+                                <input type="text" id="yakin_sph_sol" class="input" style="text-align:center;font-weight:600;font-size:0.95rem;" readonly />
+                            </div>
+                            <div>
+                                <label style="font-size:0.75rem;color:var(--text-secondary);display:block;margin-bottom:2px;">CYL</label>
+                                <input type="text" id="yakin_cyl_sol" class="input" style="text-align:center;font-weight:600;font-size:0.95rem;" readonly />
+                            </div>
+                            <div>
+                                <label style="font-size:0.75rem;color:var(--text-secondary);display:block;margin-bottom:2px;">AX</label>
+                                <input type="text" id="yakin_ax_sol" class="input" style="text-align:center;font-weight:600;font-size:0.95rem;" readonly />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top:10px;display:flex;gap:8px;align-items:center;">
+                    <button type="button" class="btn btn--sm btn--outline" id="yakinDuzenleBtn" onclick="yakinGozlukDuzenle()">Elle Duzenle</button>
+                    <span id="yakin-add-bilgi" style="font-size:0.8rem;color:var(--text-secondary);"></span>
+                </div>
+            </div>
+
+            <!-- ---- Marka/Model Onerileri ---- -->
+            <h2 class="section-title">
+                <span class="icon"><svg><use href="#icon-star"/></svg></span>
+                Marka / Model Onerileri
+            </h2>
+
+            <!-- Marka Tab Sistemi -->
+            <div id="marka-oneri-section">
+                <!-- Marka tab bar -->
+                <div class="brand-tabs" id="brand-tabs">
+                    <!-- JS ile doldurulacak -->
+                </div>
+                <!-- 4 onerilen paket -->
+                <div class="brand-selections" id="brand-selections">
+                    <!-- JS ile doldurulacak: ekonomik, enIyiSecim, alternatif, best kartlari -->
+                </div>
+                <!-- Markanin tum modelleri -->
+                <div class="brand-all-models" id="brand-all-models">
+                    <!-- JS ile doldurulacak -->
+                </div>
+            </div>
+
+            <!-- ---- Uyarilar ---- -->
+            <div id="uyarilar-section" style="display:none;">
+                <h2 class="section-title">
+                    <span class="icon"><svg><use href="#icon-warning"/></svg></span>
+                    Uyarilar
+                </h2>
+                <div class="warnings" id="uyarilar-list">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- ---- Siparis Kontrol Listesi ---- -->
+            <div id="siparis-kontrol-section" style="display:none;">
+                <h2 class="section-title" style="margin-top:2rem;">
+                    <span class="icon"><svg><use href="#icon-document"/></svg></span>
+                    Siparis Kontrol Listesi
+                </h2>
+                <div class="card" style="margin-bottom: 1rem;">
+                    <div id="siparis-zorunlu-list">
+                        <!-- Populated by JS -->
+                    </div>
+                    <div id="siparis-onerilen-list" style="margin-top: 12px;">
+                        <!-- Populated by JS -->
+                    </div>
+                    <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border-light);">
+                        <p style="font-weight: 600; margin-bottom: 8px; font-size: 0.9rem; color: var(--primary);">Firma Siparis Notu:</p>
+                        <pre id="firma-notu-icerik" style="background: var(--bg); padding: 12px; border-radius: var(--radius-sm); font-size: 0.85rem; white-space: pre-wrap; word-break: break-word; line-height: 1.5;"></pre>
+                    </div>
+                    <div class="btn-group" style="margin-top: 12px; gap: 8px;">
+                        <button type="button" class="btn btn--outline btn--sm" id="btn-siparis-kopyala">
+                            <span class="icon"><svg><use href="#icon-copy"/></svg></span>
+                            Tum Bilgileri Kopyala
+                        </button>
+                        <button type="button" class="btn btn--ghost btn--sm" id="btn-firma-notu-kopyala">
+                            <span class="icon"><svg><use href="#icon-copy"/></svg></span>
+                            Firma Notunu Kopyala
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ---- Montaj Kontrol Listesi ---- -->
+            <div id="montaj-kontrol-section" style="display:none;">
+                <h2 class="section-title" style="margin-top:2rem;">
+                    <span class="icon"><svg><use href="#icon-warning"/></svg></span>
+                    Montaj Kontrol Listesi
+                </h2>
+                <div class="card">
+                    <button type="button" class="patient-notes__toggle" id="montaj-toggle" style="width:100%; text-align:left; cursor:pointer; background:none; border:none; padding:8px 0; font-size:1rem; font-weight:600; color:var(--primary); display:flex; justify-content:space-between; align-items:center;">
+                        <span>Montaj Rehberini Goster / Gizle</span>
+                        <span class="chevron">&#9660;</span>
+                    </button>
+                    <div id="montaj-icerik" style="display:none;">
+                        <div id="montaj-ozel-uyarilar" style="margin-bottom: 12px;">
+                            <!-- Populated by JS -->
+                        </div>
+                        <div style="margin-bottom: 12px;">
+                            <h4 style="color: var(--primary); margin-bottom: 8px; font-size: 0.95rem;">Montaj Oncesi</h4>
+                            <ul id="montaj-oncesi-list" style="list-style: none; padding: 0;"></ul>
+                        </div>
+                        <div style="margin-bottom: 12px;">
+                            <h4 style="color: var(--primary); margin-bottom: 8px; font-size: 0.95rem;">Montaj Sirasinda</h4>
+                            <ul id="montaj-sirasi-list" style="list-style: none; padding: 0;"></ul>
+                        </div>
+                        <div>
+                            <h4 style="color: var(--primary); margin-bottom: 8px; font-size: 0.95rem;">Montaj Sonrasi (Teslim)</h4>
+                            <ul id="montaj-sonrasi-list" style="list-style: none; padding: 0;"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ---- Hasta Bilgilendirme Notlari ---- -->
+            <h2 class="section-title" style="margin-top:2rem;">
+                <span class="icon"><svg><use href="#icon-document"/></svg></span>
+                Hasta Bilgilendirme Notlari
+            </h2>
+
+            <div class="patient-notes">
+                <button type="button" class="patient-notes__toggle" id="patient-notes-toggle">
+                    <span>Hasta Notlarini Goster / Gizle</span>
+                    <span class="chevron">&#9660;</span>
+                </button>
+                <div class="patient-notes__content" id="patient-notes-content">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- ---- Action Buttons ---- -->
+            <div class="btn-group" style="justify-content: center; margin-top: 2rem; flex-wrap: wrap;">
+                <button type="button" class="btn btn--primary" id="btn-musteri-kaydet">
+                    <span class="icon"><svg><use href="#icon-document"/></svg></span>
+                    Musteri Olarak Kaydet
+                </button>
+                <button type="button" class="btn btn--outline" id="btn-yazdir">
+                    <span class="icon"><svg><use href="#icon-print"/></svg></span>
+                    Yazdir
+                </button>
+                <button type="button" class="btn btn--ghost" id="btn-kopyala">
+                    <span class="icon"><svg><use href="#icon-copy"/></svg></span>
+                    Kopyala
+                </button>
+                <button type="button" class="btn btn--accent" id="btn-hasta-talimati">
+                    <span class="icon"><svg><use href="#icon-document"/></svg></span>
+                    Hasta Talimati Yazdir
+                </button>
+            </div>
+
+        </section>
+        <!-- END sonuc-section -->
+
+    </main>
+
+    <!-- ============================================================
+         MUSTERI LISTESI
+         ============================================================ -->
+    <section id="musteri-listesi-section" class="musteri-section" style="display:none;">
+        <div class="musteri-container">
+            <div class="musteri-header">
+                <h2 class="section-title" style="margin:0;">
+                    <span class="icon"><svg><use href="#icon-document"/></svg></span>
+                    Musteriler
+                </h2>
+                <button type="button" class="btn btn--primary btn--sm" id="btn-yeni-musteri">+ Yeni Musteri</button>
+            </div>
+            <div class="musteri-arama">
+                <input type="text" id="musteri-arama-input" class="form-input" placeholder="Ad veya telefon ile ara...">
+            </div>
+            <div id="musteri-liste-icerik">
+                <!-- JS ile doldurulacak -->
+            </div>
+            <div style="margin-top:1.5rem; text-align:center;">
+                <button type="button" class="btn btn--ghost" id="btn-istatistikler">Istatistikler</button>
+                <button type="button" class="btn btn--outline" id="btn-analize-don" onclick="analizGorunumuneGecis()">Analize Don</button>
+            </div>
+            <div id="istatistik-panel" style="display:none; margin-top:1rem;">
+                <!-- JS ile doldurulacak -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         MUSTERI DETAY
+         ============================================================ -->
+    <section id="musteri-detay-section" class="musteri-section" style="display:none;">
+        <div class="musteri-container">
+            <div class="musteri-detay-header">
+                <button type="button" class="btn btn--ghost btn--sm" id="btn-geri-liste" onclick="musteriListesiGoster()">&#8592; Geri</button>
+                <h2 id="musteri-detay-ad" class="section-title" style="margin:0; flex:1;"></h2>
+                <button type="button" class="btn btn--ghost btn--sm" id="btn-musteri-duzenle">Duzenle</button>
+                <button type="button" class="btn btn--ghost btn--sm" style="color:var(--danger);" id="btn-musteri-sil">Sil</button>
+            </div>
+            <div id="musteri-detay-bilgi" style="margin-bottom:1rem; color:var(--text-light); font-size:0.9rem;"></div>
+
+            <div class="musteri-detay-grid">
+                <div class="musteri-detay-sol">
+                    <h3 class="card__title" style="margin-bottom:0.8rem;">Analizler</h3>
+                    <div id="musteri-analizler-liste">
+                        <!-- JS ile doldurulacak -->
+                    </div>
+                </div>
+                <div class="musteri-detay-sag">
+                    <h3 class="card__title" style="margin-bottom:0.8rem;">Sorunlar</h3>
+                    <div id="musteri-sorunlar-liste">
+                        <!-- JS ile doldurulacak -->
+                    </div>
+                    <button type="button" class="btn btn--accent btn--sm" id="btn-sorun-ekle" style="margin-top:0.8rem;">+ Sorun Ekle</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+         MUSTERI KAYIT MODAL
+         ============================================================ -->
+    <div id="musteri-modal" class="modal-overlay" style="display:none;">
+        <div class="modal-content">
+            <h3 class="modal-title" id="modal-baslik">Musteri Olarak Kaydet</h3>
+            <div class="form-group" style="margin-bottom:1rem;">
+                <label class="form-label">Ad Soyad *</label>
+                <input type="text" id="modal-musteri-ad" class="form-input" placeholder="Musteri adi">
+            </div>
+            <div class="form-group" style="margin-bottom:1rem;">
+                <label class="form-label">Telefon</label>
+                <input type="text" id="modal-musteri-telefon" class="form-input" placeholder="05XX...">
+            </div>
+            <div class="form-group" style="margin-bottom:1rem;">
+                <label class="form-label">Not</label>
+                <textarea id="modal-musteri-not" class="form-input" rows="2" placeholder="Serbest not..."></textarea>
+            </div>
+            <div id="modal-mevcut-musteri" style="display:none; margin-bottom:1rem;">
+                <label class="form-label">Veya mevcut musteriye ekle:</label>
+                <select id="modal-mevcut-select" class="form-input">
+                    <option value="">-- Yeni musteri olustur --</option>
+                </select>
+            </div>
+            <div class="btn-group" style="justify-content: flex-end;">
+                <button type="button" class="btn btn--ghost" id="modal-iptal">Iptal</button>
+                <button type="button" class="btn btn--primary" id="modal-kaydet">Kaydet</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         SORUN EKLEME MODAL
+         ============================================================ -->
+    <div id="sorun-modal" class="modal-overlay" style="display:none;">
+        <div class="modal-content">
+            <h3 class="modal-title">Sorun Ekle</h3>
+            <div class="form-group" style="margin-bottom:1rem;">
+                <label class="form-label">Kategori *</label>
+                <select id="sorun-kategori" class="form-input">
+                    <option value="">-- Secin --</option>
+                    <option value="alisma">Alisma sorunu</option>
+                    <option value="yakin_bulanik">Yakin bulanik</option>
+                    <option value="uzak_bulanik">Uzak bulanik</option>
+                    <option value="basdonmesi">Bas donmesi / agrisi</option>
+                    <option value="cerceve">Cerceve sorunu</option>
+                    <option value="montaj">Montaj hatasi</option>
+                    <option value="diger">Diger</option>
+                </select>
+            </div>
+            <div class="form-group" style="margin-bottom:1rem;">
+                <label class="form-label">Aciklama *</label>
+                <textarea id="sorun-aciklama" class="form-input" rows="3" placeholder="Musterinin sikayetini yazin..."></textarea>
+            </div>
+            <div class="btn-group" style="justify-content: flex-end;">
+                <button type="button" class="btn btn--ghost" id="sorun-modal-iptal">Iptal</button>
+                <button type="button" class="btn btn--primary" id="sorun-modal-kaydet">Kaydet</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         MUSTERI DUZENLEME MODAL
+         ============================================================ -->
+    <div id="duzenle-modal" class="modal-overlay" style="display:none;">
+        <div class="modal-content">
+            <h3 class="modal-title">Musteri Bilgilerini Duzenle</h3>
+            <div class="form-group" style="margin-bottom:1rem;">
+                <label class="form-label">Ad Soyad *</label>
+                <input type="text" id="duzenle-ad" class="form-input">
+            </div>
+            <div class="form-group" style="margin-bottom:1rem;">
+                <label class="form-label">Telefon</label>
+                <input type="text" id="duzenle-telefon" class="form-input">
+            </div>
+            <div class="form-group" style="margin-bottom:1rem;">
+                <label class="form-label">Not</label>
+                <textarea id="duzenle-not" class="form-input" rows="2"></textarea>
+            </div>
+            <div class="btn-group" style="justify-content: flex-end;">
+                <button type="button" class="btn btn--ghost" id="duzenle-iptal">Iptal</button>
+                <button type="button" class="btn btn--primary" id="duzenle-kaydet">Kaydet</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         COZUM NOTU MODAL
+         ============================================================ -->
+    <div id="cozum-modal" class="modal-overlay" style="display:none;">
+        <div class="modal-content">
+            <h3 class="modal-title">Cozum Notu</h3>
+            <div class="form-group" style="margin-bottom:1rem;">
+                <label class="form-label">Cozum aciklamasi</label>
+                <textarea id="cozum-aciklama" class="form-input" rows="3" placeholder="Sorun nasil cozuldu..."></textarea>
+            </div>
+            <div class="btn-group" style="justify-content: flex-end;">
+                <button type="button" class="btn btn--ghost" id="cozum-modal-iptal">Iptal</button>
+                <button type="button" class="btn btn--primary" id="cozum-modal-kaydet">Kaydet</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
+         FOOTER
+         ============================================================ -->
+    <footer class="footer">
+        <div class="footer__title">Kepekci Optik - Progresif Cam Oneri Sistemi v1.0</div>
+        <div class="footer__disclaimer">Bu sistem oneri niteligindedir, kesin teshis yerine gecmez.</div>
+    </footer>
+
+    <!-- ============================================================
+         SCRIPTS
+         ============================================================ -->
+    <script src="js/data.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/engine.js"></script>
+    <script src="js/musteri.js"></script>
+    <script src="js/sorun.js"></script>
+    <script src="js/istatistik.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/musteri-ui.js"></script>
+</body>
+</html>

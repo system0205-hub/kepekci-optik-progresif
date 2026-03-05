@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Olcum Rehberi - Kepekci Optik</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* Header stili (index.html ile ayni) */
+    .header {
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--primary-light) 100%);
+      color: #ffffff;
+      padding: 1.2rem 1.5rem;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header__inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+    }
+    .header__brand { display: flex; flex-direction: column; }
+    .header__title { font-size: 1.6rem; font-weight: 700; letter-spacing: 0.5px; }
+    .header__subtitle { font-size: 0.85rem; opacity: 0.85; font-weight: 400; }
+    .header__nav { display: flex; gap: 0.3rem; }
+    .header__nav a {
+      color: rgba(255,255,255,0.75);
+      text-decoration: none;
+      padding: 0.45rem 1rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+    .header__nav a:hover { color: #fff; background: rgba(255,255,255,0.12); }
+    .header__nav a.active { color: #fff; background: rgba(255,255,255,0.2); font-weight: 600; }
+
+    .rehber-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .rehber-baslik {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .rehber-baslik h1 {
+      font-size: 1.8rem;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+
+    .rehber-baslik p {
+      color: var(--text-secondary);
+    }
+
+    /* Adim kartlari */
+    .adim-kart {
+      background: var(--bg-card);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-md);
+      border-left: 4px solid var(--primary);
+    }
+
+    .adim-kart-baslik {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .adim-kart-baslik .numara {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .adim-kart-baslik h2 {
+      font-size: 1.2rem;
+      color: var(--text-primary);
+    }
+
+    .adim-icerik {
+      padding-left: 52px;
+    }
+
+    .adim-icerik p {
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+      line-height: 1.7;
+    }
+
+    .adim-icerik ul {
+      list-style: none;
+      padding: 0;
+      margin-bottom: 12px;
+    }
+
+    .adim-icerik li {
+      padding: 6px 0 6px 24px;
+      position: relative;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .adim-icerik li::before {
+      content: "\2713";
+      position: absolute;
+      left: 0;
+      color: var(--success);
+      font-weight: 700;
+    }
+
+    /* Dikkat kutusu */
+    .dikkat-kutu {
+      background: #fff7ed;
+      border: 1px solid #f97316;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin: 12px 0;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .dikkat-kutu svg {
+      width: 20px;
+      height: 20px;
+      color: #f97316;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .dikkat-kutu p {
+      font-size: 0.9rem;
+      color: #9a3412;
+      margin: 0 !important;
+      line-height: 1.5;
+    }
+
+    /* Ipucu kutusu */
+    .ipucu-kutu {
+      background: #eff6ff;
+      border: 1px solid #3b82f6;
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin: 12px 0;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .ipucu-kutu svg {
+      width: 20px;
+      height: 20px;
+      color: #3b82f6;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .ipucu-kutu p {
+      font-size: 0.9rem;
+      color: #1e40af;
+      margin: 0 !important;
+      line-height: 1.5;
+    }
+
+    /* Tablo */
+    .rehber-tablo {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 0.9rem;
+    }
+
+    .rehber-tablo th {
+      background: #1e3a5f;
+      color: #ffffff;
+      padding: 12px 14px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.9rem;
+      letter-spacing: 0.3px;
+    }
+
+    .rehber-tablo td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-primary);
+    }
+
+    .rehber-tablo tr:nth-child(even) td {
+      background: var(--bg-secondary);
+    }
+
+    .rehber-tablo .tehlike {
+      color: #ef4444;
+      font-weight: 700;
+    }
+
+    .rehber-tablo .uyari-renk {
+      color: #f97316;
+      font-weight: 600;
+    }
+
+    .rehber-tablo .iyi {
+      color: #22c55e;
+      font-weight: 600;
+    }
+
+    /* Illustrasyon */
+    .illus-kart {
+      background: var(--bg-secondary);
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      margin: 16px 0;
+    }
+
+    .illus-kart svg {
+      max-width: 300px;
+      width: 100%;
+      height: auto;
+    }
+
+    .illus-kart .aciklama {
+      font-size: 0.85rem;
+      color: var(--text-tertiary);
+      margin-top: 8px;
+    }
+
+    /* Kontrol listesi */
+    .kontrol-listesi {
+      list-style: none;
+      padding: 0;
+    }
+
+    .kontrol-listesi li {
+      padding: 10px 12px 10px 40px;
+      position: relative;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-primary);
+      font-size: 0.95rem;
+    }
+
+    .kontrol-listesi li::before {
+      content: "";
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border);
+      border-radius: 4px;
+      position: absolute;
+      left: 8px;
+      top: 10px;
+    }
+
+    /* Yazdirma */
+    @media print {
+      body { background: #fff; }
+      .rehber-container { padding: 0; max-width: 100%; }
+      .adim-kart { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; }
+      nav, header, footer { display: none !important; }
+      .adim-kart { border-left-color: #333; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Ust Menu -->
+  <header class="header">
+    <div class="header__inner">
+      <div class="header__brand">
+        <div class="header__title">Kepekci Optik</div>
+        <div class="header__subtitle">Olcum Rehberi</div>
+      </div>
+      <nav class="header__nav">
+        <a href="index.html">Ana Sayfa</a>
+        <a href="foto-olcum.html">Fotograftan Olcum</a>
+        <a href="kamera-olcum.html">Kameradan Olcum</a>
+        <a href="olcum-rehberi.html" class="active">Olcum Rehberi</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="rehber-container">
+    <div class="rehber-baslik">
+      <h1>Progresif Cam Icin Dogru Olcum Rehberi</h1>
+      <p>Her adimi dikkatli uygulayin. Dogru olcum = mutlu hasta</p>
+    </div>
+
+    <!-- Adim 1: PD Olcumu -->
+    <div class="adim-kart">
+      <div class="adim-kart-baslik">
+        <span class="numara">1</span>
+        <h2>Goz Mesafesi (Monokuler PD) Olcumu</h2>
+      </div>
+      <div class="adim-icerik">
+        <p>Her gozun burundan olan mesafesini <strong>ayri ayri</strong> olcun. Binokuler PD'yi ikiye bolmeyin!</p>
+
+        <ul>
+          <li>Hasta karsiniza oturun, gozleriniz ayni yukseklikte olsun</li>
+          <li>Pupilometre veya milimetrik cetvel kullanin</li>
+          <li>Hasta size degil, <strong>arkanizda uzak bir noktaya</strong> baksin</li>
+          <li>Sag ve sol PD'yi ayri ayri olcun ve kaydedin</li>
+          <li>En az 2 kez tekrarlayin</li>
+          <li>Fark 0.5 mm'den fazlaysa 3. kez olcun, ortalamasini alin</li>
+        </ul>
+
+        <div class="dikkat-kutu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+          <p><strong>DIKKAT:</strong> Hasta size bakiyorsa, bir gozunuzu kapatarak olcum yapin. Yoksa paralaks hatasi olusur. Hasta arkanizda uzak bir noktaya bakarken her iki gozunuz acik olcum daha doğru olur.</p>
+        </div>
+
+        <div class="ipucu-kutu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="16" x2="12" y2="12"/>
+            <line x1="12" y1="8" x2="12.01" y2="8"/>
+          </svg>
+          <p><strong>IPUCU:</strong> Ortalama degerler: Sag PD 30-34 mm, Sol PD 30-34 mm. Binokuler PD genellikle 58-68 mm arasidir. Sag-sol arasi 1-2 mm fark normaldir.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Adim 2: Cerceve Secimi -->
+    <div class="adim-kart">
+      <div class="adim-kart-baslik">
+        <span class="numara">2</span>
+        <h2>Cerceve Secimi Kontrolu</h2>
+      </div>
+      <div class="adim-icerik">
+        <p>Progresif cam icin cerceve secimi kritik onem tasir. Asagidaki kontrolleri yapin:</p>
+
+        <ul>
+          <li><strong>B Olcusu (dikey yukseklik):</strong> Minimum 28 mm olmali, ideal 30+ mm</li>
+          <li><strong>A Olcusu (yatay genislik):</strong> Hastanin yuzune uygun olmali</li>
+          <li>Cerceve burnun uzerinde kaymiyor olmali, sabit durmali</li>
+          <li>Pantoskopik egim 8-12 derece arasi olmali</li>
+          <li>Cerceve sol ve sag taraf simetrik oturmali</li>
+        </ul>
+
+        <!-- B Olcusu Illustrasyonu -->
+        <div class="illus-kart">
+          <svg viewBox="0 0 280 160" fill="none">
+            <!-- Cerceve -->
+            <rect x="20" y="20" width="110" height="120" rx="12" stroke="#1e3a5f" stroke-width="2.5" fill="none"/>
+            <rect x="150" y="20" width="110" height="120" rx="12" stroke="#1e3a5f" stroke-width="2.5" fill="none"/>
+            <!-- Kopru -->
+            <path d="M130 60 Q140 40 150 60" stroke="#1e3a5f" stroke-width="2.5" fill="none"/>
+
+            <!-- B Olcusu ok -->
+            <line x1="8" y1="20" x2="8" y2="140" stroke="#ef4444" stroke-width="2"/>
+            <polygon points="8,20 4,28 12,28" fill="#ef4444"/>
+            <polygon points="8,140 4,132 12,132" fill="#ef4444"/>
+            <text x="2" y="85" font-size="10" fill="#ef4444" font-weight="700" transform="rotate(-90,2,85)">B Olcusu</text>
+
+            <!-- A Olcusu ok -->
+            <line x1="20" y1="150" x2="130" y2="150" stroke="#3b82f6" stroke-width="2"/>
+            <polygon points="20,150 28,146 28,154" fill="#3b82f6"/>
+            <polygon points="130,150 122,146 122,154" fill="#3b82f6"/>
+            <text x="55" y="158" font-size="10" fill="#3b82f6" font-weight="700">A Olcusu</text>
+
+            <!-- Pupil merkezi -->
+            <circle cx="75" cy="65" r="4" fill="#22c55e"/>
+            <text x="85" y="55" font-size="8" fill="#22c55e" font-weight="600">Pupil Merkezi</text>
+
+            <!-- FH ok -->
+            <line x1="75" y1="65" x2="75" y2="140" stroke="#22c55e" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <text x="80" y="105" font-size="8" fill="#22c55e" font-weight="600">Odak Yuk.</text>
+          </svg>
+          <p class="aciklama">B Olcusu: Cercevenin dikey yuksekligi &nbsp;|&nbsp; A Olcusu: Yatay genisligi &nbsp;|&nbsp; Odak Yuksekligi: Pupilden alt kenara</p>
+        </div>
+
+        <div class="dikkat-kutu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+          <p><strong>DIKKAT:</strong> B Olcusu 24 mm altindaki cerceveye progresif cam <strong>onerilmez</strong>. Hastaya baska cerceve secmesini soylenin. 24-28 mm arasi kisa koridorlu cam zorunludur.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Adim 3: Fitting Height -->
+    <div class="adim-kart">
+      <div class="adim-kart-baslik">
+        <span class="numara">3</span>
+        <h2>Odak Yuksekligi (Fitting Height) Olcumu</h2>
+      </div>
+      <div class="adim-icerik">
+        <p>Gozbebeginizin merkezinden cercevenin alt kenarina olan dikey mesafedir.</p>
+
+        <ul>
+          <li>Hasta gozlugu taksin, dogal pozisyonda karsiniza otursun</li>
+          <li>Hasta ne yukari ne asagi, duz karsiyi baksin</li>
+          <li>Pupilla merkezini gozluk cami uzerine ince marker ile isaretleyin</li>
+          <li>Isaretlenen noktadan cercevenin <strong>ALT kenarina</strong> olan mesafeyi olcun</li>
+          <li>Her goz icin ayri ayri olcun (genellikle ayni cikar ama bazen 1 mm fark olabilir)</li>
+        </ul>
+
+        <div class="dikkat-kutu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+          <p><strong>DIKKAT:</strong> Hasta dogal bas pozisyonunda olmali. Ne yukari ne asagi bakmasin. Siz hasta ile ayni seviyede olun - oturarak oturana, ayaktakine ayakta olcum yapin.</p>
+        </div>
+
+        <div class="ipucu-kutu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="16" x2="12" y2="12"/>
+            <line x1="12" y1="8" x2="12.01" y2="8"/>
+          </svg>
+          <p><strong>IPUCU:</strong> Odak yuksekligi genellikle B olcusunun yarisina yakin cikar (B/2 +/- 2mm). B=30 ise FH genellikle 14-18 mm arasindadir.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Adim 4: Koridor Uyumu -->
+    <div class="adim-kart">
+      <div class="adim-kart-baslik">
+        <span class="numara">4</span>
+        <h2>Odak Yuksekligi - Gecis Bolgesi (Koridor) Uyumu</h2>
+      </div>
+      <div class="adim-icerik">
+        <p>Odak yuksekligi, secilecek koridor uzunlugunu belirler. Asagidaki tabloyu kontrol edin:</p>
+
+        <table class="rehber-tablo">
+          <thead>
+            <tr>
+              <th>Odak Yuksekligi</th>
+              <th>Uygun Koridor</th>
+              <th>Durum</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>22 mm ve uzeri</td>
+              <td>Standart - Uzun Koridor (16-18 mm)</td>
+              <td class="iyi">Ideal</td>
+            </tr>
+            <tr>
+              <td>18 - 21 mm</td>
+              <td>Orta Koridor (14-16 mm)</td>
+              <td class="iyi">Uygun</td>
+            </tr>
+            <tr>
+              <td>14 - 17 mm</td>
+              <td>Kisa Koridor (11-14 mm)</td>
+              <td class="uyari-renk">Dikkatli Secim</td>
+            </tr>
+            <tr>
+              <td>14 mm alti</td>
+              <td>---</td>
+              <td class="tehlike">CERCEVE DEGISTIRIN</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="dikkat-kutu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+          <p><strong>FORMUL:</strong> Odak Yuksekligi - Koridor Uzunlugu >= 4-5 mm olmali. Bu fark, yakin okuma alani icin yeterli alanin kalmasini saglar. Ornegin: FH=18 ise, koridor en fazla 13-14 mm olmali.</p>
+        </div>
+
+        <p><strong>Ozel durumlar:</strong></p>
+        <ul>
+          <li><strong>Yuksek silindir (CYL >= 2.00):</strong> Kisa koridordan kacinin, en az 14 mm koridor secin</li>
+          <li><strong>Yuksek yakin ilave (ADD >= 2.50):</strong> Uzun koridor tercih edin, yakin alan genisler</li>
+          <li><strong>Ilk progresif kullanan:</strong> Uzun koridor ve kolay alisma ozellikli model secin</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Adim 5: Kontrol Listesi -->
+    <div class="adim-kart">
+      <div class="adim-kart-baslik">
+        <span class="numara">5</span>
+        <h2>Siparis Oncesi Kontrol Listesi</h2>
+      </div>
+      <div class="adim-icerik">
+        <p>Siparisi vermeden once asagidaki maddelerin hepsini kontrol edin:</p>
+
+        <ul class="kontrol-listesi">
+          <li>Goz mesafeleri (PD) sag ve sol ayri ayri olculdu mu?</li>
+          <li>Odak yuksekligi (fitting height) olculdu mu?</li>
+          <li>Cerceve yuksekligi (B olcusu) yeterli mi? (Minimum 28 mm)</li>
+          <li>Gecis bolgesi (koridor) uzunlugu, odak yuksekligine uygun mu?</li>
+          <li>Hastanin meslegi ve yasam tarzi soruldu mu?</li>
+          <li>Hasta bilgilendirildi mi? (Alisma sureci anlatildi mi?)</li>
+          <li>Ilk progresif mi? (Evet ise: uzun koridor + kolay alisma modeli)</li>
+          <li>Yuksek silindir veya oblik aks var mi? (Evet ise: premium freeform modeli)</li>
+          <li>Cerceve hastayla birlikte ayar edildi mi? (Pantoskopik egim, burun mesafesi)</li>
+          <li>Hasta talimati kagidi hazir mi?</li>
+        </ul>
+
+        <div class="ipucu-kutu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="16" x2="12" y2="12"/>
+            <line x1="12" y1="8" x2="12.01" y2="8"/>
+          </svg>
+          <p><strong>IPUCU:</strong> Bu listeyi her siparis oncesinde kontrol edin. Tek bir eksik olcum bile hastanin memnuniyetsizligine neden olabilir.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Kamera ile Olcum Rehberi -->
+    <div class="adim-kart" style="border-left-color: #8b5cf6;">
+      <div class="adim-kart-baslik">
+        <span class="numara" style="background: #8b5cf6;">&#128247;</span>
+        <h2>Kamera ile Otomatik PD ve Odak Yuksekligi Olcumu</h2>
+      </div>
+      <div class="adim-icerik">
+        <p>Programimiz, yapay zeka destekli kamera olcum sistemi ile gozbebeklerinizi otomatik tespit eder. Manuel olcume gore daha hizli ve daha az hata payi ile PD ve fitting height olcumu yapabilirsiniz.</p>
+
+        <p><strong>Nasil Kullanilir?</strong></p>
+        <ul>
+          <li><strong>Kamerayi acin:</strong> Masaustu webcam veya telefon kamerasi kullanabilirsiniz</li>
+          <li><strong>Yuzunuzu kameraya donun:</strong> Sistem yuzunuzu ve gozbebeklerinizi otomatik algilar</li>
+          <li><strong>Fotograf cekin:</strong> Yesil iris noktalari gorundugunde "Fotograf Cek" butonuna basin</li>
+          <li><strong>Referans karti isaretleyin:</strong> 30mm olcek kartinin iki ucunu tiklayin</li>
+          <li><strong>Cerceve alt kenarini isaretleyin:</strong> Her goz icin cerceve alt kenarini tiklayin</li>
+          <li><strong>"Bu Degerleri Kullan" butonuna basin:</strong> Olculer otomatik ana sayfaya aktarilir</li>
+        </ul>
+
+        <div class="dikkat-kutu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+          <p><strong>DIKKAT:</strong> Kamera ile olcum icin iyi aydinlatma cok onemlidir. Yuzunuz esit sekilde aydinlatilmali, arkadan gelen isik (pencere onunde durmak) gozbebegi tespitini zorlastirir.</p>
+        </div>
+
+        <p><strong>Dogru Sonuc Icin:</strong></p>
+        <ul>
+          <li>Gozlugunuzu takin ve duz karsiyi bakin</li>
+          <li>Referans karti (30mm) yuz hizasinda tutun - kartla yuz arasi mesafe az olsun</li>
+          <li>Kameraya yaklasik 40-60 cm mesafede durun</li>
+          <li>Telefon kullaniyorsaniz, telefonu goz seviyesinde tutun</li>
+        </ul>
+
+        <div class="ipucu-kutu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="16" x2="12" y2="12"/>
+            <line x1="12" y1="8" x2="12.01" y2="8"/>
+          </svg>
+          <p><strong>IPUCU:</strong> Kamera olcumu sirasinda referans kart kullanamazsaniz, sistem iris capindan otomatik kalibrasyon yapar. Ancak referans kartli olcum daha dogruludur (~%2-3 hata payi, kartsiz ~%10).</p>
+        </div>
+
+        <p style="margin-top:16px;"><a href="kamera-olcum.html" style="display:inline-block; padding:10px 24px; background:#8b5cf6; color:#fff; border-radius:8px; text-decoration:none; font-weight:600;">Kamera ile Olcume Basla</a></p>
+      </div>
+    </div>
+
+    <!-- Hizli Referans Tablosu -->
+    <div class="adim-kart" style="border-left-color: #22c55e;">
+      <div class="adim-kart-baslik">
+        <span class="numara" style="background: #22c55e;">&#9733;</span>
+        <h2>Hizli Referans: Ne Zaman Hangi Cam?</h2>
+      </div>
+      <div class="adim-icerik">
+        <table class="rehber-tablo">
+          <thead>
+            <tr>
+              <th>Durum</th>
+              <th>Onerilen Cam Tipi</th>
+              <th>Neden?</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Ilk progresif, dusuk numara</td>
+              <td>Orta seviye, uzun koridor</td>
+              <td>Kolay alisma, genis gecis bolgesi</td>
+            </tr>
+            <tr>
+              <td>Yuksek silindir (CYL >= 2.00)</td>
+              <td class="uyari-renk">Premium Freeform (kisisel tasarim)</td>
+              <td>Yan bulanikligi azaltir</td>
+            </tr>
+            <tr>
+              <td>Oblik aks (30-60 veya 120-150)</td>
+              <td class="uyari-renk">Premium Freeform (kisisel tasarim)</td>
+              <td>Aks bozulmasi minimuma iner</td>
+            </tr>
+            <tr>
+              <td>Yuksek ADD (>= 2.50)</td>
+              <td class="uyari-renk">Uzun koridorlu premium cam</td>
+              <td>Dar koridor swim etkisi yaratir</td>
+            </tr>
+            <tr>
+              <td>Kucuk cerceve (B < 28)</td>
+              <td class="tehlike">Kisa koridorlu ozel cam</td>
+              <td>Standart koridor sigmaz</td>
+            </tr>
+            <tr>
+              <td>Ofis / bilgisayar calisani</td>
+              <td>Dijital optimizeli cam</td>
+              <td>Ara mesafe genistir</td>
+            </tr>
+            <tr>
+              <td>Sofor</td>
+              <td>Uzak gorus optimizeli cam</td>
+              <td>Genis uzak alan, stabil gorus</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer style="text-align:center; padding:24px; color:var(--text-tertiary); font-size:0.8rem;">
+    Kepekci Optik &copy; 2026 - Progresif Cam Oneri Sistemi
+  </footer>
+</body>
+</html>

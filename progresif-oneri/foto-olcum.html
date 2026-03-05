@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fotograftan Olcum - Kepekci Optik</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* Header stili (index.html ile ayni) */
+    .header {
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--primary-light) 100%);
+      color: #ffffff;
+      padding: 1.2rem 1.5rem;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header__inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+    }
+    .header__brand { display: flex; flex-direction: column; }
+    .header__title { font-size: 1.6rem; font-weight: 700; letter-spacing: 0.5px; }
+    .header__subtitle { font-size: 0.85rem; opacity: 0.85; font-weight: 400; }
+    .header__nav { display: flex; gap: 0.3rem; }
+    .header__nav a {
+      color: rgba(255,255,255,0.75);
+      text-decoration: none;
+      padding: 0.45rem 1rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+    .header__nav a:hover { color: #fff; background: rgba(255,255,255,0.12); }
+    .header__nav a.active { color: #fff; background: rgba(255,255,255,0.2); font-weight: 600; }
+
+    /* Foto olcum sayfasina ozel stiller */
+    .foto-container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .foto-baslik {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .foto-baslik h1 {
+      font-size: 1.8rem;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+
+    .foto-baslik p {
+      color: var(--text-secondary);
+      font-size: 1rem;
+    }
+
+    /* Adim gostergesi */
+    .adim-gostergesi {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+    }
+
+    .adim-gostergesi .adim {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 20px;
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      transition: all 0.3s;
+    }
+
+    .adim-gostergesi .adim.aktif {
+      background: var(--primary);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .adim-gostergesi .adim.tamamlandi {
+      background: var(--success);
+      color: #fff;
+    }
+
+    .adim-gostergesi .adim-no {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.8rem;
+    }
+
+    /* Yukle alani */
+    .yukle-alani {
+      border: 3px dashed var(--border);
+      border-radius: 16px;
+      padding: 60px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      background: var(--bg-secondary);
+      margin-bottom: 24px;
+    }
+
+    .yukle-alani:hover, .yukle-alani.surukle-aktif {
+      border-color: var(--primary);
+      background: rgba(59, 130, 246, 0.05);
+    }
+
+    .yukle-alani svg {
+      width: 64px;
+      height: 64px;
+      color: var(--text-tertiary);
+      margin-bottom: 16px;
+    }
+
+    .yukle-alani h3 {
+      font-size: 1.2rem;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .yukle-alani p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .yukle-alani.gizle { display: none; }
+
+    /* Canvas alani */
+    .canvas-sarmalayici {
+      position: relative;
+      background: #000;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 24px;
+      display: none;
+      touch-action: none;
+    }
+
+    .canvas-sarmalayici.goster { display: block; }
+
+    .canvas-sarmalayici canvas {
+      display: block;
+      width: 100%;
+      cursor: crosshair;
+    }
+
+    /* Talimat kutusu */
+    .talimat-kutusu {
+      background: var(--bg-card);
+      border: 2px solid var(--primary);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 24px;
+      display: none;
+    }
+
+    .talimat-kutusu.goster { display: block; }
+
+    .talimat-kutusu h3 {
+      color: var(--primary);
+      margin-bottom: 8px;
+      font-size: 1.1rem;
+    }
+
+    .talimat-kutusu p {
+      color: var(--text-primary);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .talimat-kutusu .adim-numara {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.85rem;
+      margin-right: 8px;
+    }
+
+    /* Sonuc paneli */
+    .sonuc-paneli {
+      background: var(--bg-card);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: var(--shadow-md);
+      display: none;
+    }
+
+    .sonuc-paneli.goster { display: block; }
+
+    .sonuc-paneli h3 {
+      font-size: 1.2rem;
+      color: var(--primary);
+      margin-bottom: 16px;
+    }
+
+    .olcum-sonuclari {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .olcum-sonuc-kart {
+      background: var(--bg-secondary);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .olcum-sonuc-kart .etiket {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+
+    .olcum-sonuc-kart .deger {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .olcum-sonuc-kart .birim {
+      font-size: 0.85rem;
+      color: var(--text-tertiary);
+    }
+
+    /* Buton grubu */
+    .buton-grubu {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .buton-grubu .btn {
+      flex: 1;
+      min-width: 160px;
+    }
+
+    /* Araç çubuğu */
+    .arac-cubugu {
+      display: none;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .arac-cubugu.goster { display: flex; }
+
+    .arac-cubugu .btn {
+      padding: 8px 16px;
+      font-size: 0.85rem;
+      border-radius: 8px;
+    }
+
+    /* Uyari kutusu */
+    .foto-uyari {
+      background: #fff7ed;
+      border: 1px solid #f97316;
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .foto-uyari svg {
+      width: 24px;
+      height: 24px;
+      color: #f97316;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .foto-uyari p {
+      color: #9a3412;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    /* Nokta bilgisi */
+    .nokta-listesi {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .nokta-bilgi {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      background: var(--bg-secondary);
+      font-size: 0.85rem;
+    }
+
+    .nokta-bilgi .nokta-renk {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .nokta-bilgi.tamamlandi { opacity: 0.6; }
+
+    @media print {
+      body { background: #fff; }
+      .foto-container { padding: 0; }
+      .yukle-alani, .canvas-sarmalayici, .arac-cubugu, .talimat-kutusu, .buton-grubu, .adim-gostergesi, nav, .foto-uyari { display: none !important; }
+      .sonuc-paneli { display: block !important; box-shadow: none; border: 1px solid #ccc; }
+    }
+
+    @media (max-width: 768px) {
+      .olcum-sonuclari { grid-template-columns: 1fr; }
+      .nokta-listesi { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Ust Menu -->
+  <header class="header">
+    <div class="header__inner">
+      <div class="header__brand">
+        <div class="header__title">Kepekci Optik</div>
+        <div class="header__subtitle">Fotograftan Olcum</div>
+      </div>
+      <nav class="header__nav">
+        <a href="index.html">Ana Sayfa</a>
+        <a href="foto-olcum.html" class="active">Fotograftan Olcum</a>
+        <a href="kamera-olcum.html">Kameradan Olcum</a>
+        <a href="olcum-rehberi.html">Olcum Rehberi</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="foto-container">
+    <!-- Baslik -->
+    <div class="foto-baslik">
+      <h1>Fotograftan Olcum Alma</h1>
+      <p>Gozlugun fotografini yukleyin, noktlari isaretleyin, olcumler otomatik hesaplansin</p>
+    </div>
+
+    <!-- Uyari -->
+    <div class="foto-uyari">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+        <line x1="12" y1="9" x2="12" y2="13"/>
+        <line x1="12" y1="17" x2="12.01" y2="17"/>
+      </svg>
+      <div>
+        <p><strong>Onemli:</strong> Bu olcum yontemi yaklasik deger verir. Kesin olcum icin pupilometre kullanmaniz onerilir. Fotograftan olcum almadan once <a href="olcek-karti.html" target="_blank"><strong>olcek kartini</strong></a> yazdirin ve gozlugun yanina koyun.</p>
+      </div>
+    </div>
+
+    <!-- Adim gostergesi -->
+    <div class="adim-gostergesi" id="adimGostergesi">
+      <div class="adim aktif" data-adim="0">
+        <span class="adim-no">1</span>
+        <span>Fotograf Yukle</span>
+      </div>
+      <div class="adim" data-adim="1">
+        <span class="adim-no">2</span>
+        <span>Olcek Noktasi 1</span>
+      </div>
+      <div class="adim" data-adim="2">
+        <span class="adim-no">3</span>
+        <span>Olcek Noktasi 2</span>
+      </div>
+      <div class="adim" data-adim="3">
+        <span class="adim-no">4</span>
+        <span>Sag Goz Odak</span>
+      </div>
+      <div class="adim" data-adim="4">
+        <span class="adim-no">5</span>
+        <span>Sol Goz Odak</span>
+      </div>
+      <div class="adim" data-adim="5">
+        <span class="adim-no">6</span>
+        <span>Sag Alt Kenar</span>
+      </div>
+      <div class="adim" data-adim="6">
+        <span class="adim-no">7</span>
+        <span>Sol Alt Kenar</span>
+      </div>
+    </div>
+
+    <!-- Fotograf yukleme alani -->
+    <div class="yukle-alani" id="yukleAlani">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+        <circle cx="8.5" cy="8.5" r="1.5"/>
+        <polyline points="21 15 16 10 5 21"/>
+      </svg>
+      <h3>Fotografinizi Yukleyin</h3>
+      <p>Dosyayi surukleyip birakin veya tiklayarak secin</p>
+      <p style="margin-top: 8px; font-size: 0.8rem; color: var(--text-tertiary);">JPG, PNG - Maksimum 10 MB</p>
+      <input type="file" id="dosyaSecici" accept="image/jpeg,image/png" style="display:none" />
+    </div>
+
+    <!-- Talimat kutusu -->
+    <div class="talimat-kutusu" id="talimatKutusu">
+      <h3 id="talimatBaslik">Olcek Noktalarini Isaretleyin</h3>
+      <p id="talimatMetin">Olcek kartindaki referans cizgisinin <strong>sol ucuna</strong> tiklayin.</p>
+      <div class="nokta-listesi" id="noktaListesi">
+        <div class="nokta-bilgi" id="noktaBilgi0">
+          <span class="nokta-renk" style="background:#ef4444"></span>
+          <span>Olcek Sol Ucu</span>
+        </div>
+        <div class="nokta-bilgi" id="noktaBilgi1">
+          <span class="nokta-renk" style="background:#f97316"></span>
+          <span>Olcek Sag Ucu</span>
+        </div>
+        <div class="nokta-bilgi" id="noktaBilgi2">
+          <span class="nokta-renk" style="background:#22c55e"></span>
+          <span>Sag Goz Odak Noktasi</span>
+        </div>
+        <div class="nokta-bilgi" id="noktaBilgi3">
+          <span class="nokta-renk" style="background:#3b82f6"></span>
+          <span>Sol Goz Odak Noktasi</span>
+        </div>
+        <div class="nokta-bilgi" id="noktaBilgi4">
+          <span class="nokta-renk" style="background:#a855f7"></span>
+          <span>Sag Cerceve Alt Kenar</span>
+        </div>
+        <div class="nokta-bilgi" id="noktaBilgi5">
+          <span class="nokta-renk" style="background:#ec4899"></span>
+          <span>Sol Cerceve Alt Kenar</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Arac cubugu -->
+    <div class="arac-cubugu" id="aracCubugu">
+      <button class="btn btn-secondary" id="btnGeriAl" disabled>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+          <polyline points="1 4 1 10 7 10"/>
+          <path d="M3.51 15a9 9 0 105.13-11.82L1 10"/>
+        </svg>
+        Geri Al
+      </button>
+      <button class="btn btn-secondary" id="btnSifirla">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+          <polyline points="23 4 23 10 17 10"/>
+          <polyline points="1 20 1 14 7 14"/>
+          <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+        </svg>
+        Sifirla
+      </button>
+      <button class="btn btn-secondary" id="btnBuyut">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          <line x1="11" y1="8" x2="11" y2="14"/>
+          <line x1="8" y1="11" x2="14" y2="11"/>
+        </svg>
+        Buyut
+      </button>
+      <button class="btn btn-secondary" id="btnKucult">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          <line x1="8" y1="11" x2="14" y2="11"/>
+        </svg>
+        Kucult
+      </button>
+      <button class="btn btn-secondary" id="btnYenidenYukle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+          <circle cx="8.5" cy="8.5" r="1.5"/>
+          <polyline points="21 15 16 10 5 21"/>
+        </svg>
+        Yeni Fotograf
+      </button>
+    </div>
+
+    <!-- Canvas -->
+    <div class="canvas-sarmalayici" id="canvasSarmalayici">
+      <canvas id="olcumCanvas"></canvas>
+    </div>
+
+    <!-- Sonuc paneli -->
+    <div class="sonuc-paneli" id="sonucPaneli">
+      <h3>Hesaplanan Olcumler</h3>
+      <div class="olcum-sonuclari">
+        <div class="olcum-sonuc-kart">
+          <div class="etiket">Sag Goz Mesafesi (PD)</div>
+          <div class="deger" id="sonucPdSag">--</div>
+          <div class="birim">mm</div>
+        </div>
+        <div class="olcum-sonuc-kart">
+          <div class="etiket">Sol Goz Mesafesi (PD)</div>
+          <div class="deger" id="sonucPdSol">--</div>
+          <div class="birim">mm</div>
+        </div>
+        <div class="olcum-sonuc-kart">
+          <div class="etiket">Sag Odak Yuksekligi</div>
+          <div class="deger" id="sonucFhSag">--</div>
+          <div class="birim">mm</div>
+        </div>
+        <div class="olcum-sonuc-kart">
+          <div class="etiket">Sol Odak Yuksekligi</div>
+          <div class="deger" id="sonucFhSol">--</div>
+          <div class="birim">mm</div>
+        </div>
+      </div>
+
+      <div class="buton-grubu">
+        <button class="btn btn-primary" id="btnKullan">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          Bu Degerleri Kullan
+        </button>
+        <button class="btn btn-secondary" id="btnTekrarOlc">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+            <polyline points="23 4 23 10 17 10"/>
+            <path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/>
+          </svg>
+          Tekrar Olc
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer style="text-align:center; padding:24px; color:var(--text-tertiary); font-size:0.8rem;">
+    Kepekci Optik &copy; 2026 - Progresif Cam Oneri Sistemi
+  </footer>
+
+  <script src="js/utils.js"></script>
+  <script src="js/foto-olcum.js"></script>
+</body>
+</html>
