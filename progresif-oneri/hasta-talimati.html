@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hasta Kullanim Talimati - Kepekci Optik</title>
+  <title>Hasta Kullanım Talimatı - Kepekçi Optik</title>
   <style>
-    /* Yazdirma icin optimize edilmis A4 tasarim */
+    /* Yazdırma için optimize edilmiş A4 tasarım */
     @page {
       size: A4;
-      margin: 12mm 15mm;
+      margin: 10mm 12mm;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -16,7 +16,7 @@
     body {
       font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
       color: #1e293b;
-      line-height: 1.5;
+      line-height: 1.45;
       background: #f1f5f9;
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
@@ -24,117 +24,154 @@
 
     .sayfa {
       max-width: 210mm;
+      min-height: 287mm;
       margin: 20px auto;
       background: #fff;
-      padding: 28px 32px;
+      padding: 20px 24px;
       box-shadow: 0 4px 24px rgba(0,0,0,0.1);
     }
 
-    /* Ust Kisim - Logo ve Bilgiler */
+    /* Üst Kısım - Logo ve Bilgiler */
     .ust-kisim {
       display: flex;
       justify-content: space-between;
       align-items: center;
       border-bottom: 3px solid #1e3a5f;
-      padding-bottom: 16px;
-      margin-bottom: 20px;
+      padding-bottom: 12px;
+      margin-bottom: 14px;
     }
 
     .logo-alan {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
 
     .logo-alan svg {
-      width: 40px;
-      height: 40px;
+      width: 36px;
+      height: 36px;
       color: #1e3a5f;
     }
 
     .logo-alan h1 {
-      font-size: 1.4rem;
+      font-size: 1.3rem;
       color: #1e3a5f;
       letter-spacing: -0.5px;
     }
 
     .logo-alan .alt-baslik {
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       color: #64748b;
       font-weight: 400;
     }
 
     .iletisim-bilgi {
       text-align: right;
-      font-size: 0.75rem;
+      font-size: 0.73rem;
       color: #64748b;
       line-height: 1.6;
     }
 
-    /* Ana Baslik */
+    /* İsim Soyisim Alanı */
+    .isim-alani {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      padding: 8px 14px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+    }
+
+    .isim-alani label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #1e3a5f;
+      white-space: nowrap;
+    }
+
+    .isim-alani .isim-cizgi {
+      flex: 1;
+      border-bottom: 1px solid #94a3b8;
+      min-height: 22px;
+    }
+
+    .isim-alani input {
+      flex: 1;
+      border: none;
+      border-bottom: 1px solid #94a3b8;
+      background: transparent;
+      font-size: 0.85rem;
+      padding: 4px 0;
+      outline: none;
+      font-family: inherit;
+    }
+
+    /* Ana Başlık */
     .ana-baslik {
       text-align: center;
       background: linear-gradient(135deg, #1e3a5f, #2563eb);
       color: #fff;
-      padding: 14px 20px;
+      padding: 12px 16px;
       border-radius: 10px;
-      margin-bottom: 20px;
+      margin-bottom: 14px;
     }
 
     .ana-baslik h2 {
-      font-size: 1.3rem;
-      margin-bottom: 4px;
+      font-size: 1.2rem;
+      margin-bottom: 3px;
     }
 
     .ana-baslik p {
-      font-size: 0.8rem;
+      font-size: 0.76rem;
       opacity: 0.9;
     }
 
-    /* Goz Bolgesi Illüstrasyonu */
+    /* Göz Bölgesi İllüstrasyonu */
     .goz-bolgeleri {
       display: flex;
-      gap: 20px;
-      margin-bottom: 20px;
+      gap: 16px;
+      margin-bottom: 14px;
       align-items: center;
     }
 
     .goz-illus {
-      flex: 0 0 160px;
+      flex: 0 0 140px;
       text-align: center;
     }
 
     .goz-illus svg {
-      width: 140px;
-      height: 200px;
+      width: 120px;
+      height: 175px;
     }
 
     .bolge-aciklamalar {
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
     }
 
     .bolge-kart {
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 8px 12px;
+      gap: 8px;
+      padding: 6px 10px;
       border-radius: 8px;
-      font-size: 0.82rem;
+      font-size: 0.78rem;
     }
 
     .bolge-kart .renk-kutu {
-      width: 14px;
-      height: 14px;
-      border-radius: 4px;
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
       flex-shrink: 0;
     }
 
     .bolge-kart strong {
       display: block;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
     }
 
     .bolge-uzak { background: #eff6ff; border-left: 3px solid #3b82f6; }
@@ -149,35 +186,35 @@
     .bolge-yan { background: #fef2f2; border-left: 3px solid #ef4444; }
     .bolge-yan .renk-kutu { background: #ef4444; }
 
-    /* Kullanim Kilavuzu */
+    /* Kullanım Kılavuzu */
     .kilavuz-baslik {
-      font-size: 1.05rem;
+      font-size: 0.95rem;
       color: #1e3a5f;
       font-weight: 700;
-      margin-bottom: 12px;
-      padding-bottom: 6px;
+      margin-bottom: 8px;
+      padding-bottom: 4px;
       border-bottom: 2px solid #e2e8f0;
     }
 
     .kilavuz-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 20px;
+      gap: 8px;
+      margin-bottom: 14px;
     }
 
     .kilavuz-kart {
       display: flex;
-      gap: 10px;
-      padding: 10px;
+      gap: 8px;
+      padding: 7px 9px;
       border-radius: 8px;
       background: #f8fafc;
       border: 1px solid #e2e8f0;
     }
 
     .kilavuz-kart .numara {
-      width: 28px;
-      height: 28px;
+      width: 24px;
+      height: 24px;
       border-radius: 50%;
       background: #1e3a5f;
       color: #fff;
@@ -185,49 +222,49 @@
       align-items: center;
       justify-content: center;
       font-weight: 700;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       flex-shrink: 0;
     }
 
     .kilavuz-kart .icerik h4 {
-      font-size: 0.82rem;
+      font-size: 0.78rem;
       color: #1e3a5f;
-      margin-bottom: 2px;
+      margin-bottom: 1px;
     }
 
     .kilavuz-kart .icerik p {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       color: #64748b;
-      line-height: 1.4;
+      line-height: 1.35;
     }
 
-    /* Adaptasyon Sureci */
+    /* Adaptasyon Süreci */
     .adaptasyon {
-      margin-bottom: 20px;
+      margin-bottom: 14px;
     }
 
     .adaptasyon-zaman-cizgisi {
       display: flex;
-      gap: 8px;
+      gap: 6px;
     }
 
     .adaptasyon-kart {
       flex: 1;
       text-align: center;
-      padding: 10px 8px;
+      padding: 8px 6px;
       border-radius: 8px;
       border: 1px solid;
     }
 
     .adaptasyon-kart .gun {
-      font-size: 0.9rem;
+      font-size: 0.82rem;
       font-weight: 700;
       display: block;
-      margin-bottom: 4px;
+      margin-bottom: 3px;
     }
 
     .adaptasyon-kart p {
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       line-height: 1.3;
     }
 
@@ -243,19 +280,19 @@
     .ad-gun4 { background: #f0fdf4; border-color: #bbf7d0; color: #166534; }
     .ad-gun4 .gun { color: #22c55e; }
 
-    /* Uyari Kutusu */
+    /* Uyarı Kutusu */
     .yapmayin-kutu {
       background: #fef2f2;
       border: 2px solid #ef4444;
       border-radius: 10px;
-      padding: 14px 16px;
-      margin-bottom: 20px;
+      padding: 10px 14px;
+      margin-bottom: 14px;
     }
 
     .yapmayin-kutu h3 {
       color: #ef4444;
-      font-size: 0.95rem;
-      margin-bottom: 8px;
+      font-size: 0.88rem;
+      margin-bottom: 6px;
       display: flex;
       align-items: center;
       gap: 6px;
@@ -267,10 +304,10 @@
     }
 
     .yapmayin-kutu li {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       color: #991b1b;
-      padding: 3px 0;
-      padding-left: 20px;
+      padding: 2px 0;
+      padding-left: 18px;
       position: relative;
     }
 
@@ -282,61 +319,59 @@
       font-weight: 700;
     }
 
-    /* Optisyen Not Alani */
+    /* Optisyen Not Alanı */
     .not-alani {
       border: 1px dashed #94a3b8;
       border-radius: 8px;
-      padding: 12px 16px;
-      margin-bottom: 16px;
+      padding: 10px 14px;
+      margin-bottom: 12px;
     }
 
     .not-alani h4 {
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       color: #64748b;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .not-alani .not-satir {
       border-bottom: 1px dotted #cbd5e1;
-      height: 28px;
-      margin-bottom: 4px;
+      height: 24px;
+      margin-bottom: 3px;
     }
 
-    /* Kisisel bilgilendirme (dinamik) */
+    /* Kişisel bilgilendirme (dinamik) */
     .kisisel-bilgi {
       background: #eff6ff;
       border: 1px solid #bfdbfe;
       border-radius: 8px;
-      padding: 12px 16px;
-      margin-bottom: 16px;
+      padding: 10px 14px;
+      margin-bottom: 12px;
       display: none;
     }
 
     .kisisel-bilgi.goster { display: block; }
 
     .kisisel-bilgi h4 {
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       color: #1e40af;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .kisisel-bilgi p, .kisisel-bilgi li {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       color: #1e3a8a;
-      line-height: 1.5;
+      line-height: 1.4;
     }
 
     .kisisel-bilgi ul {
       padding-left: 16px;
     }
 
-    /* Alt Kisim */
+    /* Alt Kısım */
     .alt-kisim {
       border-top: 2px solid #1e3a5f;
-      padding-top: 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      padding-top: 10px;
+      text-align: center;
     }
 
     .alt-kisim p {
@@ -344,16 +379,7 @@
       color: #64748b;
     }
 
-    .alt-kisim .randevu {
-      background: #1e3a5f;
-      color: #fff;
-      padding: 6px 16px;
-      border-radius: 6px;
-      font-size: 0.8rem;
-      font-weight: 600;
-    }
-
-    /* Ekran gorunumu icin butonlar */
+    /* Ekran görünümü için butonlar */
     .ekran-butonlar {
       max-width: 210mm;
       margin: 16px auto;
@@ -388,20 +414,21 @@
 
     @media print {
       body { background: #fff; }
-      .sayfa { box-shadow: none; margin: 0; padding: 0; }
+      .sayfa { box-shadow: none; margin: 0; padding: 10mm 12mm; min-height: auto; }
       .ekran-butonlar { display: none; }
+      .isim-alani input { border-bottom: 1px solid #94a3b8; }
     }
   </style>
 </head>
 <body>
-  <!-- Ekran Butonlari -->
+  <!-- Ekran Butonları -->
   <div class="ekran-butonlar">
-    <button class="btn-yazdir" onclick="window.print()">Yazdir</button>
-    <button class="btn-geri" onclick="window.close(); window.location.href='index.html';">Geri Don</button>
+    <button class="btn-yazdir" onclick="window.print()">Yazdır</button>
+    <button class="btn-geri" onclick="window.close(); window.location.href='index.html';">Geri Dön</button>
   </div>
 
   <div class="sayfa">
-    <!-- Ust Kisim -->
+    <!-- Üst Kısım -->
     <div class="ust-kisim">
       <div class="logo-alan">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -409,39 +436,46 @@
           <path d="M2 12s4-8 10-8 10 8 10 8-4 8-10 8-10-8-10-8z"/>
         </svg>
         <div>
-          <h1>Kepekci Optik</h1>
-          <span class="alt-baslik">Uzman Goz Bakimi</span>
+          <h1>Kepekçi Optik</h1>
+          <span class="alt-baslik">Uzman Göz Bakımı</span>
         </div>
       </div>
       <div class="iletisim-bilgi">
-        <strong>Kepekci Optik</strong><br/>
-        Tel: (XXX) XXX XX XX<br/>
-        Adres: ...
+        <strong>Kepekçi Optik</strong><br/>
+        Tel: 0506 905 55 70<br/>
+        Yeni Hastane Yolu Üzeri<br/>
+        Kepekçi Optik - Kilis
       </div>
     </div>
 
-    <!-- Ana Baslik -->
-    <div class="ana-baslik">
-      <h2>Progresif Gozlugunuzu Taniyin</h2>
-      <p>Bu kilavuz, yeni gozlugunuze en hizli sekilde alismaniz icin hazirlanmistir</p>
+    <!-- İsim Soyisim -->
+    <div class="isim-alani">
+      <label>İsim Soyisim:</label>
+      <input type="text" id="isimSoyisim" placeholder="" />
     </div>
 
-    <!-- Goz Bolgeleri Illustrasyonu -->
+    <!-- Ana Başlık -->
+    <div class="ana-baslik">
+      <h2>Progresif Gözlüğünüzü Tanıyın</h2>
+      <p>Bu kılavuz, yeni gözlüğünüze en hızlı şekilde alışmanız için hazırlanmıştır</p>
+    </div>
+
+    <!-- Göz Bölgeleri İllüstrasyonu -->
     <div class="goz-bolgeleri">
       <div class="goz-illus">
         <svg viewBox="0 0 120 180" fill="none">
-          <!-- Cerceve -->
+          <!-- Çerçeve -->
           <rect x="10" y="10" width="100" height="160" rx="16" ry="16" stroke="#1e3a5f" stroke-width="2.5" fill="none"/>
-          <!-- Uzak bolge -->
+          <!-- Uzak bölge -->
           <path d="M20 30 Q60 20 100 30 L100 65 Q60 75 20 65 Z" fill="#dbeafe" stroke="#3b82f6" stroke-width="1"/>
           <text x="60" y="52" text-anchor="middle" font-size="10" fill="#1e40af" font-weight="600">UZAK</text>
-          <!-- Ara bolge -->
+          <!-- Ara bölge -->
           <path d="M30 70 Q60 65 90 70 L85 105 Q60 110 35 105 Z" fill="#dcfce7" stroke="#22c55e" stroke-width="1"/>
           <text x="60" y="92" text-anchor="middle" font-size="9" fill="#166534" font-weight="600">ARA</text>
-          <!-- Yakin bolge -->
+          <!-- Yakın bölge -->
           <path d="M35 110 Q60 105 85 110 L80 145 Q60 150 40 145 Z" fill="#fef9c3" stroke="#eab308" stroke-width="1"/>
           <text x="60" y="132" text-anchor="middle" font-size="9" fill="#854d0e" font-weight="600">YAKIN</text>
-          <!-- Periferik bulaniklik -->
+          <!-- Periferik bulanıklık -->
           <path d="M12 30 L20 30 L20 65 L12 65 Z" fill="#fee2e2" opacity="0.7"/>
           <path d="M100 30 L108 30 L108 65 L100 65 Z" fill="#fee2e2" opacity="0.7"/>
           <path d="M12 70 L30 70 L35 105 L12 105 Z" fill="#fee2e2" opacity="0.5"/>
@@ -454,112 +488,112 @@
       <div class="bolge-aciklamalar">
         <div class="bolge-kart bolge-uzak">
           <span class="renk-kutu"></span>
-          <div><strong>Uzak Gorus (Ust)</strong> Yol, televizyon, karsiyi izleme</div>
+          <div><strong>Uzak Görüş (Üst)</strong> Yol, televizyon, karşıyı izleme</div>
         </div>
         <div class="bolge-kart bolge-ara">
           <span class="renk-kutu"></span>
-          <div><strong>Ara Mesafe (Orta)</strong> Bilgisayar ekrani, telefon</div>
+          <div><strong>Ara Mesafe (Orta)</strong> Bilgisayar ekranı, telefon</div>
         </div>
         <div class="bolge-kart bolge-yakin">
           <span class="renk-kutu"></span>
-          <div><strong>Yakin Gorus (Alt)</strong> Kitap, gazete, yazi yazma</div>
+          <div><strong>Yakın Görüş (Alt)</strong> Kitap, gazete, yazı yazma</div>
         </div>
         <div class="bolge-kart bolge-yan">
           <span class="renk-kutu"></span>
-          <div><strong>Yan Kisimlar</strong> Hafif bulaniklik normaldir, zamanla azalir</div>
+          <div><strong>Yan Kısımlar</strong> Hafif bulanıklık normaldir, zamanla azalır</div>
         </div>
       </div>
     </div>
 
-    <!-- Kullanim Kilavuzu -->
-    <h3 class="kilavuz-baslik">Dogru Kullanim Kilavuzu</h3>
+    <!-- Kullanım Kılavuzu -->
+    <h3 class="kilavuz-baslik">Doğru Kullanım Kılavuzu</h3>
     <div class="kilavuz-grid">
       <div class="kilavuz-kart">
         <span class="numara">1</span>
         <div class="icerik">
-          <h4>Uzaga Bakarken</h4>
-          <p>Basinizi duz tutun, camin ust bolgesinden bakin. Ceneyi hafifce asagi indirin.</p>
+          <h4>Uzağa Bakarken</h4>
+          <p>Başınızı düz tutun, camın üst bölgesinden bakın. Çenenizi hafifçe aşağı indirin.</p>
         </div>
       </div>
       <div class="kilavuz-kart">
         <span class="numara">2</span>
         <div class="icerik">
           <h4>Bilgisayara Bakarken</h4>
-          <p>Ceneyi hafifce kaldirin, camin orta bolgesini kullanin. Ekrani goz hizasinda tutun.</p>
+          <p>Çenenizi hafifçe kaldırın, camın orta bölgesini kullanın. Ekranı göz hizasında tutun.</p>
         </div>
       </div>
       <div class="kilavuz-kart">
         <span class="numara">3</span>
         <div class="icerik">
           <h4>Okurken / Telefonla</h4>
-          <p>Gozlerinizi asagi kaydirin, camin alt bolgesini kullanin. Kitabi gobeginiz hizasinda tutun.</p>
+          <p>Gözlerinizi aşağı kaydırın, camın alt bölgesini kullanın. Kitabı göbeğiniz hizasında tutun.</p>
         </div>
       </div>
       <div class="kilavuz-kart">
         <span class="numara">4</span>
         <div class="icerik">
           <h4>Yanlara Bakarken</h4>
-          <p>Gozlerinizi degil, <strong>BASINIZI</strong> cevirin. Goz ucuyla bakmayin, bas hareketine alistin.</p>
+          <p>Gözlerinizi değil, <strong>BAŞINIZI</strong> çevirin. Göz ucuyla bakmayın, baş hareketine alışın.</p>
         </div>
       </div>
       <div class="kilavuz-kart">
         <span class="numara">5</span>
         <div class="icerik">
-          <h4>Merdiven Inerken</h4>
-          <p>Basinizi hafifce one egin ve asagi bakin. Camin alt kismindaki yakin bolge yerine ortayi kullanin.</p>
+          <h4>Merdiven İnerken</h4>
+          <p>Başınızı hafifçe öne eğin ve aşağı bakın. Camın alt kısmındaki yakın bölge yerine ortayı kullanın.</p>
         </div>
       </div>
       <div class="kilavuz-kart">
         <span class="numara">6</span>
         <div class="icerik">
-          <h4>Arac Kullanirken</h4>
-          <p>Aynalara bakarken basi cevirin. Ilk 1 haftada uzun yoldan kacinin, kisa mesafelerde alisin.</p>
+          <h4>Araç Kullanırken</h4>
+          <p>Aynalara bakarken başı çevirin. İlk 1 haftada uzun yoldan kaçının, kısa mesafelerde alışın.</p>
         </div>
       </div>
     </div>
 
-    <!-- Adaptasyon Sureci -->
+    <!-- Adaptasyon Süreci -->
     <div class="adaptasyon">
-      <h3 class="kilavuz-baslik">Alisma Sureci</h3>
+      <h3 class="kilavuz-baslik">Alışma Süreci</h3>
       <div class="adaptasyon-zaman-cizgisi">
         <div class="adaptasyon-kart ad-gun1">
-          <span class="gun" id="adGun1">1-3 Gun</span>
-          <p>Hafif rahatsizlik normaldir. Sabirin!</p>
+          <span class="gun" id="adGun1">1-3 Gün</span>
+          <p>Hafif rahatsızlık normaldir. Sabırlı olun!</p>
         </div>
         <div class="adaptasyon-kart ad-gun2">
-          <span class="gun" id="adGun2">4-7 Gun</span>
-          <p>Yogun alisma donemi. Gozlugu cikarmayin.</p>
+          <span class="gun" id="adGun2">4-7 Gün</span>
+          <p>Yoğun alışma dönemi. Gözlüğü çıkarmayın.</p>
         </div>
         <div class="adaptasyon-kart ad-gun3">
-          <span class="gun" id="adGun3">7-14 Gun</span>
-          <p>Buyuk olcude alisirsiniz. Hareket etmeye devam edin.</p>
+          <span class="gun" id="adGun3">7-14 Gün</span>
+          <p>Büyük ölçüde alışırsınız. Hareket etmeye devam edin.</p>
         </div>
         <div class="adaptasyon-kart ad-gun4">
-          <span class="gun" id="adGun4">14+ Gun</span>
+          <span class="gun" id="adGun4">14+ Gün</span>
           <p>Tam adaptasyon. Tebrikler!</p>
         </div>
       </div>
     </div>
 
-    <!-- Kisisel Bilgilendirme (JS ile doldurulacak) -->
+    <!-- Kişisel Bilgilendirme (JS ile doldurulacak) -->
     <div class="kisisel-bilgi" id="kisiselBilgi">
-      <h4>Size Ozel Notlar</h4>
+      <h4>Size Özel Notlar</h4>
       <div id="kisiselIcerik"></div>
     </div>
 
-    <!-- Yapmayin Kutusu -->
+    <!-- Yapmayın Kutusu -->
     <div class="yapmayin-kutu">
-      <h3>&#9888; Yapmayin!</h3>
+      <h3>&#9888; Yapmayın!</h3>
       <ul>
-        <li>Gozlugu cikarip takip durmayin - surekli takili tutun</li>
-        <li>Eski gozlugunuzle karsilastirma yapmayin</li>
-        <li>Ilk gunlerde uzun mesafe arac kullanmayin</li>
-        <li>Yaniniza degil, basinizi cevirerek bakin</li>
-        <li>Alisma surecinde moralsizlenmeyin - bu normaldir</li>
+        <li>Gözlüğü çıkarıp takıp durmayın - sürekli takılı tutun</li>
+        <li>Eski gözlüğünüzle karşılaştırma yapmayın</li>
+        <li>İlk günlerde uzun mesafe araç kullanmayın</li>
+        <li>Yanınıza değil, başınızı çevirerek bakın</li>
+        <li>Alışma sürecinde moralsizlenmeyin - bu normaldir</li>
       </ul>
     </div>
 
-    <!-- Optisyen Not Alani -->
+    <!-- Optisyen Not Alanı -->
     <div class="not-alani">
       <h4>Optisyen Notu:</h4>
       <div class="not-satir"></div>
@@ -567,18 +601,14 @@
       <div class="not-satir"></div>
     </div>
 
-    <!-- Alt Kisim -->
+    <!-- Alt Kısım -->
     <div class="alt-kisim">
-      <div>
-        <p><strong>3 hafta sonra hala sorun yasiyorsaniz, bizi arayin.</strong></p>
-        <p>Kepekci Optik - Progresif cam uzmanligiyla yaninizdayiz.</p>
-      </div>
-      <div class="randevu">Randevu: (XXX) XXX XX XX</div>
+      <p>Kepekçi Optik - Progresif cam uzmanlığıyla yanınızdayız.</p>
     </div>
   </div>
 
   <script>
-    // URL parametrelerinden kisisel bilgileri al
+    // URL parametrelerinden kişisel bilgileri al
     (function() {
       var params = new URLSearchParams(window.location.search);
       var risk = parseInt(params.get("risk")) || 0;
@@ -586,40 +616,46 @@
       var meslek = params.get("meslek") || "";
       var adaptasyonMin = params.get("adaptasyonMin") || "";
       var adaptasyonMax = params.get("adaptasyonMax") || "";
+      var isim = params.get("isim") || "";
+
+      // İsim parametresi varsa otomatik doldur
+      if (isim) {
+        document.getElementById("isimSoyisim").value = isim;
+      }
 
       var kisiselDiv = document.getElementById("kisiselBilgi");
       var icerikDiv = document.getElementById("kisiselIcerik");
       var notlar = [];
 
-      // Risk skoruna gore adaptasyon surelerini guncelle
+      // Risk skoruna göre adaptasyon sürelerini güncelle
       if (risk >= 7) {
-        document.getElementById("adGun1").textContent = "1-5 Gun";
-        document.getElementById("adGun2").textContent = "5-10 Gun";
-        document.getElementById("adGun3").textContent = "10-21 Gun";
-        document.getElementById("adGun4").textContent = "21+ Gun";
-        notlar.push("Recete degerlerinize gore alisma sureci normalden biraz daha uzun olabilir. Sabirli olun, bu tamamen normaldir.");
+        document.getElementById("adGun1").textContent = "1-5 Gün";
+        document.getElementById("adGun2").textContent = "5-10 Gün";
+        document.getElementById("adGun3").textContent = "10-21 Gün";
+        document.getElementById("adGun4").textContent = "21+ Gün";
+        notlar.push("Reçete değerlerinize göre alışma süreci normalden biraz daha uzun olabilir. Sabırlı olun, bu tamamen normaldir.");
       } else if (risk >= 5) {
-        document.getElementById("adGun3").textContent = "7-18 Gun";
-        document.getElementById("adGun4").textContent = "18+ Gun";
+        document.getElementById("adGun3").textContent = "7-18 Gün";
+        document.getElementById("adGun4").textContent = "18+ Gün";
       }
 
-      // Ilk kullanim notu
+      // İlk kullanım notu
       if (ilk) {
-        notlar.push("Ilk defa progresif gozluk kullandiginiz icin alisma sureci biraz daha uzun olabilir. Gozlugunuzu gunden gune daha cok sevin, sabirin!");
-        notlar.push("Ilk gunlerde hafif bas donmesi veya dengesizlik hissi yasayabilirsiniz. Bu normaldir ve gecer.");
+        notlar.push("İlk defa progresif gözlük kullandığınız için alışma süreci biraz daha uzun olabilir. Gözlüğünüzü günden güne daha çok seveceksiniz, sabırlı olun!");
+        notlar.push("İlk günlerde hafif baş dönmesi veya dengesizlik hissi yaşayabilirsiniz. Bu normaldir ve geçer.");
       }
 
-      // Meslek bazli notlar
+      // Meslek bazlı notlar
       if (meslek === "ofis" || meslek === "bilgisayar") {
-        notlar.push("Bilgisayar basinda calisirken: Ekrani goz hizasina getirin, camin orta bolgesinden bakin. Her 20 dakikada uzaga bakin.");
+        notlar.push("Bilgisayar başında çalışırken: Ekranı göz hizasına getirin, camın orta bölgesinden bakın. Her 20 dakikada uzağa bakın.");
       } else if (meslek === "sofor") {
-        notlar.push("Arac kullanirken dikkat: Yan aynalara bakarken mutlaka basinizi cevirin. Ilk hafta uzun yolculuk yapmayin.");
+        notlar.push("Araç kullanırken dikkat: Yan aynalara bakarken mutlaka başınızı çevirin. İlk hafta uzun yolculuk yapmayın.");
       } else if (meslek === "aktif" || meslek === "spor") {
-        notlar.push("Aktif yasaminizda: Ani bas hareketlerinden kacinin, spor yaparken gozluk kaymasin diye bant kullanabilirsiniz.");
+        notlar.push("Aktif yaşamınızda: Ani baş hareketlerinden kaçının, spor yaparken gözlük kaymasın diye bant kullanabilirsiniz.");
       }
 
       if (adaptasyonMin && adaptasyonMax) {
-        notlar.push("Sizin icin beklenen alisma suresi: " + adaptasyonMin + " - " + adaptasyonMax + " gundur.");
+        notlar.push("Sizin için beklenen alışma süresi: " + adaptasyonMin + " - " + adaptasyonMax + " gündür.");
       }
 
       if (notlar.length > 0) {
