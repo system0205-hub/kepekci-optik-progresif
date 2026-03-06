@@ -28,6 +28,13 @@
   var OTO_YAKALAMA_SURE_MS = 3000; // Ideal mesafede bekleme suresi (3 saniye)
   var OTO_YAKALAMA_AKTIF = true;
 
+  // Burun koprüsu landmark indeksi (monokuler PD icin yuz merkez hatti)
+  var BURUN_KOPRUSU = 168; // Iki goz arasindaki burun koprüsü tepesi
+
+  // PD stabilizasyon sabitleri
+  var PD_ORTALAMA_KARE = 10; // Son 10 karenin ortalamasini al
+  var PD_MIN_MESAFE_CM = 25; // Bu mesafenin altinda PD gosterme
+
   // MediaPipe iris landmark indeksleri
   var IRIS_SOL_MERKEZ = 468; // Kamera perspektifinden sol = kisinin sag gozu
   var IRIS_SAG_MERKEZ = 473; // Kamera perspektifinden sag = kisinin sol gozu
@@ -368,6 +375,9 @@
       kalanMs: OTO_YAKALAMA_SURE_MS
     };
 
+    // PD stabilizasyon buffer'i
+    var pdBuffer = [];  // Son N karenin PD degerleri
+
     function algilamaDongusu() {
       if (!durum.kameraAktif || durum.mevcutAdim !== ADIM.KAMERA) return;
 
@@ -464,10 +474,11 @@
             var tahminMesafeMm = mesafeTahminEt(ortIrisCapPx, w);
             var tahminMesafeCm = Math.round(tahminMesafeMm / 10);
 
-            // Yakin PD hesapla (iris kalibrasyonu ile)
-            var burunOrtaX = (solIris.x * w + sagIris.x * w) / 2;
-            var yakinPdSag = Math.abs(solIris.x * w - burunOrtaX) * pxToMm;
-            var yakinPdSol = Math.abs(sagIris.x * w - burunOrtaX) * pxToMm;
+            // Monokuler PD hesapla - burun koprusu landmark'i ile (R != L olabilir)
+            var burunKoprusu = landmarks[BURUN_KOPRUSU];
+            var burunX = burunKoprusu ? burunKoprusu.x * w : (solIris.x * w + sagIris.x * w) / 2;
+            var yakinPdSag = Math.abs(solIris.x * w - burunX) * pxToMm;  // Kisinin sag gozu
+            var yakinPdSol = Math.abs(sagIris.x * w - burunX) * pxToMm;  // Kisinin sol gozu
             var yakinPdToplam = Math.abs(solIris.x * w - sagIris.x * w) * pxToMm;
 
             // Konverjans duzeltmesi: yakin PD -> uzak PD
@@ -475,14 +486,32 @@
             var pdSol = uzakPdHesapla(yakinPdSol, tahminMesafeMm);
             var pdToplam = uzakPdHesapla(yakinPdToplam, tahminMesafeMm);
 
+            // PD stabilizasyonu: son N karenin hareketli ortalamasi
+            pdBuffer.push({ sag: pdSag, sol: pdSol, toplam: pdToplam });
+            if (pdBuffer.length > PD_ORTALAMA_KARE) pdBuffer.shift();
+            var ortPdSag = 0, ortPdSol = 0, ortPdToplam = 0;
+            for (var pb = 0; pb < pdBuffer.length; pb++) {
+              ortPdSag += pdBuffer[pb].sag;
+              ortPdSol += pdBuffer[pb].sol;
+              ortPdToplam += pdBuffer[pb].toplam;
+            }
+            ortPdSag /= pdBuffer.length;
+            ortPdSol /= pdBuffer.length;
+            ortPdToplam /= pdBuffer.length;
+
             // Son canli PD degerlerini sakla (fotograf PD hesabi icin)
             durum.canliPdVerisi = {
-              pdSag: pdSag,
-              pdSol: pdSol,
-              pdToplam: pdToplam
+              pdSag: ortPdSag,
+              pdSol: ortPdSol,
+              pdToplam: ortPdToplam
             };
 
-            canliPd.textContent = "PD: ~" + pdToplam.toFixed(1) + " mm (R: " + pdSag.toFixed(1) + " | L: " + pdSol.toFixed(1) + ")";
+            // Mesafe cok yakinsa PD guvenilir degil - uyari goster
+            if (tahminMesafeCm < PD_MIN_MESAFE_CM) {
+              canliPd.textContent = "PD: -- mm (cok yakin, uzaklasin)";
+            } else {
+              canliPd.textContent = "PD: ~" + ortPdToplam.toFixed(1) + " mm (R: " + ortPdSag.toFixed(1) + " | L: " + ortPdSol.toFixed(1) + ")";
+            }
             canliPd.classList.add("goster");
             var mDurum = mesafeDurumu(tahminMesafeCm);
             mesafeGosterge.className = "mesafe-gosterge goster " + mDurum;
@@ -643,6 +672,18 @@
           sagCap: irisCapiHesapla(sagMerkez, sagIrisCevreler),
           solCap: irisCapiHesapla(solMerkez, solIrisCevreler)
         };
+
+        // Burun koprusu pozisyonunu sakla (monokuler PD icin)
+        var burunKoprusuYakalama = landmarks[BURUN_KOPRUSU];
+        if (burunKoprusuYakalama) {
+          if (durum.facingMode === "user") {
+            durum.burunKoprusuX = burunKoprusuYakalama.x * w; // Aynalanmis
+          } else {
+            durum.burunKoprusuX = burunKoprusuYakalama.x * w;
+          }
+        } else {
+          durum.burunKoprusuX = (durum.irisNoktalar.sagX + durum.irisNoktalar.solX) / 2;
+        }
 
         // Kamera mesafesini tahmin et ve sakla (konverjans duzeltmesi icin)
         var ortIrisCapYakalama = (durum.irisCaplari.sagCap + durum.irisCaplari.solCap) / 2;
@@ -962,9 +1003,10 @@
       pdSolMm = durum.canliPdVerisi.pdSol;
     } else if (durum.irisNoktalar && durum.irisCaplari) {
       // Fallback: IMAGE mode ile hesapla (canli veri yoksa)
-      var burunOrtaX = (durum.irisNoktalar.sagX + durum.irisNoktalar.solX) / 2;
-      var pdSagPx = Math.abs(durum.irisNoktalar.sagX - burunOrtaX);
-      var pdSolPx = Math.abs(durum.irisNoktalar.solX - burunOrtaX);
+      // Burun koprusu landmark'i ile monokuler PD (iris ortasi degil!)
+      var burunRefX = durum.burunKoprusuX || (durum.irisNoktalar.sagX + durum.irisNoktalar.solX) / 2;
+      var pdSagPx = Math.abs(durum.irisNoktalar.sagX - burunRefX);
+      var pdSolPx = Math.abs(durum.irisNoktalar.solX - burunRefX);
       var ortIrisCap = (durum.irisCaplari.sagCap + durum.irisCaplari.solCap) / 2;
       var irisMmPerPx = IRIS_CAPI_MM / ortIrisCap;
       pdSagMm = pdSagPx * irisMmPerPx;
