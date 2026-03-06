@@ -1574,6 +1574,7 @@ function olusturBilgiNotlari(recete, koridorSonuc, riskSonuc) {
   var sphSol = Math.abs(parseFloat(recete.sol.sph) || 0);
   var pKoridor = koridorSonuc.idealKoridor;
   var pKoridorCm = pKoridor / 10; // mm → cm
+  var pAddMax = Math.max(parseFloat(recete.sag.add) || 0, parseFloat(recete.sol.add) || 0);
 
   // Prentice kurali: P = c x F (c = santimetre, F = diyoptri)
   var prizmaSag = pKoridorCm * sphSag;
@@ -1592,24 +1593,53 @@ function olusturBilgiNotlari(recete, koridorSonuc, riskSonuc) {
     var prizmaRenk = prizmaFark >= 1.50 ? "kritik" : "uyari";
     var slabOffGerekli = prizmaFark >= 1.50;
 
-    // Risk seviyesi metni
+    // Minkwitz catismasi kontrolu
+    var minkwitzCatismasi = pAddMax >= 2.00 && prizmaFark >= 1.50;
+
+    // Risk seviyesi metni — daha net ve yonlendirici
     var prizmaRiskYorum = "";
     if (prizmaFark >= 2.00) {
-      prizmaRiskYorum = "YUKSEK RISK — Cift gorme (diplopi) olasiligi var. Slab-off veya prizma kompanzasyonu degerlendirilmeli.";
+      prizmaRiskYorum = "YUKSEK RISK — Cift gorme (diplopi) olasiligi var. Bu hastaya standart stok cam UYGUN DEGILDIR. Asagidaki 'Ne yapmaliyiz?' bolumune bakiniz.";
     } else if (prizmaFark >= 1.50) {
-      prizmaRiskYorum = "ORTA-YUKSEK RISK — Hastada bas agrisi ve uyum guclugu olasiligi yuksek. Slab-off prizmasi degerlendirilmeli.";
+      prizmaRiskYorum = "ORTA-YUKSEK RISK — Bas agrisi ve uyum guclugu beklenir. FreeForm tasarim ZORUNLUDUR. Asagidaki 'Ne yapmaliyiz?' bolumune bakiniz.";
     } else {
-      prizmaRiskYorum = "DIKKAT — Hassas hastalarda uyum sorunu olusabilir. Kisisel tasarim (FreeForm) onerilir.";
+      prizmaRiskYorum = "DIKKAT — Hassas hastalarda uyum sorunu olusabilir. FreeForm tasarim onerilir, stok camda dikkatli montaj gerekir.";
     }
 
-    // Koridor kisaltma karsilastirmasi
+    // Koridor kisaltma karsilastirmasi — Minkwitz catismasiyla birlikte
     var koridorKarsilastirma = "";
     if (altKoridor < pKoridor) {
-      koridorKarsilastirma = "Mevcut koridor " + pKoridor + "mm → fark: " + prizmaFark.toFixed(2) + " prizma. " +
-        altKoridor + "mm kisa koridor secilirse → fark: " + altPrizmaFark.toFixed(2) + " prizmaya duser. " +
-        "Ancak kisa koridor periferik distorsiyonu artirir (Minkwitz). ADD 2.00D uzerindeyse cok kisa koridor onerilmez.";
+      koridorKarsilastirma = "Hesap: " + pKoridor + "mm koridor → " + prizmaFark.toFixed(2) + "Δ fark. " +
+        altKoridor + "mm koridor → " + altPrizmaFark.toFixed(2) + "Δ fark. ";
+      if (minkwitzCatismasi) {
+        koridorKarsilastirma += "ANCAK: Bu hastanin ADD degeri " + pAddMax.toFixed(2) + "D (yuksek). Minkwitz teoremine gore kisa koridor periferik bozulmayi arttirir. " +
+          "SONUC: Koridoru kisaltmak YANLIS COZUMDUR. Dogru cozum: Slab-off prizmasi veya FreeForm tasarimla prizma kompanzasyonu.";
+      } else {
+        koridorKarsilastirma += "ADD degeri " + pAddMax.toFixed(2) + "D (dusuk-orta). Kisa koridor secenegi uygulanabilir, " +
+          "ancak en iyi sonuc icin FreeForm tasarim tercih edilmelidir.";
+      }
     } else {
-      koridorKarsilastirma = "Koridor zaten " + pKoridor + "mm (kisa). Daha fazla kisaltma yapilamaz. Slab-off veya prizma kompanzasyonu dusunulmelidir.";
+      koridorKarsilastirma = "Koridor zaten " + pKoridor + "mm (en kisa seviye). Koridoru daha fazla kisaltmak mumkun degil. " +
+        "Cozum: Slab-off prizmasi, FreeForm prizma kompanzasyonu veya bir goze kontak lens.";
+    }
+
+    // Pratik oneri metni — en onemli soru
+    var pratikOneri = "";
+    if (prizmaFark >= 2.00) {
+      pratikOneri = "1) ZORUNLU: FreeForm bireysel tasarim cam secin (stok cam UYGUN DEGIL). " +
+        "2) ONERILEN: Slab-off prizmasi degerlendirilmeli — cam laboratuvarinizla gorusun. " +
+        "3) ALTERNATIF: Dusuk goze kontak lens + diger goze gozluk (mono-vizyon). " +
+        "4) MONTAJ: Optik merkez yuksekliklerini +/- 0.5mm hassasiyetle ayarlayin.";
+    } else if (prizmaFark >= 1.50) {
+      pratikOneri = "1) ONERILEN: FreeForm bireysel tasarim cam secin. " +
+        "2) DEGERLENDIR: Slab-off prizmasi — " + prizmaFark.toFixed(2) + "Δ fark sinirda, hasta sikayetine gore karar verin. " +
+        "3) MONTAJ: Optik merkez yuksekliklerini hassas ayarlayin, PD olcumunu dogrulayin. " +
+        "4) TAKIP: Hastaya 1 hafta uyum suresi sonrasi kontrol randevusu verin.";
+    } else {
+      pratikOneri = "1) TERCIH: FreeForm bireysel tasarim cam daha iyi sonuc verir. " +
+        "2) STOK CAM: Kullanilabilir, ancak montaj hassasiyeti cok onemli. " +
+        "3) MONTAJ: Optik merkez ve PD olcumlerini dikkatle yapin. " +
+        "4) BILGI: Hastaya yakin gorusde hafif rahatsizlik olabilecegini bildirin.";
     }
 
     notlar.push({
@@ -1620,24 +1650,35 @@ function olusturBilgiNotlari(recete, koridorSonuc, riskSonuc) {
       gozDegerleri: "Sag: " + prizmaSag.toFixed(2) + "\u0394 | Sol: " + prizmaSol.toFixed(2) + "\u0394 | Fark: " + prizmaFark.toFixed(2) + "\u0394",
       icerik: [
         {
-          soru: "Diferansiyel prizmatik etki nedir?",
-          cevap: "Prentice kurali: Prizma = Mesafe (cm) x Guc (D). Progresif camda okuma noktasina bakarken gozler koridor uzunlugu kadar asagi bakar. Her gozun numarasi farkli oldugunda, farkli miktarda prizmatik etki olusur. Bu fark binokuler gorme uyumunu bozar."
+          soru: "Bu ne demek?",
+          cevap: "Progresif camda okuma noktasina bakarken gozler asagi kayar. Prentice kurali (P = mesafe x guc) geregi, farkli numarali gozler farkli prizma etkisi yasар. " +
+            "Bu hastanin gozleri arasinda " + prizmaFark.toFixed(2) + "Δ (prizma diyoptri) fark var. " +
+            "1.00Δ uzerindeki farklar uyum sorununa, 1.50Δ uzerindekiler bas agrisi ve cift gormeye yol acabilir."
         },
         {
-          soru: "Bu recetede ne oluyor?",
-          cevap: "Sag goz: " + pKoridorCm.toFixed(1) + " cm x " + sphSag.toFixed(2) + " D = " + prizmaSag.toFixed(2) + " prizma. " +
-            "Sol goz: " + pKoridorCm.toFixed(1) + " cm x " + sphSol.toFixed(2) + " D = " + prizmaSol.toFixed(2) + " prizma. " +
-            "Fark: " + prizmaFark.toFixed(2) + " prizma diyoptri. " + prizmaRiskYorum
+          soru: "Bu recetede hesap nasil?",
+          cevap: "Formul: Prizma = Koridor (cm) x SPH (D). | " +
+            "Sag goz: " + pKoridorCm.toFixed(1) + " cm x " + sphSag.toFixed(2) + " D = " + prizmaSag.toFixed(2) + "Δ | " +
+            "Sol goz: " + pKoridorCm.toFixed(1) + " cm x " + sphSol.toFixed(2) + " D = " + prizmaSol.toFixed(2) + "Δ | " +
+            "Fark: " + prizmaFark.toFixed(2) + "Δ — " + prizmaRiskYorum
         },
         {
-          soru: "Koridor kisaltilirsa ne olur?",
+          soru: "Koridoru kisaltarak cozulebilir mi?",
           cevap: koridorKarsilastirma
         },
         {
-          soru: "Slab-off gerekli mi?",
+          soru: "Ne yapmaliyiz?",
+          cevap: pratikOneri
+        },
+        {
+          soru: "Slab-off nedir, ne zaman gerekir?",
           cevap: slabOffGerekli
-            ? "Prizma farki " + prizmaFark.toFixed(2) + " diyoptri (>= 1.50). Slab-off prizmasi veya prizma kompanzasyonlu cam degerlendirilmelidir. Slab-off, camin alt kisminda prizma uygulayarak iki goz arasindaki farki dengeler."
-            : "Prizma farki " + prizmaFark.toFixed(2) + " diyoptri (< 1.50). Slab-off genellikle gerekmez. Ancak hasta hassassa veya sikayeti varsa degerlendirilmelidir."
+            ? "Slab-off: Camin alt yarisina ters yonde prizma taslanarak iki goz arasindaki fark dengelenir. " +
+              "Bu hastada fark " + prizmaFark.toFixed(2) + "Δ (>= 1.50Δ siniri). Slab-off DEGERLENDIRILMELI. " +
+              "Not: Slab-off camda gorunur bir cizgi birakir — hastaya onceden bilgi verin. FreeForm prizma kompanzasyonu gorsel olarak daha temiz bir alternatiftir."
+            : "Slab-off: Camin alt yarisina ters yonde prizma taslanarak iki goz arasindaki fark dengelenir. " +
+              "Bu hastada fark " + prizmaFark.toFixed(2) + "Δ (< 1.50Δ siniri). Slab-off genellikle GEREKMEZ. " +
+              "Ancak hasta yakin gorusde cift gorme veya bulanik gorme bildirirse yeniden degerlendirilmelidir."
         }
       ],
       svgTip: "prizma-grafik",
