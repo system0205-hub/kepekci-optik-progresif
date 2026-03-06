@@ -7,10 +7,16 @@
   // --- Sabitler ---
   var OLCEK_MM = 30; // Olcek kartindaki referans mesafesi (mm)
   var MAX_DOSYA_BOYUT = 10 * 1024 * 1024; // 10 MB
-  var NOKTA_YARICAP = 8;
+  var MOBIL_CIHAZ = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  var NOKTA_YARICAP = MOBIL_CIHAZ ? 14 : 8; // Mobilde daha buyuk isaretciler
   var BUYUTME_ADIM = 0.2;
   var MIN_ZOOM = 0.3;
   var MAX_ZOOM = 5;
+
+  // Buyutec (loupe) sabitleri
+  var LOUPE_BOYUT = 140;        // Buyutec capi (px)
+  var LOUPE_ZOOM = 3;           // Buyutec zoom seviyesi
+  var LOUPE_OFFSET_Y = -90;     // Parmak ustunde gosterim (px)
 
   // Nokta renkleri ve adlari
   var NOKTALAR = [
@@ -144,27 +150,205 @@
       zoomYap(durum.zoom + delta);
     }, { passive: false });
 
-    // Dokunmatik destek
+    // --- Gelismis Dokunmatik Destek ---
     var sonDokunmaUzakligi = 0;
+    var dokunmaModu = ""; // "isaretle", "pan", "pinch"
+    var dokunmaBaslangicX = 0, dokunmaBaslangicY = 0;
+    var dokunmaHareketVar = false;
+    var loupeCanvas = null; // Buyutec canvas
+    var loupeCtx = null;
+
+    // Buyutec olustur
+    function loupeOlustur() {
+      if (loupeCanvas) return;
+      loupeCanvas = document.createElement("canvas");
+      loupeCanvas.width = LOUPE_BOYUT * 2;  // Retina
+      loupeCanvas.height = LOUPE_BOYUT * 2;
+      loupeCanvas.style.cssText = "position:fixed;width:" + LOUPE_BOYUT + "px;height:" + LOUPE_BOYUT + "px;" +
+        "border-radius:50%;border:3px solid var(--primary, #3b82f6);box-shadow:0 4px 20px rgba(0,0,0,0.3);" +
+        "pointer-events:none;z-index:9999;display:none;";
+      document.body.appendChild(loupeCanvas);
+      loupeCtx = loupeCanvas.getContext("2d");
+    }
+
+    // Buyutec goster
+    function loupeGoster(touchX, touchY) {
+      if (!loupeCanvas || !durum.gorsel) return;
+
+      var rect = canvas.getBoundingClientRect();
+      var canvasX = touchX - rect.left;
+      var canvasY = touchY - rect.top;
+      var gorselKoord = canvasGorsel(canvasX, canvasY);
+
+      // Buyutec pozisyonu (parmak ustunde)
+      var loupeX = touchX - LOUPE_BOYUT / 2;
+      var loupeY = touchY + LOUPE_OFFSET_Y - LOUPE_BOYUT / 2;
+      // Ekran ustunden tasarsa alta al
+      if (loupeY < 10) loupeY = touchY + 60;
+      loupeCanvas.style.left = loupeX + "px";
+      loupeCanvas.style.top = loupeY + "px";
+      loupeCanvas.style.display = "block";
+
+      // Buyutec icerigini ciz
+      var lb = LOUPE_BOYUT * 2; // Retina boyut
+      loupeCtx.clearRect(0, 0, lb, lb);
+
+      // Daire klip
+      loupeCtx.save();
+      loupeCtx.beginPath();
+      loupeCtx.arc(lb / 2, lb / 2, lb / 2, 0, Math.PI * 2);
+      loupeCtx.clip();
+
+      // Gorselden buyutulmus alan ciz
+      var kaynakBoyut = LOUPE_BOYUT / LOUPE_ZOOM;
+      loupeCtx.drawImage(
+        durum.gorsel,
+        gorselKoord.x - kaynakBoyut / 2,
+        gorselKoord.y - kaynakBoyut / 2,
+        kaynakBoyut, kaynakBoyut,
+        0, 0, lb, lb
+      );
+
+      // Mevcut noktalari buyutecte ciz
+      for (var i = 0; i < durum.noktalar.length; i++) {
+        var np = durum.noktalar[i];
+        var npx = (np.x - gorselKoord.x + kaynakBoyut / 2) / kaynakBoyut * lb;
+        var npy = (np.y - gorselKoord.y + kaynakBoyut / 2) / kaynakBoyut * lb;
+        if (npx > -20 && npx < lb + 20 && npy > -20 && npy < lb + 20) {
+          loupeCtx.beginPath();
+          loupeCtx.arc(npx, npy, 10, 0, Math.PI * 2);
+          loupeCtx.fillStyle = NOKTALAR[i].renk;
+          loupeCtx.fill();
+          loupeCtx.strokeStyle = "#fff";
+          loupeCtx.lineWidth = 3;
+          loupeCtx.stroke();
+        }
+      }
+
+      // Arti isareti (crosshair)
+      loupeCtx.strokeStyle = "rgba(255,255,255,0.9)";
+      loupeCtx.lineWidth = 2;
+      loupeCtx.beginPath();
+      loupeCtx.moveTo(lb / 2 - 18, lb / 2);
+      loupeCtx.lineTo(lb / 2 + 18, lb / 2);
+      loupeCtx.moveTo(lb / 2, lb / 2 - 18);
+      loupeCtx.lineTo(lb / 2, lb / 2 + 18);
+      loupeCtx.stroke();
+
+      // Arti isareti koyu cerceve
+      loupeCtx.strokeStyle = "rgba(0,0,0,0.4)";
+      loupeCtx.lineWidth = 1;
+      loupeCtx.beginPath();
+      loupeCtx.moveTo(lb / 2 - 18, lb / 2);
+      loupeCtx.lineTo(lb / 2 + 18, lb / 2);
+      loupeCtx.moveTo(lb / 2, lb / 2 - 18);
+      loupeCtx.lineTo(lb / 2, lb / 2 + 18);
+      loupeCtx.stroke();
+
+      loupeCtx.restore();
+
+      // Daire kenarligi
+      loupeCtx.beginPath();
+      loupeCtx.arc(lb / 2, lb / 2, lb / 2 - 2, 0, Math.PI * 2);
+      loupeCtx.strokeStyle = "#3b82f6";
+      loupeCtx.lineWidth = 4;
+      loupeCtx.stroke();
+    }
+
+    function loupeGizle() {
+      if (loupeCanvas) loupeCanvas.style.display = "none";
+    }
+
     canvas.addEventListener("touchstart", function(e) {
       if (e.touches.length === 2) {
+        // Iki parmak: pinch zoom
+        dokunmaModu = "pinch";
+        loupeGizle();
         var dx = e.touches[0].clientX - e.touches[1].clientX;
         var dy = e.touches[0].clientY - e.touches[1].clientY;
         sonDokunmaUzakligi = Math.sqrt(dx * dx + dy * dy);
+      } else if (e.touches.length === 1) {
+        // Tek parmak: basla (isaretle veya pan olacak)
+        dokunmaBaslangicX = e.touches[0].clientX;
+        dokunmaBaslangicY = e.touches[0].clientY;
+        dokunmaHareketVar = false;
+        dokunmaModu = "bekle"; // Hareket ederse pan, etmezse isaretle
+        // Buyutec olustur ve goster
+        if (durum.mevcutAdim >= 1 && durum.mevcutAdim <= 6) {
+          loupeOlustur();
+          loupeGoster(e.touches[0].clientX, e.touches[0].clientY);
+        }
       }
     }, { passive: true });
 
     canvas.addEventListener("touchmove", function(e) {
-      if (e.touches.length === 2) {
-        e.preventDefault();
+      e.preventDefault();
+      if (e.touches.length === 2 && dokunmaModu === "pinch") {
+        // Pinch zoom
         var dx = e.touches[0].clientX - e.touches[1].clientX;
         var dy = e.touches[0].clientY - e.touches[1].clientY;
         var uzaklik = Math.sqrt(dx * dx + dy * dy);
         var oran = uzaklik / sonDokunmaUzakligi;
         zoomYap(durum.zoom * oran);
         sonDokunmaUzakligi = uzaklik;
+      } else if (e.touches.length === 1) {
+        var tx = e.touches[0].clientX;
+        var ty = e.touches[0].clientY;
+        var hareketMesafe = Math.sqrt(
+          Math.pow(tx - dokunmaBaslangicX, 2) +
+          Math.pow(ty - dokunmaBaslangicY, 2)
+        );
+
+        if (hareketMesafe > 15 && dokunmaModu === "bekle") {
+          // 15px'den fazla hareket: pan moduna gec
+          dokunmaModu = "pan";
+          loupeGizle();
+        }
+
+        if (dokunmaModu === "pan") {
+          // Tek parmak pan
+          var ddx = tx - dokunmaBaslangicX;
+          var ddy = ty - dokunmaBaslangicY;
+          durum.panX += ddx;
+          durum.panY += ddy;
+          dokunmaBaslangicX = tx;
+          dokunmaBaslangicY = ty;
+          dokunmaHareketVar = true;
+          ciz();
+        } else if (dokunmaModu === "bekle") {
+          // Henuz karar verilmedi ama buyuteci guncelle
+          loupeGoster(tx, ty);
+        }
       }
     }, { passive: false });
+
+    canvas.addEventListener("touchend", function(e) {
+      if (dokunmaModu === "bekle" && !dokunmaHareketVar) {
+        // Kisa dokunma: nokta koy
+        loupeGizle();
+        if (durum.mevcutAdim >= 1 && durum.mevcutAdim <= 6) {
+          // Son dokunma pozisyonuna nokta koy
+          var rect = canvas.getBoundingClientRect();
+          var canvasX = dokunmaBaslangicX - rect.left;
+          var canvasY = dokunmaBaslangicY - rect.top;
+          var gorselKoord = canvasGorsel(canvasX, canvasY);
+
+          if (gorselKoord.x >= 0 && gorselKoord.y >= 0 &&
+              gorselKoord.x <= durum.gorsel.width && gorselKoord.y <= durum.gorsel.height) {
+            durum.noktalar.push({ x: gorselKoord.x, y: gorselKoord.y });
+            durum.mevcutAdim++;
+            ciz();
+            goruntuguncelle();
+            if (durum.noktalar.length === 6) {
+              hesaplaOlcumler();
+            }
+          }
+        }
+      } else {
+        loupeGizle();
+      }
+      dokunmaModu = "";
+    }, { passive: true });
 
     // Butonlar
     btnGeriAl.addEventListener("click", geriAl);
