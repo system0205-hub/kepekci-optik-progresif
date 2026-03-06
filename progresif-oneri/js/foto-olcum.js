@@ -13,10 +13,8 @@
   var MIN_ZOOM = 0.3;
   var MAX_ZOOM = 5;
 
-  // Buyutec (loupe) sabitleri
-  var LOUPE_BOYUT = 140;        // Buyutec capi (px)
-  var LOUPE_ZOOM = 3;           // Buyutec zoom seviyesi
-  var LOUPE_OFFSET_Y = -90;     // Parmak ustunde gosterim (px)
+  // Iki parmak pan/zoom icin esik
+  var IKI_PARMAK_PAN_ESIK = 5; // px - iki parmakta pan baslama esigi
 
   // Nokta renkleri ve adlari
   var NOKTALAR = [
@@ -150,235 +148,90 @@
       zoomYap(durum.zoom + delta);
     }, { passive: false });
 
-    // --- Gelismis Dokunmatik Destek ---
+    // --- Basit Dokunmatik Destek ---
     // Mantik:
-    //   Hizli dokunma (<300ms, hareket <10px) -> direkt nokta koy
-    //   Uzun basma (>=300ms) -> buyutec ac, parmakla gez, kaldir -> nokta koy
-    //   Hizli kaydirma (300ms olmadan >15px hareket) -> pan
-    //   Iki parmak -> pinch zoom
+    //   Tek parmak dokunma = nokta koy (her zaman)
+    //   Iki parmak = pinch zoom + pan (kaydirma)
+    //   Tek parmak surukle = HIC BIR SEY (karmasiklik yok)
     var sonDokunmaUzakligi = 0;
-    var dokunmaModu = ""; // "bekle", "loupe", "pan", "pinch"
+    var dokunmaModu = ""; // "tek", "pinch"
     var dokunmaBaslangicX = 0, dokunmaBaslangicY = 0;
-    var dokunmaSonX = 0, dokunmaSonY = 0;
-    var uzunBasmaTimer = null;
-    var UZUN_BASMA_MS = 300; // Uzun basma esigi (ms)
-    var loupeCanvas = null;
-    var loupeCtx = null;
-
-    // Buyutec olustur
-    function loupeOlustur() {
-      if (loupeCanvas) return;
-      loupeCanvas = document.createElement("canvas");
-      loupeCanvas.width = LOUPE_BOYUT * 2;  // Retina
-      loupeCanvas.height = LOUPE_BOYUT * 2;
-      loupeCanvas.style.cssText = "position:fixed;width:" + LOUPE_BOYUT + "px;height:" + LOUPE_BOYUT + "px;" +
-        "border-radius:50%;border:3px solid #3b82f6;box-shadow:0 4px 20px rgba(0,0,0,0.3);" +
-        "pointer-events:none;z-index:9999;display:none;";
-      document.body.appendChild(loupeCanvas);
-      loupeCtx = loupeCanvas.getContext("2d");
-    }
-
-    // Buyutec goster/guncelle
-    function loupeGoster(touchX, touchY) {
-      if (!loupeCanvas || !durum.gorsel) return;
-
-      var rect = canvas.getBoundingClientRect();
-      var canvasX = touchX - rect.left;
-      var canvasY = touchY - rect.top;
-      var gorselKoord = canvasGorsel(canvasX, canvasY);
-
-      // Buyutec pozisyonu (parmak ustunde)
-      var loupeX = touchX - LOUPE_BOYUT / 2;
-      var loupeY = touchY + LOUPE_OFFSET_Y - LOUPE_BOYUT / 2;
-      // Ekran ustunden tasarsa alta al
-      if (loupeY < 10) loupeY = touchY + 60;
-      // Ekranin sagina tasarsa sola cek
-      if (loupeX + LOUPE_BOYUT > window.innerWidth - 5) loupeX = window.innerWidth - LOUPE_BOYUT - 5;
-      if (loupeX < 5) loupeX = 5;
-      loupeCanvas.style.left = loupeX + "px";
-      loupeCanvas.style.top = loupeY + "px";
-      loupeCanvas.style.display = "block";
-
-      // Buyutec icerigini ciz
-      var lb = LOUPE_BOYUT * 2; // Retina boyut
-      loupeCtx.clearRect(0, 0, lb, lb);
-
-      // Daire klip
-      loupeCtx.save();
-      loupeCtx.beginPath();
-      loupeCtx.arc(lb / 2, lb / 2, lb / 2, 0, Math.PI * 2);
-      loupeCtx.clip();
-
-      // Gorselden buyutulmus alan ciz
-      var kaynakBoyut = LOUPE_BOYUT / LOUPE_ZOOM;
-      loupeCtx.drawImage(
-        durum.gorsel,
-        gorselKoord.x - kaynakBoyut / 2,
-        gorselKoord.y - kaynakBoyut / 2,
-        kaynakBoyut, kaynakBoyut,
-        0, 0, lb, lb
-      );
-
-      // Mevcut noktalari buyutecte ciz
-      for (var i = 0; i < durum.noktalar.length; i++) {
-        var np = durum.noktalar[i];
-        var npx = (np.x - gorselKoord.x + kaynakBoyut / 2) / kaynakBoyut * lb;
-        var npy = (np.y - gorselKoord.y + kaynakBoyut / 2) / kaynakBoyut * lb;
-        if (npx > -20 && npx < lb + 20 && npy > -20 && npy < lb + 20) {
-          loupeCtx.beginPath();
-          loupeCtx.arc(npx, npy, 10, 0, Math.PI * 2);
-          loupeCtx.fillStyle = NOKTALAR[i].renk;
-          loupeCtx.fill();
-          loupeCtx.strokeStyle = "#fff";
-          loupeCtx.lineWidth = 3;
-          loupeCtx.stroke();
-        }
-      }
-
-      // Arti isareti (crosshair)
-      loupeCtx.strokeStyle = "rgba(255,255,255,0.9)";
-      loupeCtx.lineWidth = 2;
-      loupeCtx.beginPath();
-      loupeCtx.moveTo(lb / 2 - 18, lb / 2);
-      loupeCtx.lineTo(lb / 2 + 18, lb / 2);
-      loupeCtx.moveTo(lb / 2, lb / 2 - 18);
-      loupeCtx.lineTo(lb / 2, lb / 2 + 18);
-      loupeCtx.stroke();
-
-      // Arti isareti koyu cerceve
-      loupeCtx.strokeStyle = "rgba(0,0,0,0.4)";
-      loupeCtx.lineWidth = 1;
-      loupeCtx.beginPath();
-      loupeCtx.moveTo(lb / 2 - 18, lb / 2);
-      loupeCtx.lineTo(lb / 2 + 18, lb / 2);
-      loupeCtx.moveTo(lb / 2, lb / 2 - 18);
-      loupeCtx.lineTo(lb / 2, lb / 2 + 18);
-      loupeCtx.stroke();
-
-      loupeCtx.restore();
-
-      // Daire kenarligi
-      loupeCtx.beginPath();
-      loupeCtx.arc(lb / 2, lb / 2, lb / 2 - 2, 0, Math.PI * 2);
-      loupeCtx.strokeStyle = "#3b82f6";
-      loupeCtx.lineWidth = 4;
-      loupeCtx.stroke();
-    }
-
-    function loupeGizle() {
-      if (loupeCanvas) loupeCanvas.style.display = "none";
-    }
-
-    // Nokta koyma yardimci fonksiyonu
-    function noktaKoyDokunma(touchX, touchY) {
-      if (durum.mevcutAdim < 1 || durum.mevcutAdim > 6) return;
-      var rect = canvas.getBoundingClientRect();
-      var canvasX = touchX - rect.left;
-      var canvasY = touchY - rect.top;
-      var gorselKoord = canvasGorsel(canvasX, canvasY);
-
-      if (gorselKoord.x >= 0 && gorselKoord.y >= 0 &&
-          gorselKoord.x <= durum.gorsel.width && gorselKoord.y <= durum.gorsel.height) {
-        durum.noktalar.push({ x: gorselKoord.x, y: gorselKoord.y });
-        durum.mevcutAdim++;
-        ciz();
-        goruntuguncelle();
-        if (durum.noktalar.length === 6) {
-          hesaplaOlcumler();
-        }
-      }
-    }
+    var ikiParmakOrtaX = 0, ikiParmakOrtaY = 0;
 
     canvas.addEventListener("touchstart", function(e) {
+      e.preventDefault(); // Kopyalama/surukle/secim engelle
       if (e.touches.length === 2) {
-        // Iki parmak: pinch zoom
-        if (uzunBasmaTimer) { clearTimeout(uzunBasmaTimer); uzunBasmaTimer = null; }
+        // Iki parmak: pinch zoom + pan
         dokunmaModu = "pinch";
-        loupeGizle();
         var dx = e.touches[0].clientX - e.touches[1].clientX;
         var dy = e.touches[0].clientY - e.touches[1].clientY;
         sonDokunmaUzakligi = Math.sqrt(dx * dx + dy * dy);
+        ikiParmakOrtaX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+        ikiParmakOrtaY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
       } else if (e.touches.length === 1) {
-        // Tek parmak: basla
+        // Tek parmak: baslangic pozisyonunu kaydet
+        dokunmaModu = "tek";
         dokunmaBaslangicX = e.touches[0].clientX;
         dokunmaBaslangicY = e.touches[0].clientY;
-        dokunmaSonX = dokunmaBaslangicX;
-        dokunmaSonY = dokunmaBaslangicY;
-        dokunmaModu = "bekle";
-
-        // Uzun basma zamanlayicisi: 300ms sonra buyutec ac
-        if (durum.mevcutAdim >= 1 && durum.mevcutAdim <= 6) {
-          uzunBasmaTimer = setTimeout(function() {
-            uzunBasmaTimer = null;
-            dokunmaModu = "loupe";
-            loupeOlustur();
-            loupeGoster(dokunmaSonX, dokunmaSonY);
-            // Haptic feedback (destekleniyorsa)
-            if (navigator.vibrate) navigator.vibrate(30);
-          }, UZUN_BASMA_MS);
-        }
       }
-    }, { passive: true });
+    }, { passive: false });
 
     canvas.addEventListener("touchmove", function(e) {
-      e.preventDefault();
-      if (e.touches.length === 2 && dokunmaModu === "pinch") {
-        // Pinch zoom
+      e.preventDefault(); // Sayfa scroll engelle
+      if (e.touches.length === 2) {
+        dokunmaModu = "pinch"; // tek parmaktan gecis olabilir
         var dx = e.touches[0].clientX - e.touches[1].clientX;
         var dy = e.touches[0].clientY - e.touches[1].clientY;
         var uzaklik = Math.sqrt(dx * dx + dy * dy);
-        var oran = uzaklik / sonDokunmaUzakligi;
-        zoomYap(durum.zoom * oran);
-        sonDokunmaUzakligi = uzaklik;
-      } else if (e.touches.length === 1) {
-        var tx = e.touches[0].clientX;
-        var ty = e.touches[0].clientY;
-        dokunmaSonX = tx;
-        dokunmaSonY = ty;
 
-        if (dokunmaModu === "loupe") {
-          // Buyutec modu: parmakla gez, buyutec takip etsin
-          loupeGoster(tx, ty);
-        } else if (dokunmaModu === "bekle") {
-          var hareketMesafe = Math.sqrt(
-            Math.pow(tx - dokunmaBaslangicX, 2) +
-            Math.pow(ty - dokunmaBaslangicY, 2)
-          );
-          if (hareketMesafe > 15) {
-            // Hizli kaydirma: pan moduna gec, uzun basma iptal
-            if (uzunBasmaTimer) { clearTimeout(uzunBasmaTimer); uzunBasmaTimer = null; }
-            dokunmaModu = "pan";
-          }
+        // Pinch zoom
+        if (sonDokunmaUzakligi > 0) {
+          var oran = uzaklik / sonDokunmaUzakligi;
+          zoomYap(durum.zoom * oran);
         }
+        sonDokunmaUzakligi = uzaklik;
 
-        if (dokunmaModu === "pan") {
-          // Tek parmak pan
-          var ddx = tx - dokunmaBaslangicX;
-          var ddy = ty - dokunmaBaslangicY;
-          durum.panX += ddx;
-          durum.panY += ddy;
-          dokunmaBaslangicX = tx;
-          dokunmaBaslangicY = ty;
-          ciz();
+        // Iki parmak pan
+        var yeniOrtaX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+        var yeniOrtaY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+        durum.panX += yeniOrtaX - ikiParmakOrtaX;
+        durum.panY += yeniOrtaY - ikiParmakOrtaY;
+        ikiParmakOrtaX = yeniOrtaX;
+        ikiParmakOrtaY = yeniOrtaY;
+        ciz();
+      } else if (e.touches.length === 1 && dokunmaModu === "tek") {
+        // Tek parmak hareket ederse: dokunmayi iptal et (surukle degil)
+        var hareketX = Math.abs(e.touches[0].clientX - dokunmaBaslangicX);
+        var hareketY = Math.abs(e.touches[0].clientY - dokunmaBaslangicY);
+        if (hareketX > 10 || hareketY > 10) {
+          dokunmaModu = "iptal"; // Cok hareket etti, nokta koyma
         }
       }
     }, { passive: false });
 
     canvas.addEventListener("touchend", function(e) {
-      // Uzun basma zamanlayicisini temizle
-      if (uzunBasmaTimer) { clearTimeout(uzunBasmaTimer); uzunBasmaTimer = null; }
+      if (dokunmaModu === "tek") {
+        // Tek parmak dokunma: nokta koy
+        if (durum.mevcutAdim >= 1 && durum.mevcutAdim <= 6 && durum.gorsel) {
+          var rect = canvas.getBoundingClientRect();
+          var canvasX = dokunmaBaslangicX - rect.left;
+          var canvasY = dokunmaBaslangicY - rect.top;
+          var gorselKoord = canvasGorsel(canvasX, canvasY);
 
-      if (dokunmaModu === "loupe") {
-        // Buyutec modunda parmak kaldirildi: buyutecin gosterdigi noktaya koy
-        loupeGizle();
-        noktaKoyDokunma(dokunmaSonX, dokunmaSonY);
-      } else if (dokunmaModu === "bekle") {
-        // Hizli dokunma: direkt nokta koy (buyutecsiz)
-        noktaKoyDokunma(dokunmaBaslangicX, dokunmaBaslangicY);
-      } else {
-        loupeGizle();
+          if (gorselKoord.x >= 0 && gorselKoord.y >= 0 &&
+              gorselKoord.x <= durum.gorsel.width && gorselKoord.y <= durum.gorsel.height) {
+            durum.noktalar.push({ x: gorselKoord.x, y: gorselKoord.y });
+            durum.mevcutAdim++;
+            ciz();
+            goruntuguncelle();
+            if (durum.noktalar.length === 6) {
+              hesaplaOlcumler();
+            }
+          }
+        }
       }
       dokunmaModu = "";
+      sonDokunmaUzakligi = 0;
     }, { passive: true });
 
     // Butonlar
