@@ -119,10 +119,16 @@ function _musteriDetayRenderle(musteriId) {
   if (!musteri.analizler || musteri.analizler.length === 0) {
     analizHtml = '<div class="musteri-bos">Henuz analiz yok.</div>';
   } else {
+    if (musteri.analizler.length >= 2) {
+      analizHtml += '<div style="margin-bottom:0.6rem;"><button class="btn btn--ghost btn--xs" id="btn-karsilastir" disabled>Secilenleri Karsilastir</button></div>';
+    }
     // Son analiz once
     for (let i = musteri.analizler.length - 1; i >= 0; i--) {
       const a = musteri.analizler[i];
       analizHtml += '<div class="analiz-kart">';
+      if (musteri.analizler.length >= 2) {
+        analizHtml += '<label style="float:right;cursor:pointer;"><input type="checkbox" class="analiz-karsilastir-cb" data-index="' + i + '" style="margin:0;"> Sec</label>';
+      }
       analizHtml += '  <div class="analiz-kart__tarih">' + (a.tarih || "-") + '</div>';
       analizHtml += '  <div class="analiz-kart__detay">';
       if (a.sonuc && a.sonuc.risk) {
@@ -142,6 +148,26 @@ function _musteriDetayRenderle(musteriId) {
     }
   }
   document.getElementById("musteri-analizler-liste").innerHTML = analizHtml;
+
+  // Karsilastirma checkbox event'leri
+  if (musteri.analizler && musteri.analizler.length >= 2) {
+    const cbList = document.querySelectorAll(".analiz-karsilastir-cb");
+    const btnKarsilastir = document.getElementById("btn-karsilastir");
+    cbList.forEach(function(cb) {
+      cb.addEventListener("change", function() {
+        const secili = document.querySelectorAll(".analiz-karsilastir-cb:checked");
+        btnKarsilastir.disabled = secili.length < 2;
+      });
+    });
+    btnKarsilastir.addEventListener("click", function() {
+      const secili = document.querySelectorAll(".analiz-karsilastir-cb:checked");
+      const indexler = [];
+      secili.forEach(function(cb) { indexler.push(parseInt(cb.dataset.index)); });
+      if (indexler.length >= 2) {
+        _analizKarsilastirGoster(musteriId, indexler);
+      }
+    });
+  }
 
   // Sorunlar
   _sorunlarRenderle(musteriId);
@@ -383,6 +409,76 @@ function _setInput(id, val) {
   el.dispatchEvent(new Event("change", { bubbles: true }));
 }
 
+// ===== ANALIZ KARSILASTIRMA =====
+
+function _analizKarsilastirGoster(musteriId, indexler) {
+  const musteri = musteriGetir(musteriId);
+  if (!musteri || !musteri.analizler) return;
+
+  const analizler = indexler.map(function(i) { return musteri.analizler[i]; }).filter(Boolean);
+  if (analizler.length < 2) return;
+
+  // Kronolojik siralama
+  analizler.sort(function(a, b) { return (a.tarih || "").localeCompare(b.tarih || ""); });
+
+  let html = '<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:0.85rem;">';
+  html += '<thead><tr><th style="border:1px solid #ddd;padding:6px;background:#f0f4f8;">Parametre</th>';
+  analizler.forEach(function(a) {
+    html += '<th style="border:1px solid #ddd;padding:6px;background:#f0f4f8;">' + (a.tarih || "-") + '</th>';
+  });
+  html += '</tr></thead><tbody>';
+
+  // Satirlar
+  const satirlar = [
+    { baslik: "Sag SPH", al: function(a) { return _fmtNum(a.recete && a.recete.sag && a.recete.sag.sph); } },
+    { baslik: "Sag CYL", al: function(a) { return _fmtNum(a.recete && a.recete.sag && a.recete.sag.cyl); } },
+    { baslik: "Sag AX", al: function(a) { return _fmtNum(a.recete && a.recete.sag && a.recete.sag.ax); } },
+    { baslik: "Sag ADD", al: function(a) { return _fmtNum(a.recete && a.recete.sag && a.recete.sag.add); } },
+    { baslik: "Sol SPH", al: function(a) { return _fmtNum(a.recete && a.recete.sol && a.recete.sol.sph); } },
+    { baslik: "Sol CYL", al: function(a) { return _fmtNum(a.recete && a.recete.sol && a.recete.sol.cyl); } },
+    { baslik: "Sol AX", al: function(a) { return _fmtNum(a.recete && a.recete.sol && a.recete.sol.ax); } },
+    { baslik: "Sol ADD", al: function(a) { return _fmtNum(a.recete && a.recete.sol && a.recete.sol.add); } },
+    { baslik: "PD Sag", al: function(a) { return _fmtNum(a.recete && a.recete.pdSag); } },
+    { baslik: "PD Sol", al: function(a) { return _fmtNum(a.recete && a.recete.pdSol); } },
+    { baslik: "Odak Yuk.", al: function(a) { return _fmtNum(a.cerceve && a.cerceve.fittingHeight); } },
+    { baslik: "Risk Skoru", al: function(a) { return a.sonuc && a.sonuc.risk ? a.sonuc.risk.skor + "/10" : "-"; } }
+  ];
+
+  satirlar.forEach(function(satir) {
+    html += '<tr><td style="border:1px solid #ddd;padding:6px;font-weight:600;">' + satir.baslik + '</td>';
+    const degerler = analizler.map(satir.al);
+    analizler.forEach(function(a, idx) {
+      let stil = "border:1px solid #ddd;padding:6px;text-align:center;";
+      // Degisim varsa vurgula
+      if (idx > 0 && degerler[idx] !== degerler[idx - 1] && degerler[idx] !== "-" && degerler[idx - 1] !== "-") {
+        stil += "background:#fff3cd;font-weight:600;";
+      }
+      html += '<td style="' + stil + '">' + degerler[idx] + '</td>';
+    });
+    html += '</tr>';
+  });
+
+  html += '</tbody></table></div>';
+
+  // Modal'da goster
+  let modal = document.getElementById("karsilastirma-modal");
+  if (!modal) {
+    modal = document.createElement("div");
+    modal.id = "karsilastirma-modal";
+    modal.className = "modal-overlay";
+    modal.innerHTML = '<div class="modal-content" style="max-width:700px;"><h3 class="modal-title">Analiz Karsilastirma</h3><div id="karsilastirma-icerik"></div><div style="text-align:center;margin-top:1rem;"><button class="btn btn--outline" id="btn-karsilastirma-kapat">Kapat</button></div></div>';
+    document.body.appendChild(modal);
+    modal.addEventListener("click", function(e) {
+      if (e.target === this) this.style.display = "none";
+    });
+    document.getElementById("btn-karsilastirma-kapat").addEventListener("click", function() {
+      modal.style.display = "none";
+    });
+  }
+  document.getElementById("karsilastirma-icerik").innerHTML = html;
+  modal.style.display = "flex";
+}
+
 // ===== SORUN EKLEME =====
 
 function sorunEkleFormuGoster(musteriId) {
@@ -583,6 +679,22 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // Istatistikler
   document.getElementById("btn-istatistikler").addEventListener("click", _istatistikleriGoster);
+
+  // Veri yedekleme
+  document.getElementById("btn-veri-yedekle").addEventListener("click", veriYedekle);
+
+  // Veri geri yukleme
+  const btnVeriYukle = document.getElementById("btn-veri-yukle");
+  const yedekDosyaInput = document.getElementById("yedek-dosya-input");
+  btnVeriYukle.addEventListener("click", function() {
+    yedekDosyaInput.click();
+  });
+  yedekDosyaInput.addEventListener("change", function() {
+    if (this.files && this.files[0]) {
+      veriGeriYukle(this.files[0]);
+      this.value = ""; // ayni dosyanin tekrar secilmesine izin ver
+    }
+  });
 
   // Arama
   document.getElementById("musteri-arama-input").addEventListener("input", function() {

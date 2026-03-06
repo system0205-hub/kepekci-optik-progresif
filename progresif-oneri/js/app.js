@@ -102,10 +102,24 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   }
 
-  // ===== YAZDIR BUTONU =====
+  // ===== YAZDIR / PDF RAPOR BUTONU =====
   var btnYazdir = document.getElementById("btn-yazdir");
   if (btnYazdir) {
     btnYazdir.addEventListener("click", function() {
+      // Rapor basligi bilgilerini doldur
+      var raporTarih = document.getElementById("rapor-tarih");
+      if (raporTarih) {
+        raporTarih.textContent = "Rapor Tarihi: " + new Date().toLocaleDateString("tr-TR");
+      }
+      var raporMusteri = document.getElementById("rapor-musteri-bilgi");
+      if (raporMusteri) {
+        // Formdaki bilgileri ozetle
+        var pdS = formDegeriOku("pd_sag");
+        var pdL = formDegeriOku("pd_sol");
+        var bilgi = "";
+        if (pdS && pdL) bilgi = "PD: " + pdS + "/" + pdL + " mm";
+        raporMusteri.textContent = bilgi;
+      }
       window.print();
     });
   }
@@ -124,6 +138,24 @@ document.addEventListener("DOMContentLoaded", function() {
   if (btnHastaTalimati) {
     btnHastaTalimati.addEventListener("click", function() {
       hastaTalimatiAc();
+    });
+  }
+
+  // ===== WHATSAPP PAYLAS BUTONU =====
+  var btnWhatsapp = document.getElementById("btn-whatsapp");
+  if (btnWhatsapp) {
+    btnWhatsapp.addEventListener("click", function() {
+      var metin = sonuclariMetneOlustur();
+      if (!metin || metin === "Henuz analiz yapilmadi.") {
+        bildirimGoster("Once analiz yapin.", "hata");
+        return;
+      }
+      // WhatsApp karakter limiti ~65536, kisa tutalim
+      if (metin.length > 4000) {
+        metin = metin.substring(0, 4000) + "\n\n... (devami icin raporu yazdirin)";
+      }
+      var url = "https://wa.me/?text=" + encodeURIComponent(metin);
+      window.open(url, "_blank");
     });
   }
 
@@ -1027,6 +1059,7 @@ function olusturPrizmaSvg(prizmaSag, prizmaSol, prizmaFark) {
 function olusturKarsilastirmaTablolari() {
   olusturMarkaKarsilastirma();
   olusturOzellikKarsilastirma();
+  olusturFiyatKarsilastirma();
   baslatKarsilastirmaTabGecisleri();
 }
 
@@ -1132,6 +1165,69 @@ function olusturOzellikKarsilastirma() {
     '<thead><tr><th>Ozellik</th><th>Bu Ozellige Sahip Modeller</th></tr></thead>' +
     '<tbody>' + tbody + '</tbody>' +
     '</table>';
+}
+
+function olusturFiyatKarsilastirma() {
+  var container = document.getElementById("fiyat-karsilastirma-tablo");
+  if (!container || !window.LENS_DATABASE) return;
+
+  var markalar = window.LENS_DATABASE.markalar;
+  var satirlar = [];
+
+  // Tum markalardaki fiyati olan modelleri topla
+  Object.keys(markalar).forEach(function(markaKey) {
+    var marka = markalar[markaKey];
+    marka.modeller.forEach(function(model) {
+      if (model.fiyatAraligi && model.fiyatAraligi.min) {
+        satirlar.push({
+          marka: marka.kisaAd,
+          model: model.ad,
+          seviye: model.seviye,
+          tasarim: model.tasarim,
+          minFiyat: model.fiyatAraligi.min,
+          maxFiyat: model.fiyatAraligi.max,
+          indeksler: model.indeksler || []
+        });
+      }
+    });
+  });
+
+  if (satirlar.length === 0) {
+    container.innerHTML = '<p style="color:var(--text-light);text-align:center;">Fiyat bilgisi bulunan cam modeli yok.</p>';
+    return;
+  }
+
+  // Min fiyata gore sirala
+  satirlar.sort(function(a, b) { return a.minFiyat - b.minFiyat; });
+
+  var seviyeRenk = {
+    premium: "#e8f5e9",
+    orta: "#fff8e1",
+    baslangic: "#fce4ec",
+    giris: "#fce4ec"
+  };
+
+  var html = '<table class="karsilastirma-tablo">';
+  html += '<thead><tr><th>Marka</th><th>Model</th><th>Seviye</th><th>Tasarim</th><th>Fiyat Araligi (Tek Cam)</th><th>Indeksler</th></tr></thead>';
+  html += '<tbody>';
+
+  satirlar.forEach(function(s) {
+    var bg = seviyeRenk[s.seviye] || "";
+    var seviyeAd = seviyeEtiketi(s.seviye);
+    var tasarimAd = tasarimEtiketi(s.tasarim);
+    html += '<tr style="background:' + bg + ';">';
+    html += '<td>' + s.marka + '</td>';
+    html += '<td><strong>' + s.model + '</strong></td>';
+    html += '<td>' + seviyeAd + '</td>';
+    html += '<td>' + tasarimAd + '</td>';
+    html += '<td>' + formatParaTL(s.minFiyat) + ' - ' + formatParaTL(s.maxFiyat) + '</td>';
+    html += '<td>' + s.indeksler.join(', ') + '</td>';
+    html += '</tr>';
+  });
+
+  html += '</tbody></table>';
+  html += '<p style="font-size:0.8rem;color:var(--text-muted);margin-top:0.5rem;">* Fiyatlar tek cam icindir. Cift cam icin x2. Bazi markalarin fiyatlari QR kod uzerinden ogrenilir.</p>';
+  container.innerHTML = html;
 }
 
 function baslatKarsilastirmaTabGecisleri() {

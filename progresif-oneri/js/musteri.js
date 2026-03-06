@@ -79,6 +79,113 @@ function musteriAra(sorgu) {
   });
 }
 
+/**
+ * Tum musteri verilerini JSON dosyasi olarak indir (yedekleme)
+ */
+function veriYedekle() {
+  const musteriler = _musteriListesiOku();
+  if (musteriler.length === 0) {
+    bildirimGoster("Yedeklenecek musteri verisi bulunamadi.", "hata");
+    return;
+  }
+
+  const yedekVeri = {
+    uygulama: "Kepekci Optik - Progresif Cam Oneri Sistemi",
+    versiyon: "1.0",
+    tarih: new Date().toISOString(),
+    musteriSayisi: musteriler.length,
+    musteriler: musteriler
+  };
+
+  const json = JSON.stringify(yedekVeri, null, 2);
+  const blob = new Blob([json], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+
+  const tarih = new Date().toISOString().slice(0, 10);
+  const dosyaAdi = "kepekci-optik-yedek-" + tarih + ".json";
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = dosyaAdi;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  bildirimGoster(musteriler.length + " musteri verisi yedeklendi.", "basarili");
+}
+
+/**
+ * JSON yedek dosyasindan musteri verilerini geri yukle
+ * @param {File} dosya - Kullanicinin sectigi JSON dosyasi
+ */
+function veriGeriYukle(dosya) {
+  if (!dosya) return;
+
+  if (!dosya.name.endsWith(".json")) {
+    bildirimGoster("Lutfen .json uzantili bir yedek dosyasi secin.", "hata");
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = function(e) {
+    try {
+      const veri = JSON.parse(e.target.result);
+
+      // Validasyon
+      if (!veri.musteriler || !Array.isArray(veri.musteriler)) {
+        bildirimGoster("Gecersiz yedek dosyasi: musteri verisi bulunamadi.", "hata");
+        return;
+      }
+
+      // Her musterinin temel alanlarini kontrol et
+      for (let i = 0; i < veri.musteriler.length; i++) {
+        const m = veri.musteriler[i];
+        if (!m.id || !m.ad) {
+          bildirimGoster("Gecersiz yedek dosyasi: " + (i + 1) + ". musteri verisi bozuk.", "hata");
+          return;
+        }
+      }
+
+      // Mevcut verileri kontrol et
+      const mevcutListe = _musteriListesiOku();
+      if (mevcutListe.length > 0) {
+        const onay = confirm(
+          "Dikkat: Mevcut " + mevcutListe.length + " musteri verisi silinecek ve " +
+          veri.musteriler.length + " musteri verisi ile degistirilecek.\n\n" +
+          "Devam etmek istiyor musunuz?"
+        );
+        if (!onay) {
+          bildirimGoster("Geri yukleme iptal edildi.", "bilgi");
+          return;
+        }
+      }
+
+      _musteriListesiYaz(veri.musteriler);
+      bildirimGoster(
+        veri.musteriler.length + " musteri verisi basariyla geri yuklendi." +
+        (veri.tarih ? " (Yedek tarihi: " + veri.tarih.slice(0, 10) + ")" : ""),
+        "basarili"
+      );
+
+      // Listeyi yenile (musteri-ui.js'deki fonksiyon)
+      if (typeof musteriListesiGoster === "function") {
+        musteriListesiGoster();
+      }
+    } catch (err) {
+      console.error("Yedek dosyasi okunamadi:", err);
+      bildirimGoster("Yedek dosyasi okunamadi. Dosya bozuk olabilir.", "hata");
+    }
+  };
+
+  reader.onerror = function() {
+    bildirimGoster("Dosya okunamadi. Lutfen tekrar deneyin.", "hata");
+  };
+
+  reader.readAsText(dosya);
+}
+
 function analizEkle(musteriId, analizData) {
   const liste = _musteriListesiOku();
   for (let i = 0; i < liste.length; i++) {

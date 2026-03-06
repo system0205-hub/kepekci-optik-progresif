@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Kepekci Optik - Progresif Cam Oneri Sistemi">
     <meta http-equiv="Content-Language" content="tr">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="manifest.json">
     <title>Kepekci Optik - Progresif Cam Oneri Sistemi</title>
     <style>
         /* ============================================================
@@ -39,6 +42,59 @@
             --radius-sm: 6px;
             --radius-lg: 14px;
             --transition: 0.2s ease;
+        }
+
+        [data-theme="dark"] {
+            --primary: #3498db;
+            --primary-light: #5dade2;
+            --primary-dark: #1a5276;
+            --accent: #e67e22;
+            --accent-light: #f39c12;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --info: #5dade2;
+            --bg: #1a1a2e;
+            --bg-card: #16213e;
+            --text: #e0e0e0;
+            --text-light: #a0a0a0;
+            --text-muted: #707070;
+            --border: #2a2a4a;
+            --border-light: #222244;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.4);
+        }
+
+        [data-theme="dark"] input,
+        [data-theme="dark"] select,
+        [data-theme="dark"] textarea {
+            background: #1a1a2e;
+            color: #e0e0e0;
+            border-color: #2a2a4a;
+        }
+
+        [data-theme="dark"] .modal-content {
+            background: #16213e;
+        }
+
+        .tema-toggle {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text);
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+            z-index: 9999;
+            transition: background 0.2s, color 0.2s;
         }
 
         html {
@@ -1657,11 +1713,18 @@
             .footer,
             #form-section,
             .btn-group,
-            .analyze-wrapper {
+            .analyze-wrapper,
+            .musteri-section,
+            .modal-overlay,
+            #btn-yazdir-rapor {
                 display: none !important;
             }
 
             #sonuc-section {
+                display: block !important;
+            }
+
+            #rapor-basligi {
                 display: block !important;
             }
 
@@ -1671,13 +1734,23 @@
 
             body {
                 background: #ffffff;
-                font-size: 12pt;
+                font-size: 11pt;
+                color: #000;
             }
 
             .card, .rec-card {
                 box-shadow: none;
                 border: 1px solid #ccc;
                 break-inside: avoid;
+                page-break-inside: avoid;
+            }
+
+            .rec-card {
+                page-break-inside: avoid;
+            }
+
+            h2, h3 {
+                page-break-after: avoid;
             }
         }
 
@@ -2666,6 +2739,13 @@
         <!-- ========== RESULTS SECTION ========== -->
         <section id="sonuc-section">
 
+            <!-- Rapor basligi (sadece print'te gorunur) -->
+            <div id="rapor-basligi" style="display:none; text-align:center; margin-bottom:1.5rem; padding-bottom:1rem; border-bottom:2px solid #1a5276;">
+                <h1 style="color:#1a5276; margin-bottom:0.3rem; font-size:1.4rem;">Kepekci Optik - Progresif Cam Analiz Raporu</h1>
+                <div id="rapor-tarih" style="color:#666; font-size:0.9rem;"></div>
+                <div id="rapor-musteri-bilgi" style="color:#333; font-size:0.95rem; margin-top:0.3rem;"></div>
+            </div>
+
             <!-- ---- Zorluk Derecesi ---- -->
             <h2 class="section-title">
                 <span class="icon"><svg><use href="#icon-warning"/></svg></span>
@@ -2906,6 +2986,7 @@
                     <button class="karsilastirma-tab active" data-ktab="tasarim">Tasarim Karsilastirma</button>
                     <button class="karsilastirma-tab" data-ktab="marka">Marka Karsilastirma</button>
                     <button class="karsilastirma-tab" data-ktab="ozellik">Ozellik Karsilastirma</button>
+                    <button class="karsilastirma-tab" data-ktab="fiyat">Fiyat Karsilastirma</button>
                 </div>
 
                 <!-- Sekme 1: Tasarim Karsilastirma -->
@@ -2987,6 +3068,13 @@
                         <!-- Populated by JS from data.js -->
                     </div>
                 </div>
+
+                <!-- Sekme 4: Fiyat Karsilastirma -->
+                <div class="karsilastirma-icerik" id="ktab-fiyat">
+                    <div class="karsilastirma-tablo-wrapper" id="fiyat-karsilastirma-tablo">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
             </div>
 
             <!-- ---- Action Buttons ---- -->
@@ -3006,6 +3094,9 @@
                 <button type="button" class="btn btn--accent" id="btn-hasta-talimati">
                     <span class="icon"><svg><use href="#icon-document"/></svg></span>
                     Hasta Talimati Yazdir
+                </button>
+                <button type="button" class="btn btn--ghost" id="btn-whatsapp" style="color:#25d366;">
+                    &#128172; WhatsApp Paylas
                 </button>
             </div>
 
@@ -3032,9 +3123,12 @@
             <div id="musteri-liste-icerik">
                 <!-- JS ile doldurulacak -->
             </div>
-            <div style="margin-top:1.5rem; text-align:center;">
+            <div style="margin-top:1.5rem; text-align:center; display:flex; flex-wrap:wrap; gap:0.5rem; justify-content:center;">
                 <button type="button" class="btn btn--ghost" id="btn-istatistikler">Istatistikler</button>
+                <button type="button" class="btn btn--ghost" id="btn-veri-yedekle">&#128190; Veri Yedekle</button>
+                <button type="button" class="btn btn--ghost" id="btn-veri-yukle">&#128194; Veri Yukle</button>
                 <button type="button" class="btn btn--outline" id="btn-analize-don" onclick="analizGorunumuneGecis()">Analize Don</button>
+                <input type="file" id="yedek-dosya-input" accept=".json" style="display:none;">
             </div>
             <div id="istatistik-panel" style="display:none; margin-top:1rem;">
                 <!-- JS ile doldurulacak -->
@@ -3187,6 +3281,7 @@
     <!-- ============================================================
          SCRIPTS
          ============================================================ -->
+    <script src="js/i18n.js"></script>
     <script src="js/data.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/engine.js"></script>
@@ -3195,5 +3290,52 @@
     <script src="js/istatistik.js"></script>
     <script src="js/app.js"></script>
     <script src="js/musteri-ui.js"></script>
+
+    <!-- Tema toggle butonu -->
+    <button type="button" class="tema-toggle" id="btn-tema-toggle" title="Karanlik/Aydinlik Mod">&#9790;</button>
+    <!-- Dil toggle butonu -->
+    <button type="button" class="tema-toggle" id="btn-dil-toggle" title="Dil Degistir / Change Language" style="bottom:4rem;">TR</button>
+
+    <script>
+    // Service Worker kaydi (PWA / offline destek)
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("sw.js").catch(function(err) {
+        console.log("SW kaydi basarisiz:", err);
+      });
+    }
+
+    // Dil toggle
+    (function() {
+      var btn = document.getElementById("btn-dil-toggle");
+      btn.textContent = aktifDilGetir().toUpperCase();
+      btn.addEventListener("click", function() {
+        var yeniDil = aktifDilGetir() === "tr" ? "en" : "tr";
+        dilDegistir(yeniDil);
+        this.textContent = yeniDil.toUpperCase();
+      });
+    })();
+
+    // Karanlik mod toggle
+    (function() {
+      var btn = document.getElementById("btn-tema-toggle");
+      var kayitliTema = localStorage.getItem("kepekci_tema");
+      if (kayitliTema === "dark") {
+        document.documentElement.setAttribute("data-theme", "dark");
+        btn.innerHTML = "&#9788;";
+      }
+      btn.addEventListener("click", function() {
+        var simdikiTema = document.documentElement.getAttribute("data-theme");
+        if (simdikiTema === "dark") {
+          document.documentElement.removeAttribute("data-theme");
+          this.innerHTML = "&#9790;";
+          localStorage.setItem("kepekci_tema", "light");
+        } else {
+          document.documentElement.setAttribute("data-theme", "dark");
+          this.innerHTML = "&#9788;";
+          localStorage.setItem("kepekci_tema", "dark");
+        }
+      });
+    })();
+    </script>
 </body>
 </html>
