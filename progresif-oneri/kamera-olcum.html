@@ -561,10 +561,44 @@
       font-size: 0.95rem;
     }
 
+    /* Mobil oneri paneli */
+    .mobil-oneri {
+      display: none; /* Varsayilan: gizli (desktop) */
+      text-align: center;
+      padding: 32px 20px;
+    }
+    .mobil-oneri-icerik {
+      background: var(--bg-primary);
+      border: 2px solid var(--primary);
+      border-radius: 16px;
+      padding: 32px 24px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    }
+    .mobil-oneri h3 {
+      color: var(--primary-dark);
+      margin-bottom: 12px;
+      font-size: 1.3rem;
+    }
+    .mobil-oneri p {
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    /* Mobil cihazlarda: oneri goster, kamera kurulum gizle */
+    @media (max-width: 768px) {
+      .mobil-oneri { display: block; }
+      .kamera-kurulum { display: none !important; }
+    }
+
+    /* Kullanici canli kamerayi secerse */
+    .mobil-oneri.gizli { display: none !important; }
+    .kamera-kurulum.mobil-goster { display: block !important; }
+
     @media print {
       body { background: #fff; }
       .foto-container { padding: 0; }
-      .kamera-kurulum, .video-sarmalayici, .canvas-sarmalayici, .arac-cubugu, .talimat-kutusu, .buton-grubu, .adim-gostergesi, nav, .foto-uyari, .yukleniyor-kapsam { display: none !important; }
+      .kamera-kurulum, .video-sarmalayici, .canvas-sarmalayici, .arac-cubugu, .talimat-kutusu, .buton-grubu, .adim-gostergesi, nav, .foto-uyari, .yukleniyor-kapsam, .mobil-oneri { display: none !important; }
       .sonuc-paneli { display: block !important; box-shadow: none; border: 1px solid #ccc; }
     }
 
@@ -640,6 +674,29 @@
       <div class="spinner"></div>
       <p>AI yuz algilama modeli yukleniyor...</p>
       <p style="font-size: 0.8rem; color: var(--text-tertiary); margin-top: 8px;">Bu islem ilk seferinde 3-5 saniye surebilir</p>
+    </div>
+
+    <!-- Telefon: Fotograf olcum onerisi -->
+    <div class="mobil-oneri" id="mobilOneri">
+      <div class="mobil-oneri-icerik">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="48" style="color: var(--primary); margin-bottom: 12px;">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+          <circle cx="12" cy="13" r="4"/>
+          <line x1="2" y1="2" x2="22" y2="2" stroke="none"/>
+        </svg>
+        <h3>Telefonda Olcum</h3>
+        <p>Telefonda en dogru sonuc icin <strong>fotograf cekip olcum</strong> alin. Olcek karti ile kalibrasyon yapilir.</p>
+        <a href="foto-olcum.html" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 8px; text-decoration: none; font-size: 1.05rem; padding: 12px 28px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            <circle cx="12" cy="13" r="4"/>
+          </svg>
+          Fotograf ile Olcum Al
+        </a>
+        <div class="fallback-link" style="margin-top: 16px;">
+          <a href="#" id="mobilCanliKameraLink">Yine de canli kamera ile olcum almak istiyorum &rarr;</a>
+        </div>
+      </div>
     </div>
 
     <!-- Kamera kurulum -->
@@ -827,5 +884,18 @@
   </script>
   <script src="js/utils.js"></script>
   <script src="js/kamera-olcum.js"></script>
+  <script>
+    // Mobilde "yine de canli kamera" linkine tiklanirsa
+    var mobilLink = document.getElementById("mobilCanliKameraLink");
+    if (mobilLink) {
+      mobilLink.addEventListener("click", function(e) {
+        e.preventDefault();
+        var oneriPanel = document.getElementById("mobilOneri");
+        var kameraKurulum = document.getElementById("kameraKurulum");
+        if (oneriPanel) oneriPanel.classList.add("gizli");
+        if (kameraKurulum) kameraKurulum.classList.add("mobil-goster");
+      });
+    }
+  </script>
 </body>
 </html>
