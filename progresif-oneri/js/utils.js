@@ -251,9 +251,9 @@ function riskSeviyesi(skor) {
  * bu durumda .valueAsNumber fallback olarak kullanilir.
  */
 function formDegeriOku(id) {
-  var el = document.getElementById(id);
+  const el = document.getElementById(id);
   if (!el) return null;
-  var val = el.value.trim();
+  const val = el.value.trim();
   if (val === "") {
     // type="number" input'larda .value bos donse bile valueAsNumber dogru olabilir
     if (el.type === "number" && !isNaN(el.valueAsNumber)) {
@@ -262,8 +262,8 @@ function formDegeriOku(id) {
     return null;
   }
   // Turkce lokalde virgulu noktaya cevir
-  var normalized = val.replace(",", ".");
-  var num = parseFloat(normalized);
+  const normalized = val.replace(",", ".");
+  const num = parseFloat(normalized);
   if (isNaN(num)) return null;
   return num;
 }

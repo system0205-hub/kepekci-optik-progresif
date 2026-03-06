@@ -1,11 +1,11 @@
 // Kepekci Optik - Musteri Veri Katmani
 // localStorage CRUD islemleri
 
-var MUSTERI_KEY = "kepekci_musteriler";
+const MUSTERI_KEY = "kepekci_musteriler";
 
 function _musteriListesiOku() {
   try {
-    var data = localStorage.getItem(MUSTERI_KEY);
+    const data = localStorage.getItem(MUSTERI_KEY);
     return data ? JSON.parse(data) : [];
   } catch (e) {
     console.error("Musteri verisi okunamadi:", e);
@@ -18,11 +18,12 @@ function _musteriListesiYaz(liste) {
     localStorage.setItem(MUSTERI_KEY, JSON.stringify(liste));
   } catch (e) {
     console.error("Musteri verisi yazilamadi:", e);
+    bildirimGoster("Veri kaydedilemedi. Depolama alani dolu olabilir.", "hata");
   }
 }
 
 function musteriKaydet(musteri) {
-  var liste = _musteriListesiOku();
+  const liste = _musteriListesiOku();
   if (!musteri.id) {
     musteri.id = "m_" + Date.now();
   }
@@ -37,8 +38,8 @@ function musteriKaydet(musteri) {
 }
 
 function musteriGetir(id) {
-  var liste = _musteriListesiOku();
-  for (var i = 0; i < liste.length; i++) {
+  const liste = _musteriListesiOku();
+  for (let i = 0; i < liste.length; i++) {
     if (liste[i].id === id) return liste[i];
   }
   return null;
@@ -49,8 +50,8 @@ function tumMusterileriGetir() {
 }
 
 function musteriGuncelle(id, data) {
-  var liste = _musteriListesiOku();
-  for (var i = 0; i < liste.length; i++) {
+  const liste = _musteriListesiOku();
+  for (let i = 0; i < liste.length; i++) {
     if (liste[i].id === id) {
       Object.keys(data).forEach(function(key) {
         liste[i][key] = data[key];
@@ -63,15 +64,15 @@ function musteriGuncelle(id, data) {
 }
 
 function musteriSil(id) {
-  var liste = _musteriListesiOku();
-  var yeniListe = liste.filter(function(m) { return m.id !== id; });
+  const liste = _musteriListesiOku();
+  const yeniListe = liste.filter(function(m) { return m.id !== id; });
   _musteriListesiYaz(yeniListe);
   return yeniListe.length < liste.length;
 }
 
 function musteriAra(sorgu) {
   if (!sorgu || sorgu.trim() === "") return tumMusterileriGetir();
-  var s = sorgu.toLowerCase().trim();
+  const s = sorgu.toLowerCase().trim();
   return _musteriListesiOku().filter(function(m) {
     return (m.ad && m.ad.toLowerCase().indexOf(s) !== -1) ||
            (m.telefon && m.telefon.indexOf(s) !== -1);
@@ -79,8 +80,8 @@ function musteriAra(sorgu) {
 }
 
 function analizEkle(musteriId, analizData) {
-  var liste = _musteriListesiOku();
-  for (var i = 0; i < liste.length; i++) {
+  const liste = _musteriListesiOku();
+  for (let i = 0; i < liste.length; i++) {
     if (liste[i].id === musteriId) {
       if (!liste[i].analizler) liste[i].analizler = [];
       if (!analizData.tarih) {

@@ -359,7 +359,14 @@
       }
 
       if (kameraVideo.readyState >= 2) { // HAVE_CURRENT_DATA
-        var sonuc = durum.faceLandmarker.detectForVideo(kameraVideo, performance.now());
+        var sonuc;
+        try {
+          sonuc = durum.faceLandmarker.detectForVideo(kameraVideo, performance.now());
+        } catch (e) {
+          console.error("Yuz algilama hatasi:", e);
+          durum.animFrameId = requestAnimationFrame(algilamaDongusu);
+          return;
+        }
 
         // Onizleme canvas'ini temizle
         onizlemeCtx.clearRect(0, 0, onizlemeCanvas.width, onizlemeCanvas.height);
@@ -528,7 +535,15 @@
       // Son algilama sonuclarini IMAGE modunda tekrar calistir (daha yuksek dogruluk)
       durum.faceLandmarker.setOptions({ runningMode: "IMAGE" });
 
-      var sonuc = durum.faceLandmarker.detect(img);
+      var sonuc;
+      try {
+        sonuc = durum.faceLandmarker.detect(img);
+      } catch (e) {
+        console.error("Fotograf yuz algilama hatasi:", e);
+        bildirimGoster("Yuz algilama sirasinda hata olustu. Tekrar deneyin.", "hata");
+        kameraBaslat();
+        return;
+      }
 
       if (sonuc.faceLandmarks && sonuc.faceLandmarks.length > 0) {
         var landmarks = sonuc.faceLandmarks[0];

@@ -204,7 +204,13 @@
         canvasHazirla();
         goruntuguncelle();
       };
+      img.onerror = function() {
+        bildirimGoster("Gorsel yuklenemedi. Lutfen baska bir dosya deneyin.", "hata");
+      };
       img.src = e.target.result;
+    };
+    reader.onerror = function() {
+      bildirimGoster("Dosya okunamadi. Lutfen tekrar deneyin.", "hata");
     };
     reader.readAsDataURL(dosya);
   }

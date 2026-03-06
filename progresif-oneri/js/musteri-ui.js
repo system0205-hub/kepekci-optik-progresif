@@ -1,7 +1,7 @@
 // Kepekci Optik - Musteri UI Katmani
 // Gorunum gecisleri, liste, detay, form, sorun takip
 
-var _aktifMusteriId = null;
+let _aktifMusteriId = null;
 
 // ===== GORUNUM GECISLERI =====
 
@@ -9,9 +9,9 @@ function analizGorunumuneGecis() {
   document.getElementById("musteri-listesi-section").style.display = "none";
   document.getElementById("musteri-detay-section").style.display = "none";
   // Analiz gorunumunu goster
-  var tabs = document.querySelector(".tabs");
-  var main = document.querySelector("main");
-  var sonuc = document.getElementById("sonuc-section");
+  const tabs = document.querySelector(".tabs");
+  const main = document.querySelector("main");
+  const sonuc = document.getElementById("sonuc-section");
   if (tabs) tabs.style.display = "";
   if (main) main.style.display = "";
   // Nav active guncelle
@@ -20,13 +20,13 @@ function analizGorunumuneGecis() {
 
 function musteriListesiGoster() {
   // Analiz gorunumunu gizle
-  var tabs = document.querySelector(".tabs");
-  var main = document.querySelector("main");
+  const tabs = document.querySelector(".tabs");
+  const main = document.querySelector("main");
   if (tabs) tabs.style.display = "none";
   if (main) main.style.display = "none";
   document.getElementById("musteri-detay-section").style.display = "none";
   // Musteri listesini goster
-  var section = document.getElementById("musteri-listesi-section");
+  const section = document.getElementById("musteri-listesi-section");
   section.style.display = "";
   _navAktifYap("nav-musteriler");
   _musteriListesiRenderle();
@@ -35,11 +35,11 @@ function musteriListesiGoster() {
 function musteriDetayGoster(musteriId) {
   _aktifMusteriId = musteriId;
   document.getElementById("musteri-listesi-section").style.display = "none";
-  var tabs = document.querySelector(".tabs");
-  var main = document.querySelector("main");
+  const tabs = document.querySelector(".tabs");
+  const main = document.querySelector("main");
   if (tabs) tabs.style.display = "none";
   if (main) main.style.display = "none";
-  var section = document.getElementById("musteri-detay-section");
+  const section = document.getElementById("musteri-detay-section");
   section.style.display = "";
   _musteriDetayRenderle(musteriId);
 }
@@ -58,8 +58,8 @@ function _navAktifYap(hedef) {
 // ===== MUSTERI LISTESI =====
 
 function _musteriListesiRenderle(filtre) {
-  var icerik = document.getElementById("musteri-liste-icerik");
-  var musteriler = filtre ? musteriAra(filtre) : tumMusterileriGetir();
+  const icerik = document.getElementById("musteri-liste-icerik");
+  const musteriler = filtre ? musteriAra(filtre) : tumMusterileriGetir();
 
   if (musteriler.length === 0) {
     icerik.innerHTML = '<div class="musteri-bos">Henuz musteri kaydi yok. Analiz yaptiktan sonra "Musteri Olarak Kaydet" butonunu kullanin.</div>';
@@ -71,10 +71,10 @@ function _musteriListesiRenderle(filtre) {
     return (b.kayitTarih || "").localeCompare(a.kayitTarih || "");
   });
 
-  var html = "";
+  let html = "";
   musteriler.forEach(function(m) {
-    var acikSorun = acikSorunSayisi(m.id);
-    var sonAnaliz = m.analizler && m.analizler.length > 0
+    const acikSorun = acikSorunSayisi(m.id);
+    const sonAnaliz = m.analizler && m.analizler.length > 0
       ? m.analizler[m.analizler.length - 1].tarih
       : "-";
 
@@ -104,24 +104,24 @@ function _musteriListesiRenderle(filtre) {
 // ===== MUSTERI DETAY =====
 
 function _musteriDetayRenderle(musteriId) {
-  var musteri = musteriGetir(musteriId);
+  const musteri = musteriGetir(musteriId);
   if (!musteri) return;
 
   document.getElementById("musteri-detay-ad").textContent = musteri.ad;
-  var bilgi = "";
+  let bilgi = "";
   if (musteri.telefon) bilgi += "Tel: " + musteri.telefon + " | ";
   bilgi += "Kayit: " + musteri.kayitTarih;
   if (musteri.not) bilgi += " | Not: " + musteri.not;
   document.getElementById("musteri-detay-bilgi").textContent = bilgi;
 
   // Analizler
-  var analizHtml = "";
+  let analizHtml = "";
   if (!musteri.analizler || musteri.analizler.length === 0) {
     analizHtml = '<div class="musteri-bos">Henuz analiz yok.</div>';
   } else {
     // Son analiz once
-    for (var i = musteri.analizler.length - 1; i >= 0; i--) {
-      var a = musteri.analizler[i];
+    for (let i = musteri.analizler.length - 1; i >= 0; i--) {
+      const a = musteri.analizler[i];
       analizHtml += '<div class="analiz-kart">';
       analizHtml += '  <div class="analiz-kart__tarih">' + (a.tarih || "-") + '</div>';
       analizHtml += '  <div class="analiz-kart__detay">';
@@ -129,7 +129,7 @@ function _musteriDetayRenderle(musteriId) {
         analizHtml += 'Risk: ' + a.sonuc.risk.skor + '/10<br>';
       }
       if (a.recete) {
-        var r = a.recete;
+        const r = a.recete;
         analizHtml += 'SPH: ' + _fmtNum(r.sag && r.sag.sph) + '/' + _fmtNum(r.sol && r.sol.sph) + '<br>';
         analizHtml += 'ADD: ' + _fmtNum(r.sag && r.sag.add) + '/' + _fmtNum(r.sol && r.sol.add);
         if (r.sag && r.sag.cyl) {
@@ -148,21 +148,21 @@ function _musteriDetayRenderle(musteriId) {
 }
 
 function _sorunlarRenderle(musteriId) {
-  var sorunlar = sorunlariGetir(musteriId);
-  var sorunHtml = "";
+  const sorunlar = sorunlariGetir(musteriId);
+  let sorunHtml = "";
 
   if (sorunlar.length === 0) {
     sorunHtml = '<div class="musteri-bos">Henuz sorun kaydi yok.</div>';
   } else {
     // Acik olanlar once
-    var sirali = sorunlar.slice().sort(function(a, b) {
-      var sira = { acik: 0, takipte: 1, cozuldu: 2 };
+    const sirali = sorunlar.slice().sort(function(a, b) {
+      const sira = { acik: 0, takipte: 1, cozuldu: 2 };
       return (sira[a.durum] || 0) - (sira[b.durum] || 0);
     });
 
     sirali.forEach(function(s) {
-      var katEtiket = SORUN_KATEGORILERI[s.kategori] || s.kategori;
-      var durumBilgi = SORUN_DURUMLARI[s.durum] || { etiket: s.durum, renk: "#999" };
+      const katEtiket = SORUN_KATEGORILERI[s.kategori] || s.kategori;
+      const durumBilgi = SORUN_DURUMLARI[s.durum] || { etiket: s.durum, renk: "#999" };
 
       sorunHtml += '<div class="sorun-kart sorun-kart--' + s.durum + '">';
       sorunHtml += '  <div class="sorun-kart__ust">';
@@ -194,7 +194,7 @@ function sorunDurumDegistir(musteriId, sorunId, yeniDurum) {
   sorunGuncelle(musteriId, sorunId, { durum: yeniDurum });
   _sorunlarRenderle(musteriId);
   // Liste gorunumundeyse onu da guncelle
-  var listeSec = document.getElementById("musteri-listesi-section");
+  const listeSec = document.getElementById("musteri-listesi-section");
   if (listeSec && listeSec.style.display !== "none") {
     _musteriListesiRenderle();
   }
@@ -207,21 +207,21 @@ function sorunCozulduGoster(musteriId, sorunId) {
   document.getElementById("cozum-modal").style.display = "flex";
 }
 
-var _aktifCozumMusteriId = null;
-var _aktifCozumSorunId = null;
+let _aktifCozumMusteriId = null;
+let _aktifCozumSorunId = null;
 
 // ===== MUSTERI KAYIT MODAL =====
 
 function musteriKaydetModalGoster(mevcutAnaliz) {
-  var modal = document.getElementById("musteri-modal");
+  const modal = document.getElementById("musteri-modal");
   document.getElementById("modal-musteri-ad").value = "";
   document.getElementById("modal-musteri-telefon").value = "";
   document.getElementById("modal-musteri-not").value = "";
 
   // Mevcut musterilere ekleme secenegi
-  var mevcut = document.getElementById("modal-mevcut-musteri");
-  var select = document.getElementById("modal-mevcut-select");
-  var musteriler = tumMusterileriGetir();
+  const mevcut = document.getElementById("modal-mevcut-musteri");
+  const select = document.getElementById("modal-mevcut-select");
+  const musteriler = tumMusterileriGetir();
   if (musteriler.length > 0) {
     mevcut.style.display = "";
     select.innerHTML = '<option value="">-- Yeni musteri olustur --</option>';
@@ -236,9 +236,9 @@ function musteriKaydetModalGoster(mevcutAnaliz) {
 
   // Mevcut select degisince ad/tel alanlarini gizle/goster
   select.onchange = function() {
-    var adInput = document.getElementById("modal-musteri-ad");
-    var telInput = document.getElementById("modal-musteri-telefon");
-    var notInput = document.getElementById("modal-musteri-not");
+    const adInput = document.getElementById("modal-musteri-ad");
+    const telInput = document.getElementById("modal-musteri-telefon");
+    const notInput = document.getElementById("modal-musteri-not");
     if (this.value) {
       adInput.parentElement.style.display = "none";
       telInput.parentElement.style.display = "none";
@@ -252,31 +252,31 @@ function musteriKaydetModalGoster(mevcutAnaliz) {
 }
 
 function _musteriKaydetIsle() {
-  var mevcutId = document.getElementById("modal-mevcut-select").value;
+  const mevcutId = document.getElementById("modal-mevcut-select").value;
 
   if (mevcutId) {
     // Mevcut musteriye analiz ekle
-    var analizData = _sonAnaliziVeriOlustur();
+    const analizData = _sonAnaliziVeriOlustur();
     if (analizData) {
       analizEkle(mevcutId, analizData);
       bildirimGoster("Analiz mevcut musteriye eklendi!", "basari");
     }
   } else {
     // Yeni musteri
-    var ad = document.getElementById("modal-musteri-ad").value.trim();
+    const ad = document.getElementById("modal-musteri-ad").value.trim();
     if (!ad) {
       bildirimGoster("Musteri adi zorunludur.", "hata");
       return;
     }
-    var musteri = {
+    const musteri = {
       ad: ad,
       telefon: document.getElementById("modal-musteri-telefon").value.trim(),
       not: document.getElementById("modal-musteri-not").value.trim()
     };
-    var kayitliMusteri = musteriKaydet(musteri);
+    const kayitliMusteri = musteriKaydet(musteri);
 
     // Mevcut analizi ekle
-    var analizData = _sonAnaliziVeriOlustur();
+    const analizData = _sonAnaliziVeriOlustur();
     if (analizData) {
       analizEkle(kayitliMusteri.id, analizData);
     }
@@ -304,7 +304,7 @@ function _sonAnaliziVeriOlustur() {
 // ===== YENI MUSTERI FORMU (listeden) =====
 
 function yeniMusteriFormuGoster() {
-  var modal = document.getElementById("musteri-modal");
+  const modal = document.getElementById("musteri-modal");
   document.getElementById("modal-baslik").textContent = "Yeni Musteri";
   document.getElementById("modal-musteri-ad").value = "";
   document.getElementById("modal-musteri-telefon").value = "";
@@ -330,10 +330,10 @@ function musteriYeniAnaliz(musteriId) {
 // ===== MUSTERI ANALIZI GOR =====
 
 function musteriAnaliziGor(musteriId, analizIndex) {
-  var musteri = musteriGetir(musteriId);
+  const musteri = musteriGetir(musteriId);
   if (!musteri || !musteri.analizler || !musteri.analizler[analizIndex]) return;
 
-  var analiz = musteri.analizler[analizIndex];
+  const analiz = musteri.analizler[analizIndex];
 
   // Form'a yaz ve analiz baslat
   if (analiz.recete) {
@@ -376,7 +376,7 @@ function _formaDoldur(recete, cerceve, powParams) {
 }
 
 function _setInput(id, val) {
-  var el = document.getElementById(id);
+  const el = document.getElementById(id);
   if (!el || val === null || val === undefined) return;
   el.value = val;
   el.dispatchEvent(new Event("input", { bubbles: true }));
@@ -393,8 +393,8 @@ function sorunEkleFormuGoster(musteriId) {
 }
 
 function _sorunEkleIsle() {
-  var kategori = document.getElementById("sorun-kategori").value;
-  var aciklama = document.getElementById("sorun-aciklama").value.trim();
+  const kategori = document.getElementById("sorun-kategori").value;
+  const aciklama = document.getElementById("sorun-aciklama").value.trim();
 
   if (!kategori) {
     bildirimGoster("Kategori secin.", "hata");
@@ -414,7 +414,7 @@ function _sorunEkleIsle() {
   bildirimGoster("Sorun eklendi.", "basari");
 
   // Detay gorunumundeyse guncelle
-  var detaySec = document.getElementById("musteri-detay-section");
+  const detaySec = document.getElementById("musteri-detay-section");
   if (detaySec && detaySec.style.display !== "none") {
     _sorunlarRenderle(_aktifMusteriId);
   }
@@ -423,7 +423,7 @@ function _sorunEkleIsle() {
 // ===== MUSTERI DUZENLEME =====
 
 function musteriDuzenleFormuGoster() {
-  var musteri = musteriGetir(_aktifMusteriId);
+  const musteri = musteriGetir(_aktifMusteriId);
   if (!musteri) return;
   document.getElementById("duzenle-ad").value = musteri.ad || "";
   document.getElementById("duzenle-telefon").value = musteri.telefon || "";
@@ -432,7 +432,7 @@ function musteriDuzenleFormuGoster() {
 }
 
 function _musteriDuzenleIsle() {
-  var ad = document.getElementById("duzenle-ad").value.trim();
+  const ad = document.getElementById("duzenle-ad").value.trim();
   if (!ad) {
     bildirimGoster("Ad zorunludur.", "hata");
     return;
@@ -450,7 +450,7 @@ function _musteriDuzenleIsle() {
 // ===== MUSTERI SILME =====
 
 function musteriSilOnay() {
-  var musteri = musteriGetir(_aktifMusteriId);
+  const musteri = musteriGetir(_aktifMusteriId);
   if (!musteri) return;
   if (confirm(musteri.ad + " adli musteriyi silmek istediginizden emin misiniz?")) {
     musteriSil(_aktifMusteriId);
@@ -462,10 +462,10 @@ function musteriSilOnay() {
 // ===== ISTATISTIKLER =====
 
 function _istatistikleriGoster() {
-  var panel = document.getElementById("istatistik-panel");
+  const panel = document.getElementById("istatistik-panel");
   if (panel.style.display === "none") {
     panel.style.display = "";
-    var stats = istatistikleriHesapla();
+    const stats = istatistikleriHesapla();
     _istatistikRenderle(stats);
   } else {
     panel.style.display = "none";
@@ -473,8 +473,8 @@ function _istatistikleriGoster() {
 }
 
 function _istatistikRenderle(stats) {
-  var panel = document.getElementById("istatistik-panel");
-  var html = '<div class="istatistik-grid">';
+  const panel = document.getElementById("istatistik-panel");
+  let html = '<div class="istatistik-grid">';
 
   html += _istatistikKart(stats.toplamMusteri, "Toplam Musteri");
   html += _istatistikKart(stats.toplamSorun, "Toplam Sorun");
@@ -501,14 +501,14 @@ function _istatistikKart(deger, etiket) {
 // ===== YARDIMCI =====
 
 function _escHtml(str) {
-  var div = document.createElement("div");
+  const div = document.createElement("div");
   div.textContent = str;
   return div.innerHTML;
 }
 
 function _fmtNum(val) {
   if (val === null || val === undefined || val === "") return "-";
-  var n = parseFloat(val);
+  const n = parseFloat(val);
   if (isNaN(n)) return "-";
   return (n >= 0 ? "+" : "") + n.toFixed(2);
 }
@@ -517,7 +517,7 @@ function _fmtNum(val) {
 
 document.addEventListener("DOMContentLoaded", function() {
   // Musteri kaydet butonu (analiz sonucu)
-  var btnKaydet = document.getElementById("btn-musteri-kaydet");
+  const btnKaydet = document.getElementById("btn-musteri-kaydet");
   if (btnKaydet) {
     btnKaydet.addEventListener("click", function() {
       if (!window._sonAnaliz) {
@@ -556,12 +556,12 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("cozum-modal").style.display = "none";
   });
   document.getElementById("cozum-modal-kaydet").addEventListener("click", function() {
-    var cozum = document.getElementById("cozum-aciklama").value.trim();
+    const cozum = document.getElementById("cozum-aciklama").value.trim();
     sorunGuncelle(_aktifCozumMusteriId, _aktifCozumSorunId, { durum: "cozuldu", cozum: cozum });
     document.getElementById("cozum-modal").style.display = "none";
     bildirimGoster("Sorun cozuldu olarak isaretlendi.", "basari");
     // Gorunumu guncelle
-    var detaySec = document.getElementById("musteri-detay-section");
+    const detaySec = document.getElementById("musteri-detay-section");
     if (detaySec && detaySec.style.display !== "none") {
       _sorunlarRenderle(_aktifCozumMusteriId);
     }

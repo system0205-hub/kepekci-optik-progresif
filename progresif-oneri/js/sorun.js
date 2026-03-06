@@ -1,6 +1,6 @@
 // Kepekci Optik - Sorun Takip Veri Katmani
 
-var SORUN_KATEGORILERI = {
+const SORUN_KATEGORILERI = {
   alisma: "Alisma sorunu",
   yakin_bulanik: "Yakin bulanik",
   uzak_bulanik: "Uzak bulanik",
@@ -10,14 +10,14 @@ var SORUN_KATEGORILERI = {
   diger: "Diger"
 };
 
-var SORUN_DURUMLARI = {
+const SORUN_DURUMLARI = {
   acik: { etiket: "Acik", renk: "#e74c3c" },
   takipte: { etiket: "Takipte", renk: "#f39c12" },
   cozuldu: { etiket: "Cozuldu", renk: "#27ae60" }
 };
 
 function sorunEkle(musteriId, sorun) {
-  var musteri = musteriGetir(musteriId);
+  const musteri = musteriGetir(musteriId);
   if (!musteri) return null;
 
   if (!sorun.id) sorun.id = "s_" + Date.now();
@@ -32,10 +32,10 @@ function sorunEkle(musteriId, sorun) {
 }
 
 function sorunGuncelle(musteriId, sorunId, data) {
-  var musteri = musteriGetir(musteriId);
+  const musteri = musteriGetir(musteriId);
   if (!musteri || !musteri.sorunlar) return null;
 
-  for (var i = 0; i < musteri.sorunlar.length; i++) {
+  for (let i = 0; i < musteri.sorunlar.length; i++) {
     if (musteri.sorunlar[i].id === sorunId) {
       Object.keys(data).forEach(function(key) {
         musteri.sorunlar[i][key] = data[key];
@@ -48,14 +48,14 @@ function sorunGuncelle(musteriId, sorunId, data) {
 }
 
 function sorunlariGetir(musteriId) {
-  var musteri = musteriGetir(musteriId);
+  const musteri = musteriGetir(musteriId);
   if (!musteri) return [];
   return musteri.sorunlar || [];
 }
 
 function acikSorunSayisi(musteriId) {
-  var sorunlar = sorunlariGetir(musteriId);
-  var sayi = 0;
+  const sorunlar = sorunlariGetir(musteriId);
+  let sayi = 0;
   sorunlar.forEach(function(s) {
     if (s.durum === "acik") sayi++;
   });

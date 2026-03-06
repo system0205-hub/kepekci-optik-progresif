@@ -1,21 +1,21 @@
 // Kepekci Optik - Istatistik / Oruntu Analizi
 
 function istatistikleriHesapla() {
-  var musteriler = tumMusterileriGetir();
+  const musteriler = tumMusterileriGetir();
 
-  var toplamMusteri = musteriler.length;
-  var toplamSorun = 0;
-  var acikSorun = 0;
-  var cozulenSorun = 0;
-  var kategoriSayac = {};
-  var toplamRisk = 0;
-  var riskSayac = 0;
-  var yuksekRiskMusteri = 0;
-  var yuksekRiskSorunlu = 0;
+  const toplamMusteri = musteriler.length;
+  let toplamSorun = 0;
+  let acikSorun = 0;
+  let cozulenSorun = 0;
+  const kategoriSayac = {};
+  let toplamRisk = 0;
+  let riskSayac = 0;
+  let yuksekRiskMusteri = 0;
+  let yuksekRiskSorunlu = 0;
 
   musteriler.forEach(function(m) {
     // Sorunlar
-    var sorunlar = m.sorunlar || [];
+    const sorunlar = m.sorunlar || [];
     toplamSorun += sorunlar.length;
     sorunlar.forEach(function(s) {
       if (s.durum === "acik") acikSorun++;
@@ -24,8 +24,8 @@ function istatistikleriHesapla() {
     });
 
     // Analizler - risk skoru
-    var analizler = m.analizler || [];
-    var enYuksekRisk = 0;
+    const analizler = m.analizler || [];
+    let enYuksekRisk = 0;
     analizler.forEach(function(a) {
       if (a.sonuc && a.sonuc.risk && a.sonuc.risk.skor) {
         toplamRisk += a.sonuc.risk.skor;
@@ -44,8 +44,8 @@ function istatistikleriHesapla() {
   });
 
   // En sik kategori
-  var enSikKategori = "-";
-  var enSikSayi = 0;
+  let enSikKategori = "-";
+  let enSikSayi = 0;
   Object.keys(kategoriSayac).forEach(function(k) {
     if (kategoriSayac[k] > enSikSayi) {
       enSikSayi = kategoriSayac[k];
@@ -54,17 +54,17 @@ function istatistikleriHesapla() {
   });
 
   // Cozum orani
-  var cozumOrani = toplamSorun > 0
+  const cozumOrani = toplamSorun > 0
     ? "%" + Math.round((cozulenSorun / toplamSorun) * 100)
     : "-";
 
   // Ortalama risk
-  var ortalamaRisk = riskSayac > 0
+  const ortalamaRisk = riskSayac > 0
     ? (toplamRisk / riskSayac).toFixed(1)
     : "-";
 
   // Yuksek risk sorun orani
-  var yuksekRiskSorunOrani = null;
+  let yuksekRiskSorunOrani = null;
   if (yuksekRiskMusteri > 0) {
     yuksekRiskSorunOrani = "%" + Math.round((yuksekRiskSorunlu / yuksekRiskMusteri) * 100) +
       " (" + yuksekRiskSorunlu + "/" + yuksekRiskMusteri + " musteri)";
