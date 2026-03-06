@@ -22,6 +22,7 @@
     { ad: "Olcek Sag Ucu", renk: "#f97316", talimat: "Olcek kartindaki referans cizgisinin <strong>sag ucuna</strong> tiklayin." },
     { ad: "Sag Goz Odak Noktasi", renk: "#22c55e", talimat: "Sag gozdeki <strong>isaretlenmis odak noktasina</strong> (pupil merkezine) tiklayin." },
     { ad: "Sol Goz Odak Noktasi", renk: "#3b82f6", talimat: "Sol gozdeki <strong>isaretlenmis odak noktasina</strong> (pupil merkezine) tiklayin." },
+    { ad: "Burun Koprusu Ortasi", renk: "#f59e0b", talimat: "Burun koprusunun <strong>tam ortasina</strong> (iki goz arasi, gozluk koprusu hizasi) tiklayin." },
     { ad: "Sag Cerceve Alt Kenar", renk: "#a855f7", talimat: "Sag gozdeki odak noktasinin <strong>tam altindaki cerceve alt kenarina</strong> tiklayin." },
     { ad: "Sol Cerceve Alt Kenar", renk: "#ec4899", talimat: "Sol gozdeki odak noktasinin <strong>tam altindaki cerceve alt kenarina</strong> tiklayin." }
   ];
@@ -212,7 +213,7 @@
     canvas.addEventListener("touchend", function(e) {
       if (dokunmaModu === "tek") {
         // Tek parmak dokunma: nokta koy
-        if (durum.mevcutAdim >= 1 && durum.mevcutAdim <= 6 && durum.gorsel) {
+        if (durum.mevcutAdim >= 1 && durum.mevcutAdim <= 7 && durum.gorsel) {
           var rect = canvas.getBoundingClientRect();
           var canvasX = dokunmaBaslangicX - rect.left;
           var canvasY = dokunmaBaslangicY - rect.top;
@@ -224,7 +225,7 @@
             durum.mevcutAdim++;
             ciz();
             goruntuguncelle();
-            if (durum.noktalar.length === 6) {
+            if (durum.noktalar.length === 7) {
               hesaplaOlcumler();
             }
           }
@@ -380,10 +381,10 @@
     }
 
     // Fitting height cizgileri (odak -> alt kenar)
-    if (durum.noktalar.length >= 5) {
-      // Sag goz: nokta 2 (odak) -> nokta 4 (alt kenar)
+    if (durum.noktalar.length >= 6) {
+      // Sag goz: nokta 2 (odak) -> nokta 5 (alt kenar)
       var sagOdak = gorseldenCanvasa(durum.noktalar[2].x, durum.noktalar[2].y);
-      var sagAlt = gorseldenCanvasa(durum.noktalar[4].x, durum.noktalar[4].y);
+      var sagAlt = gorseldenCanvasa(durum.noktalar[5].x, durum.noktalar[5].y);
 
       ctx.beginPath();
       ctx.moveTo(sagOdak.x * 2, sagOdak.y * 2);
@@ -395,10 +396,10 @@
       ctx.setLineDash([]);
     }
 
-    if (durum.noktalar.length >= 6) {
-      // Sol goz: nokta 3 (odak) -> nokta 5 (alt kenar)
+    if (durum.noktalar.length >= 7) {
+      // Sol goz: nokta 3 (odak) -> nokta 6 (alt kenar)
       var solOdak = gorseldenCanvasa(durum.noktalar[3].x, durum.noktalar[3].y);
-      var solAlt = gorseldenCanvasa(durum.noktalar[5].x, durum.noktalar[5].y);
+      var solAlt = gorseldenCanvasa(durum.noktalar[6].x, durum.noktalar[6].y);
 
       ctx.beginPath();
       ctx.moveTo(solOdak.x * 2, solOdak.y * 2);
@@ -441,7 +442,7 @@
 
   // --- Canvas Tiklama ---
   function canvasTikla(e) {
-    if (!durum.gorsel || durum.mevcutAdim < 1 || durum.mevcutAdim > 6) return;
+    if (!durum.gorsel || durum.mevcutAdim < 1 || durum.mevcutAdim > 7) return;
 
     var rect = canvas.getBoundingClientRect();
     var canvasX = e.clientX - rect.left;
@@ -463,7 +464,7 @@
     goruntuguncelle();
 
     // Tum noktalar tamamlandi mi?
-    if (durum.noktalar.length === 6) {
+    if (durum.noktalar.length === 7) {
       hesaplaOlcumler();
     }
   }
@@ -487,10 +488,10 @@
     var sagOdak = durum.noktalar[2];
     var solOdak = durum.noktalar[3];
 
-    // Burunun ortasi referans (iki odak noktasinin orta noktasi)
-    var burunOrtaX = (sagOdak.x + solOdak.x) / 2;
+    // Burun koprusu noktasi (kullanici tarafindan isaretlenmis gercek referans)
+    var burunOrtaX = durum.noktalar[4].x;
 
-    // Monokuler PD: her gozden burun ortasina olan yatay mesafe
+    // Monokuler PD: her gozden burun koprusune olan yatay mesafe
     var pdSagPx = Math.abs(sagOdak.x - burunOrtaX);
     var pdSolPx = Math.abs(solOdak.x - burunOrtaX);
 
@@ -498,8 +499,8 @@
     var pdSolMm = pdSolPx * mmPerPiksel;
 
     // Fitting height: odak noktasindan cerceve alt kenarina dikey mesafe
-    var sagAlt = durum.noktalar[4];
-    var solAlt = durum.noktalar[5];
+    var sagAlt = durum.noktalar[5];
+    var solAlt = durum.noktalar[6];
 
     var fhSagPx = Math.abs(sagAlt.y - sagOdak.y);
     var fhSolPx = Math.abs(solAlt.y - solOdak.y);
@@ -634,12 +635,12 @@
     }
 
     // Talimat kutusu
-    if (gorselVar && durum.mevcutAdim >= 1 && durum.mevcutAdim <= 6) {
+    if (gorselVar && durum.mevcutAdim >= 1 && durum.mevcutAdim <= 7) {
       talimatKutusu.classList.add("goster");
       var noktaIdx = durum.mevcutAdim - 1;
       talimatBaslik.textContent = "Adim " + durum.mevcutAdim + ": " + NOKTALAR[noktaIdx].ad;
       talimatMetin.innerHTML = NOKTALAR[noktaIdx].talimat;
-    } else if (gorselVar && durum.mevcutAdim > 6) {
+    } else if (gorselVar && durum.mevcutAdim > 7) {
       talimatKutusu.classList.add("goster");
       talimatBaslik.textContent = "Tamamlandi!";
       talimatMetin.innerHTML = "Tum noktalar isaretlendi. Olcumler asagida hesaplandi.";
