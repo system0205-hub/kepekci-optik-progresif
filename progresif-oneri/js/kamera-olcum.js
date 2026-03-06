@@ -14,9 +14,19 @@
 
   // Mesafe ve konverjans sabitleri
   var STOP_MESAFE_MM = 27; // Vertex mesafesi + kornea-rotasyon merkezi arasi (mm)
-  var VARSAYILAN_HFOV_DERECE = 70; // Laptop/on kamera yatay gorus acisi (derece)
-  var OPTIMAL_MESAFE_MIN_CM = 35; // Minimum ideal mesafe (cm)
+
+  // Cihaz tespiti ve HFOV ayari
+  var MOBIL_CIHAZ = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  var HFOV_LAPTOP = 70;  // Laptop on kamera yatay gorus acisi (derece)
+  var HFOV_TELEFON = 78;  // Telefon on kamera yatay gorus acisi (derece)
+  var VARSAYILAN_HFOV_DERECE = MOBIL_CIHAZ ? HFOV_TELEFON : HFOV_LAPTOP;
+
+  var OPTIMAL_MESAFE_MIN_CM = MOBIL_CIHAZ ? 30 : 35; // Minimum ideal mesafe (cm)
   var OPTIMAL_MESAFE_MAX_CM = 50; // Maksimum ideal mesafe (cm)
+
+  // Otomatik yakalama sabitleri
+  var OTO_YAKALAMA_SURE_MS = 3000; // Ideal mesafede bekleme suresi (3 saniye)
+  var OTO_YAKALAMA_AKTIF = true;
 
   // MediaPipe iris landmark indeksleri
   var IRIS_SOL_MERKEZ = 468; // Kamera perspektifinden sol = kisinin sag gozu
@@ -288,6 +298,10 @@
           onizlemeCanvas.width = kameraVideo.videoWidth;
           onizlemeCanvas.height = kameraVideo.videoHeight;
 
+          // Cihaz bilgisini logla
+          console.log("[Kamera Kalibrasyon] Cihaz: " + (MOBIL_CIHAZ ? "Telefon" : "Laptop") +
+            " | HFOV: " + VARSAYILAN_HFOV_DERECE + "° | Min mesafe: " + OPTIMAL_MESAFE_MIN_CM + "cm");
+
           durum.mevcutAdim = ADIM.KAMERA;
           goruntuguncelle();
 
@@ -345,7 +359,14 @@
     durum.faceLandmarker.setOptions({ runningMode: "VIDEO" });
 
     var kareSayaci = 0;
-    var performansAzalt = /Mobi|Android/i.test(navigator.userAgent); // Mobilde her 3 karede 1
+    var performansAzalt = MOBIL_CIHAZ; // Mobilde her 3 karede 1
+
+    // Otomatik yakalama degiskenleri
+    var otoYakalama = {
+      idealBaslangic: 0,     // ideal mesafeye giris zamani
+      geriSayimAktif: false,
+      kalanMs: OTO_YAKALAMA_SURE_MS
+    };
 
     function algilamaDongusu() {
       if (!durum.kameraAktif || durum.mevcutAdim !== ADIM.KAMERA) return;
@@ -466,11 +487,39 @@
             var mDurum = mesafeDurumu(tahminMesafeCm);
             mesafeGosterge.className = "mesafe-gosterge goster " + mDurum;
             if (mDurum === "ideal") {
-              mesafeGosterge.textContent = "~" + tahminMesafeCm + " cm";
-            } else if (mDurum === "yakin") {
-              mesafeGosterge.textContent = "~" + tahminMesafeCm + " cm\nUzaklastin";
+              // Otomatik yakalama: geri sayim
+              if (OTO_YAKALAMA_AKTIF && !otoYakalama.geriSayimAktif) {
+                otoYakalama.idealBaslangic = performance.now();
+                otoYakalama.geriSayimAktif = true;
+              }
+              if (otoYakalama.geriSayimAktif) {
+                var gecenMs = performance.now() - otoYakalama.idealBaslangic;
+                otoYakalama.kalanMs = OTO_YAKALAMA_SURE_MS - gecenMs;
+                if (otoYakalama.kalanMs <= 0) {
+                  // Otomatik yakalama!
+                  otoYakalama.geriSayimAktif = false;
+                  mesafeGosterge.textContent = "Yakalandi!";
+                  kareCek();
+                  return; // Donguyu durdur
+                }
+                var kalanSn = Math.ceil(otoYakalama.kalanMs / 1000);
+                mesafeGosterge.textContent = "~" + tahminMesafeCm + " cm - Ideal!\n" + kalanSn + " sn...";
+              } else {
+                mesafeGosterge.textContent = "~" + tahminMesafeCm + " cm - Ideal!";
+              }
             } else {
-              mesafeGosterge.textContent = "~" + tahminMesafeCm + " cm\nYaklastin";
+              // Ideal degilse geri sayimi sifirla
+              otoYakalama.geriSayimAktif = false;
+              otoYakalama.kalanMs = OTO_YAKALAMA_SURE_MS;
+              if (mDurum === "cok_yakin") {
+                mesafeGosterge.textContent = "~" + tahminMesafeCm + " cm\nCok yakin! Uzaklastin";
+              } else if (mDurum === "yakin") {
+                mesafeGosterge.textContent = "~" + tahminMesafeCm + " cm\nBiraz uzaklastin";
+              } else if (mDurum === "cok_uzak") {
+                mesafeGosterge.textContent = "~" + tahminMesafeCm + " cm\nCok uzak! Yaklastin";
+              } else {
+                mesafeGosterge.textContent = "~" + tahminMesafeCm + " cm\nBiraz yaklastin";
+              }
             }
 
             // Durum: bulundu
@@ -651,9 +700,11 @@
 
   // Mesafe durumunu degerlendir (UI icin)
   function mesafeDurumu(mesafeCm) {
-    if (mesafeCm < OPTIMAL_MESAFE_MIN_CM) return "yakin";
-    if (mesafeCm > OPTIMAL_MESAFE_MAX_CM) return "uzak";
-    return "ideal";
+    if (mesafeCm < OPTIMAL_MESAFE_MIN_CM - 5) return "cok_yakin"; // kirmizi
+    if (mesafeCm < OPTIMAL_MESAFE_MIN_CM) return "yakin"; // sari
+    if (mesafeCm > OPTIMAL_MESAFE_MAX_CM + 10) return "cok_uzak"; // kirmizi
+    if (mesafeCm > OPTIMAL_MESAFE_MAX_CM) return "uzak"; // sari
+    return "ideal"; // yesil
   }
 
   // ===== CANVAS HAZIRLAMA VE CIZIM =====

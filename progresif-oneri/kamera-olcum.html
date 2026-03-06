@@ -220,29 +220,67 @@
       position: absolute;
       top: 12px;
       right: 12px;
-      padding: 6px 14px;
+      padding: 8px 16px;
       border-radius: 20px;
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       font-weight: 600;
       z-index: 10;
       backdrop-filter: blur(8px);
       display: none;
       text-align: center;
       line-height: 1.4;
+      white-space: pre-line;
+      transition: background 0.3s ease;
     }
     .mesafe-gosterge.goster { display: block; }
     .mesafe-gosterge.ideal {
-      background: rgba(34, 197, 94, 0.85);
+      background: rgba(34, 197, 94, 0.9);
       color: #fff;
+      animation: pulse-ideal 1.5s ease-in-out infinite;
     }
     .mesafe-gosterge.yakin {
-      background: rgba(239, 68, 68, 0.85);
+      background: rgba(245, 158, 11, 0.85);
       color: #fff;
     }
     .mesafe-gosterge.uzak {
       background: rgba(245, 158, 11, 0.85);
       color: #fff;
     }
+    .mesafe-gosterge.cok_yakin {
+      background: rgba(239, 68, 68, 0.9);
+      color: #fff;
+    }
+    .mesafe-gosterge.cok_uzak {
+      background: rgba(239, 68, 68, 0.9);
+      color: #fff;
+    }
+    @keyframes pulse-ideal {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    /* Bildirim (toast) stilleri */
+    .bildirim {
+      position: fixed;
+      top: -60px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      z-index: 9999;
+      transition: top 0.3s ease;
+      max-width: 90%;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .bildirim-goster { top: 16px; }
+    .bildirim-hata { background: #ef4444; color: #fff; }
+    .bildirim-uyari { background: #f59e0b; color: #fff; }
+    .bildirim-basarili { background: #22c55e; color: #fff; }
+    .bildirim-basari { background: #22c55e; color: #fff; }
+    .bildirim-bilgi { background: #3b82f6; color: #fff; }
 
     /* Kamera kontrol butonu */
     .kamera-kontrol {
