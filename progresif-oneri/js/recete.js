@@ -171,7 +171,7 @@ function v2yiV1eCevir(veri) {
   var sonuc = {
     v: 1,
     hasta: {
-      ad: "",
+      ad: veri.a || "",
       tc: veri.tc || "",
       soyad: ""
     },
@@ -221,19 +221,28 @@ function receteYukle(veri) {
   }
   document.getElementById("g_hasta_ad").textContent = hastaAd;
 
-  var detayParcalari = [];
+  // Avatar harfi
+  var avatarEl = document.getElementById("g_hasta_avatar");
+  if (avatarEl) {
+    avatarEl.textContent = hastaAd.charAt(0).toUpperCase() || "?";
+  }
+
+  // Detay grid (yeni kart bazli yapi)
+  var detayGrid = document.getElementById("g_hasta_detay_grid");
+  var detayHtml = "";
   if (veri.hasta && veri.hasta.tc) {
-    detayParcalari.push("TC: " + veri.hasta.tc);
+    detayHtml += '<div class="detay-item"><div class="detay-etiket">TC Kimlik</div><div class="detay-deger">' + veri.hasta.tc + '</div></div>';
   }
   if (veri.recete && veri.recete.tarih) {
-    detayParcalari.push("Tarih: " + veri.recete.tarih);
+    detayHtml += '<div class="detay-item"><div class="detay-etiket">Recete Tarihi</div><div class="detay-deger">' + veri.recete.tarih + '</div></div>';
   }
   if (veri.recete && veri.recete.doktor) {
-    detayParcalari.push("Dr. " + veri.recete.doktor);
+    detayHtml += '<div class="detay-item"><div class="detay-etiket">Doktor</div><div class="detay-deger">Dr. ' + veri.recete.doktor + '</div></div>';
   }
-  document.getElementById("g_hasta_tc").textContent = detayParcalari[0] || "";
-  document.getElementById("g_recete_tarih").textContent = detayParcalari[1] ? " | " + detayParcalari[1] : "";
-  document.getElementById("g_doktor").textContent = detayParcalari[2] ? " | " + detayParcalari[2] : "";
+  if (veri.recete && veri.recete.protokolNo) {
+    detayHtml += '<div class="detay-item"><div class="detay-etiket">Protokol No</div><div class="detay-deger">' + veri.recete.protokolNo + '</div></div>';
+  }
+  detayGrid.innerHTML = detayHtml;
 
   // Recete tablosunu doldur
   receteTablosunuDoldur(veri);
@@ -251,7 +260,7 @@ function receteYukle(veri) {
 }
 
 // ============================================================
-// RECETE TABLOSU
+// GOZ NUMARA KARTLARI (yeni kart bazli tasarim)
 // ============================================================
 function numaraFormatla(deger, isaret) {
   if (!deger && deger !== 0) return "-";
@@ -261,78 +270,93 @@ function numaraFormatla(deger, isaret) {
   return prefix + Math.abs(val).toFixed(2);
 }
 
-function receteTablosunuDoldur(veri) {
-  var tbody = document.getElementById("g_recete_tablo_body");
-  var html = "";
-
-  // Uzak - Sag
-  if (veri.uzak && veri.uzak.sag) {
-    var s = veri.uzak.sag;
-    html += "<tr><td><strong>Uzak - Sag (OD)</strong></td>";
-    html += "<td>" + numaraFormatla(s.sph, s.sphIsaret) + "</td>";
-    html += "<td>" + numaraFormatla(s.cyl, s.cylIsaret) + "</td>";
-    html += "<td>" + (s.aks || 0) + "</td></tr>";
-  }
-  // Uzak - Sol
-  if (veri.uzak && veri.uzak.sol) {
-    var s = veri.uzak.sol;
-    html += "<tr><td><strong>Uzak - Sol (OS)</strong></td>";
-    html += "<td>" + numaraFormatla(s.sph, s.sphIsaret) + "</td>";
-    html += "<td>" + numaraFormatla(s.cyl, s.cylIsaret) + "</td>";
-    html += "<td>" + (s.aks || 0) + "</td></tr>";
-  }
-  // Yakin - Sag
-  if (veri.yakin && veri.yakin.sag) {
-    var s = veri.yakin.sag;
-    html += "<tr><td><strong>Yakin - Sag (OD)</strong></td>";
-    html += "<td>" + numaraFormatla(s.sph, s.sphIsaret) + "</td>";
-    html += "<td>" + numaraFormatla(s.cyl, s.cylIsaret) + "</td>";
-    html += "<td>" + (s.aks || 0) + "</td></tr>";
-  }
-  // Yakin - Sol
-  if (veri.yakin && veri.yakin.sol) {
-    var s = veri.yakin.sol;
-    html += "<tr><td><strong>Yakin - Sol (OS)</strong></td>";
-    html += "<td>" + numaraFormatla(s.sph, s.sphIsaret) + "</td>";
-    html += "<td>" + numaraFormatla(s.cyl, s.cylIsaret) + "</td>";
-    html += "<td>" + (s.aks || 0) + "</td></tr>";
-  }
-
-  tbody.innerHTML = html;
+function numaraSinifi(deger, isaret) {
+  var val = parseFloat(deger) || 0;
+  if (val === 0) return "notr";
+  return isaret === "-" ? "negatif" : "pozitif";
 }
 
-// ============================================================
-// SGK UYARILARI
-// ============================================================
-function sgkUyarilariGoster(veri) {
-  var container = document.getElementById("g_sgk_uyarilar");
+function gozSatiriOlustur(etiket, gozVeri) {
+  if (!gozVeri) return "";
+  var sphSinif = numaraSinifi(gozVeri.sph, gozVeri.sphIsaret);
+  var cylSinif = numaraSinifi(gozVeri.cyl, gozVeri.cylIsaret);
+  var html = '<div class="goz-satir">';
+  html += '<span class="goz-satir-etiket">' + etiket + '</span>';
+  html += '<div class="goz-deger-grup">';
+  html += '<div class="goz-deger"><div class="goz-deger-baslik">SPH</div><div class="goz-deger-sayi ' + sphSinif + '">' + numaraFormatla(gozVeri.sph, gozVeri.sphIsaret) + '</div></div>';
+  html += '<div class="goz-deger"><div class="goz-deger-baslik">CYL</div><div class="goz-deger-sayi ' + cylSinif + '">' + numaraFormatla(gozVeri.cyl, gozVeri.cylIsaret) + '</div></div>';
+  html += '<div class="goz-deger"><div class="goz-deger-baslik">AKS</div><div class="goz-deger-sayi notr">' + (gozVeri.aks || 0) + '&deg;</div></div>';
+  html += '</div></div>';
+  return html;
+}
+
+function receteTablosunuDoldur(veri) {
+  var container = document.getElementById("g_goz_kartlar");
   var html = "";
 
-  // Uzak gozluk uyarisi (her zaman var)
-  html += '<div class="sgk-uyari">';
-  html += '<span class="uyari-ikon">&#x1F534;</span>';
-  html += '<div>';
-  html += '<div class="uyari-metin">UZAK GOZLUK: ' + FIYATLAR.sgkKatki + ' TL SGK odemesi</div>';
-  html += '<div class="uyari-aciklama">Bu tutar SGK tarafindan karsilanacak, vatandas odemeyecektir.</div>';
-  html += '</div>';
-  html += '</div>';
+  // Uzak kart
+  if (veri.uzak) {
+    html += '<div class="goz-kart uzak">';
+    html += '<div class="goz-kart-header"><span class="goz-ikon">&#128065;</span> Uzak Gozluk</div>';
+    html += '<div class="goz-kart-body">';
+    html += gozSatiriOlustur("SAG", veri.uzak.sag);
+    html += gozSatiriOlustur("SOL", veri.uzak.sol);
+    html += '</div></div>';
+  }
 
-  // Yakin gozluk uyarisi (varsa)
+  // Yakin kart
   if (veri.yakin) {
-    html += '<div class="sgk-uyari">';
-    html += '<span class="uyari-ikon">&#x1F534;</span>';
-    html += '<div>';
-    html += '<div class="uyari-metin">YAKIN GOZLUK: ' + FIYATLAR.sgkKatki + ' TL SGK odemesi</div>';
-    html += '<div class="uyari-aciklama">Bu tutar SGK tarafindan karsilanacak, vatandas odemeyecektir.</div>';
-    html += '</div>';
-    html += '</div>';
+    html += '<div class="goz-kart yakin">';
+    html += '<div class="goz-kart-header"><span class="goz-ikon">&#128214;</span> Yakin Gozluk</div>';
+    html += '<div class="goz-kart-body">';
+    html += gozSatiriOlustur("SAG", veri.yakin.sag);
+    html += gozSatiriOlustur("SOL", veri.yakin.sol);
+    html += '</div></div>';
   }
 
   container.innerHTML = html;
 }
 
 // ============================================================
-// FIYAT KARTI
+// SGK UYARILARI (animasyonlu premium badge)
+// ============================================================
+function sgkUyariOlustur(baslik, tutar, aciklama, gecikme) {
+  var html = '<div class="sgk-uyari" style="animation-delay:' + gecikme + 's;">';
+  html += '<div class="uyari-badge"><span class="uyari-badge-ikon">&#9888;</span></div>';
+  html += '<div class="uyari-icerik">';
+  html += '<div class="uyari-metin">' + baslik + '</div>';
+  html += '<div class="uyari-aciklama">' + aciklama + '</div>';
+  html += '</div>';
+  html += '<span class="uyari-tutar">' + tutar + ' TL</span>';
+  html += '</div>';
+  return html;
+}
+
+function sgkUyarilariGoster(veri) {
+  var container = document.getElementById("g_sgk_uyarilar");
+  var html = "";
+
+  html += sgkUyariOlustur(
+    "UZAK GOZLUK SGK Odemesi",
+    FIYATLAR.sgkKatki,
+    "SGK tarafindan karsilanacaktir",
+    0
+  );
+
+  if (veri.yakin) {
+    html += sgkUyariOlustur(
+      "YAKIN GOZLUK SGK Odemesi",
+      FIYATLAR.sgkKatki,
+      "SGK tarafindan karsilanacaktir",
+      0.15
+    );
+  }
+
+  container.innerHTML = html;
+}
+
+// ============================================================
+// FIYAT KARTI (premium kart tasarimi)
 // ============================================================
 function fiyatKartiniDoldur(veri) {
   var container = document.getElementById("g_fiyat_detay");
@@ -342,28 +366,22 @@ function fiyatKartiniDoldur(veri) {
 
   var html = "";
 
-  // Her recete tipi icin fiyat detayi
   var tipler = ["Uzak Gozluk"];
   if (yakinVar) tipler.push("Yakin Gozluk");
 
   for (var i = 0; i < tipler.length; i++) {
-    if (tipler.length > 1) {
-      html += '<div style="font-weight:600; color:var(--text); margin-top:' + (i > 0 ? '16px' : '0') + '; margin-bottom:8px;">' + tipler[i] + '</div>';
-    }
+    html += '<div class="fiyat-grup-baslik">' + tipler[i] + '</div>';
     html += '<div class="fiyat-satir"><span class="etiket">Cerceve</span><span class="tutar">' + FIYATLAR.cerceve + ' TL</span></div>';
     html += '<div class="fiyat-satir"><span class="etiket">Standart Cam</span><span class="tutar">' + FIYATLAR.standartCam + ' TL</span></div>';
     html += '<div class="fiyat-satir"><span class="etiket">SGK Katkisi</span><span class="tutar indirim">-' + FIYATLAR.sgkKatki + ' TL</span></div>';
     html += '<div class="fiyat-satir"><span class="etiket">Magaza Indirimi</span><span class="tutar indirim">-' + FIYATLAR.magazaIndirimi + ' TL</span></div>';
-    html += '<div class="fiyat-satir"><span class="etiket"><strong>' + tipler[i] + ' Tutari</strong></span><span class="tutar"><strong>' + FIYATLAR.musteriOder + ' TL</strong></span></div>';
+    html += '<div class="fiyat-satir alt-toplam"><span class="etiket">' + tipler[i] + ' Tutari</span><span class="tutar">' + FIYATLAR.musteriOder + ' TL</span></div>';
   }
 
-  // Toplam
-  html += '<div class="fiyat-satir fiyat-toplam">';
-  html += '<span class="etiket"><strong>TOPLAM VATANDAS ODEYECEGI TUTAR</strong></span>';
-  html += '<span class="tutar toplam" id="g_toplam_tutar">' + formatParaTL(toplamMusteriOder) + '</span>';
-  html += '</div>';
-
   container.innerHTML = html;
+
+  // Footer toplam tutarini guncelle
+  document.getElementById("g_toplam_tutar").textContent = formatParaTL(toplamMusteriOder);
 
   // Ozel fiyat alanini temizle
   document.getElementById("ozel_fiyat").value = "";
@@ -380,13 +398,13 @@ function ozelFiyatGuncelle() {
   var val = parseFloat((ozelInput.value || "").replace(",", "."));
   if (val > 0) {
     toplamEl.textContent = formatParaTL(val);
-    toplamEl.style.color = "var(--warning)";
+    toplamEl.style.color = "#fbbf24";
   } else {
     // Standart fiyata don
     var yakinVar = mevcutRecete && mevcutRecete.yakin;
     var adet = yakinVar ? 2 : 1;
     toplamEl.textContent = formatParaTL(FIYATLAR.musteriOder * adet);
-    toplamEl.style.color = "";
+    toplamEl.style.color = "#ffffff";
   }
 }
 

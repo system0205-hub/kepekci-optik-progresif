@@ -258,183 +258,442 @@
     }
     #musteri-gosterim.gorunur {
       display: block;
+      animation: fadeInUp 0.5s ease;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 8px rgba(239, 68, 68, 0.3); }
+      50% { box-shadow: 0 0 20px rgba(239, 68, 68, 0.6); }
+    }
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(30px); }
+      to { opacity: 1; transform: translateX(0); }
     }
 
-    /* Hasta bilgi karti */
+    /* Hasta bilgi karti - Dark Navy Header */
     .hasta-kart {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 20px;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      border-radius: 16px;
+      padding: 28px 24px;
       margin-bottom: 20px;
-      box-shadow: var(--shadow);
+      box-shadow: 0 10px 30px rgba(26, 26, 46, 0.3);
+      position: relative;
+      overflow: hidden;
     }
-    .hasta-kart h2 {
-      font-size: 1.3rem;
-      color: var(--primary);
-      margin-bottom: 4px;
+    .hasta-kart::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+      border-radius: 50%;
     }
-    .hasta-kart .hasta-detay {
-      font-size: 0.9rem;
-      color: var(--text-light);
-    }
-
-    /* Recete tablosu */
-    .recete-tablo-container {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: var(--shadow);
-      overflow-x: auto;
-    }
-    .recete-tablo-container h3 {
-      font-size: 1rem;
-      color: var(--text);
-      margin-bottom: 12px;
-    }
-    .recete-tablo {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.95rem;
-    }
-    .recete-tablo th {
-      background: var(--bg);
-      padding: 10px 12px;
-      text-align: center;
-      font-weight: 600;
-      color: var(--text);
-      border: 1px solid var(--border);
-    }
-    .recete-tablo td {
-      padding: 10px 12px;
-      text-align: center;
-      border: 1px solid var(--border);
-    }
-    .recete-tablo tr:nth-child(even) {
-      background: var(--bg);
-    }
-
-    /* SGK uyari kutulari */
-    .sgk-uyari {
-      background: #fef2f2;
-      border: 2px solid var(--danger);
-      border-radius: var(--radius);
-      padding: 16px 20px;
-      margin-bottom: 12px;
+    .hasta-kart .hasta-baslik {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 16px;
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 1;
     }
-    .sgk-uyari .uyari-ikon {
-      font-size: 1.5rem;
-      flex-shrink: 0;
-    }
-    .sgk-uyari .uyari-metin {
-      font-size: 1.1rem;
+    .hasta-kart .hasta-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      color: #fff;
       font-weight: 700;
-      color: var(--danger);
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
     }
-    .sgk-uyari .uyari-aciklama {
-      font-size: 0.85rem;
-      color: #991b1b;
-      margin-top: 2px;
+    .hasta-kart .hasta-ad {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 0.3px;
+    }
+    .hasta-kart .hasta-detay-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      position: relative;
+      z-index: 1;
+    }
+    .hasta-kart .detay-item {
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 10px 14px;
+      backdrop-filter: blur(4px);
+    }
+    .hasta-kart .detay-etiket {
+      font-size: 0.7rem;
+      color: rgba(255, 255, 255, 0.5);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 2px;
+    }
+    .hasta-kart .detay-deger {
+      font-size: 0.95rem;
+      color: #ffffff;
+      font-weight: 500;
     }
 
-    /* Fiyat karti */
-    .fiyat-kart {
-      background: var(--bg-card);
-      border: 2px solid var(--primary);
-      border-radius: var(--radius);
-      padding: 24px;
-      margin: 20px 0;
-      box-shadow: var(--shadow-lg);
+    /* Goz numara kartlari - Kart bazli layout */
+    .goz-kartlar-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
     }
-    .fiyat-kart h3 {
-      font-size: 1.1rem;
-      color: var(--primary);
-      margin-bottom: 16px;
+    .goz-kart {
+      background: #ffffff;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+    }
+    .goz-kart-header {
+      padding: 12px 16px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .goz-kart-header .goz-ikon {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+    }
+    .goz-kart.uzak .goz-kart-header {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: #fff;
+    }
+    .goz-kart.uzak .goz-ikon {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    .goz-kart.yakin .goz-kart-header {
+      background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+      color: #fff;
+    }
+    .goz-kart.yakin .goz-ikon {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    .goz-kart-body {
+      padding: 16px;
+    }
+    .goz-satir {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .goz-satir:last-child {
+      margin-bottom: 0;
+    }
+    .goz-satir-etiket {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      width: 32px;
+      flex-shrink: 0;
+    }
+    .goz-deger-grup {
+      display: flex;
+      gap: 6px;
+      flex: 1;
+    }
+    .goz-deger {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 6px 10px;
+      text-align: center;
+      flex: 1;
+      min-width: 0;
+    }
+    .goz-deger-baslik {
+      font-size: 0.6rem;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 2px;
+    }
+    .goz-deger-sayi {
+      font-size: 1rem;
+      font-weight: 700;
+      font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+    }
+    .goz-deger-sayi.pozitif { color: #16a34a; }
+    .goz-deger-sayi.negatif { color: #dc2626; }
+    .goz-deger-sayi.notr { color: #475569; }
+
+    /* SGK uyari kutulari - Animated premium */
+    .sgk-uyarilar-container {
+      margin-bottom: 20px;
+    }
+    .sgk-uyari {
+      background: linear-gradient(135deg, #fef2f2, #fff1f2);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      border-left: 4px solid #ef4444;
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      animation: slideInRight 0.4s ease;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .sgk-uyari:hover {
+      transform: translateX(4px);
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+    }
+    .sgk-uyari .uyari-badge {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+    .sgk-uyari .uyari-badge-ikon {
+      font-size: 1.2rem;
+      color: #fff;
+    }
+    .sgk-uyari .uyari-icerik {
+      flex: 1;
+    }
+    .sgk-uyari .uyari-metin {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #dc2626;
+    }
+    .sgk-uyari .uyari-aciklama {
+      font-size: 0.8rem;
+      color: #991b1b;
+      margin-top: 2px;
+      opacity: 0.8;
+    }
+    .sgk-uyari .uyari-tutar {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #dc2626;
+      font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+      flex-shrink: 0;
+    }
+
+    /* Fiyat karti - Premium design */
+    .fiyat-kart {
+      background: #ffffff;
+      border-radius: 16px;
+      overflow: hidden;
+      margin: 20px 0;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+    }
+    .fiyat-kart-header {
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .fiyat-kart-header h3 {
+      color: #ffffff;
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 0;
+    }
+    .fiyat-kart-header .fiyat-badge {
+      background: rgba(59, 130, 246, 0.2);
+      color: #60a5fa;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .fiyat-kart-body {
+      padding: 20px 24px;
+    }
+    .fiyat-grup-baslik {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #94a3b8;
+      margin: 16px 0 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .fiyat-grup-baslik:first-child {
+      margin-top: 0;
     }
     .fiyat-satir {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding: 8px 0;
-      border-bottom: 1px solid var(--border-light);
-    }
-    .fiyat-satir:last-child {
-      border-bottom: none;
     }
     .fiyat-satir .etiket {
-      color: var(--text);
-      font-size: 0.95rem;
+      color: #475569;
+      font-size: 0.9rem;
     }
     .fiyat-satir .tutar {
-      font-weight: 700;
-      font-size: 1rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #1e293b;
+      font-family: "SF Mono", "Fira Code", "Consolas", monospace;
     }
     .fiyat-satir .tutar.indirim {
-      color: var(--success);
+      color: #16a34a;
     }
-    .fiyat-satir .tutar.toplam {
-      color: var(--primary);
-      font-size: 1.3rem;
+    .fiyat-satir.alt-toplam {
+      border-top: 1px dashed #e2e8f0;
+      margin-top: 4px;
+      padding-top: 10px;
     }
-    .fiyat-satir.fiyat-toplam {
-      margin-top: 8px;
-      padding-top: 12px;
-      border-top: 2px solid var(--primary);
+    .fiyat-satir.alt-toplam .tutar {
+      font-weight: 700;
+      color: #3b82f6;
+    }
+    .fiyat-kart-footer {
+      background: linear-gradient(135deg, #1a1a2e, #0f3460);
+      padding: 20px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .fiyat-kart-footer .toplam-etiket {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+    .fiyat-kart-footer .toplam-tutar {
+      color: #ffffff;
+      font-size: 1.8rem;
+      font-weight: 800;
+      font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+      letter-spacing: -0.5px;
     }
 
     /* Ozel fiyat girisi */
     .ozel-fiyat-kutu {
-      background: #fffbeb;
-      border: 1px solid var(--warning);
-      border-radius: var(--radius-sm);
-      padding: 12px 16px;
-      margin-top: 16px;
+      background: linear-gradient(135deg, #fefce8, #fef9c3);
+      border: 1px solid rgba(234, 179, 8, 0.3);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-top: 0;
       display: flex;
       align-items: center;
       gap: 12px;
       flex-wrap: wrap;
     }
+    .ozel-fiyat-kutu .ozel-ikon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #eab308, #ca8a04);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 1rem;
+    }
     .ozel-fiyat-kutu label {
       font-size: 0.9rem;
       font-weight: 600;
-      color: var(--text);
+      color: #92400e;
       white-space: nowrap;
     }
     .ozel-fiyat-kutu input {
       width: 140px;
-      padding: 8px 12px;
-      border: 1px solid var(--warning);
-      border-radius: var(--radius-sm);
-      font-size: 1.1rem;
+      padding: 10px 14px;
+      border: 2px solid rgba(234, 179, 8, 0.4);
+      border-radius: 10px;
+      font-size: 1.2rem;
       font-weight: 700;
       text-align: right;
+      background: #fff;
+      font-family: "SF Mono", "Fira Code", "Consolas", monospace;
     }
     .ozel-fiyat-kutu input:focus {
       outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
+      border-color: #eab308;
+      box-shadow: 0 0 0 3px rgba(234, 179, 8, 0.2);
     }
     .ozel-fiyat-kutu .birim {
-      font-weight: 600;
-      color: var(--text);
+      font-weight: 700;
+      color: #92400e;
+      font-size: 1.1rem;
     }
 
-    /* Alt butonlar */
+    /* Alt butonlar - Gradient premium */
     .islem-butonlar {
-      display: flex;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
       gap: 12px;
       margin-top: 24px;
-      flex-wrap: wrap;
     }
     .islem-butonlar .btn {
-      flex: 1;
-      min-width: 140px;
       justify-content: center;
+      padding: 16px 20px;
+      border-radius: 14px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      transition: all 0.2s ease;
+    }
+    .islem-butonlar .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    }
+    .islem-butonlar .btn:active {
+      transform: translateY(0);
+    }
+    .islem-butonlar .btn--success {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: #fff;
+      border: none;
+    }
+    .islem-butonlar .btn--primary {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: #fff;
+      border: none;
+    }
+    .islem-butonlar .btn--secondary {
+      background: #f8fafc;
+      color: #475569;
+      border: 1px solid #e2e8f0;
+    }
+    .islem-butonlar .btn--success:disabled {
+      background: linear-gradient(135deg, #94a3b8, #64748b);
+      cursor: not-allowed;
+      opacity: 0.7;
+      box-shadow: none;
+    }
+    .islem-butonlar .btn--success:disabled:hover {
+      transform: none;
     }
 
     /* Bildirim */
@@ -485,11 +744,17 @@
       .hasta-bilgi-form {
         grid-template-columns: 1fr;
       }
-      .islem-butonlar {
-        flex-direction: column;
+      .goz-kartlar-container {
+        grid-template-columns: 1fr;
       }
-      .islem-butonlar .btn {
-        min-width: auto;
+      .islem-butonlar {
+        grid-template-columns: 1fr;
+      }
+      .hasta-kart .hasta-detay-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .fiyat-kart-footer .toplam-tutar {
+        font-size: 1.4rem;
       }
     }
     @media (max-width: 480px) {
@@ -498,6 +763,17 @@
       }
       .recete-container {
         padding: 12px;
+      }
+      .hasta-kart .hasta-detay-grid {
+        grid-template-columns: 1fr;
+      }
+      .hasta-kart .hasta-ad {
+        font-size: 1.2rem;
+      }
+      .hasta-kart .hasta-avatar {
+        width: 44px;
+        height: 44px;
+        font-size: 1.1rem;
       }
     }
   </style>
@@ -726,55 +1002,50 @@
     <!-- ==================== MUSTERI GOSTERIM BOLUMU ==================== -->
     <div id="musteri-gosterim">
 
-      <!-- Hasta bilgi karti -->
+      <!-- Hasta bilgi karti - Premium Dark Navy -->
       <div class="hasta-kart">
-        <h2 id="g_hasta_ad">-</h2>
-        <div class="hasta-detay">
-          <span id="g_hasta_tc"></span>
-          <span id="g_recete_tarih"></span>
-          <span id="g_doktor"></span>
+        <div class="hasta-baslik">
+          <div class="hasta-avatar" id="g_hasta_avatar">?</div>
+          <div class="hasta-ad" id="g_hasta_ad">-</div>
+        </div>
+        <div class="hasta-detay-grid" id="g_hasta_detay_grid">
+          <!-- JS ile doldurulacak -->
         </div>
       </div>
 
-      <!-- Recete ozet tablosu -->
-      <div class="recete-tablo-container">
-        <h3>Recete Ozeti</h3>
-        <table class="recete-tablo">
-          <thead>
-            <tr>
-              <th></th>
-              <th>SPH</th>
-              <th>CYL</th>
-              <th>AKS</th>
-            </tr>
-          </thead>
-          <tbody id="g_recete_tablo_body">
-            <!-- JS ile doldurulacak -->
-          </tbody>
-        </table>
-      </div>
-
-      <!-- SGK Uyarilari -->
-      <div id="g_sgk_uyarilar">
+      <!-- Goz Numara Kartlari -->
+      <div class="goz-kartlar-container" id="g_goz_kartlar">
         <!-- JS ile doldurulacak -->
       </div>
 
-      <!-- Fiyat Karti -->
+      <!-- SGK Uyarilari -->
+      <div class="sgk-uyarilar-container" id="g_sgk_uyarilar">
+        <!-- JS ile doldurulacak -->
+      </div>
+
+      <!-- Fiyat Karti - Premium -->
       <div class="fiyat-kart" id="g_fiyat_kart">
-        <h3>Standart Cam & Cerceve Paketi</h3>
-        <div id="g_fiyat_detay">
+        <div class="fiyat-kart-header">
+          <h3>Standart Cam & Cerceve Paketi</h3>
+          <span class="fiyat-badge">Kepekci Optik</span>
+        </div>
+        <div class="fiyat-kart-body" id="g_fiyat_detay">
           <!-- JS ile doldurulacak -->
         </div>
-
+        <div class="fiyat-kart-footer">
+          <span class="toplam-etiket">TOPLAM VATANDAS ODEYECEGI</span>
+          <span class="toplam-tutar" id="g_toplam_tutar">0 TL</span>
+        </div>
         <!-- Ozel fiyat girisi -->
         <div class="ozel-fiyat-kutu">
+          <span class="ozel-ikon">&#9998;</span>
           <label for="ozel_fiyat">Ozel Fiyat:</label>
-          <input type="number" id="ozel_fiyat" placeholder="Farkli tutar giriniz" step="50" min="0" inputmode="numeric" onchange="ozelFiyatGuncelle()" />
+          <input type="number" id="ozel_fiyat" placeholder="Tutar" step="50" min="0" inputmode="numeric" onchange="ozelFiyatGuncelle()" />
           <span class="birim">TL</span>
         </div>
       </div>
 
-      <!-- Alt butonlar -->
+      <!-- Alt butonlar - Gradient Premium -->
       <div class="islem-butonlar">
         <button class="btn btn--success" id="btn-progresif" onclick="progresifOnerisineGit()">
           Progresif Cam Onerisi

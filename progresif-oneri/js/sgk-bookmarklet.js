@@ -1,9 +1,10 @@
 // ============================================================
-// SGK BOOKMARKLET v2 - Recete Veri Okuma & QR Kod Uretme
+// SGK BOOKMARKLET v3 - Recete Veri Okuma & QR Kod Uretme
 // Kepekci Optik - Modul 2
 //
 // SGK e-recete sayfasi: gss.sgk.gov.tr/Optik_Firma2_Web/ereceteGiris.faces
-// Sayfa yapisi: JSF tablo tabanli, Turkce etiketler
+// Strateji: Tablo satirlarindaki checkbox+select+input paterni ile
+//           goz verisi satirlarini bul (1. = UZAK, 2. = YAKIN)
 // ============================================================
 
 (function() {
@@ -19,7 +20,6 @@
   // YARDIMCI FONKSIYONLAR
   // ============================================================
 
-  // Turkce karakterleri ASCII'ye cevir (QR boyutunu kucultmek icin)
   function turkceTemizle(str) {
     if (!str) return "";
     return str.replace(/\u00c7/g,"C").replace(/\u00e7/g,"c")
@@ -30,20 +30,16 @@
               .replace(/\u00dc/g,"U").replace(/\u00fc/g,"u");
   }
 
-  // Sayfadaki tum td/th/span/label icinde metin ara, yanindaki degeri al
+  // Sayfadaki tum td/th/span/label icinde etiket ara, yanindaki degeri al
   function etikettenDegerBul(etiketMetni) {
-    var tds = document.querySelectorAll("td, th, span, label");
-    for (var i = 0; i < tds.length; i++) {
-      var text = (tds[i].textContent || "").trim();
-      // Tam veya kismi eslesme
+    var cells = document.querySelectorAll("td, th, span, label");
+    for (var i = 0; i < cells.length; i++) {
+      var text = (cells[i].textContent || "").trim();
       if (text.indexOf(etiketMetni) >= 0 && text.length < etiketMetni.length + 20) {
-        // Kardes hucreyi kontrol et
-        var next = tds[i].nextElementSibling;
+        var next = cells[i].nextElementSibling;
         if (next) {
-          // Icerideki input/select var mi?
           var input = next.querySelector("input, select");
           if (input) return (input.value || "").trim();
-          // Yoksa text content
           var val = (next.textContent || "").trim();
           if (val) return val;
         }
@@ -52,170 +48,58 @@
     return "";
   }
 
-  // ID sonu ile element bul
-  function idSonuIleBul(suffix) {
-    var el = document.querySelector('[id$="' + suffix + '"]');
-    return el ? (el.value || el.textContent || "").trim() : "";
-  }
-
   // ============================================================
-  // GOZ NUMARALARINI TABLO YAPISINDAN OKU
+  // GOZ NUMARALARINI OKU - Satir bazli yaklasim
   // ============================================================
-  function gozlukBolumuOku(bolumBasligi) {
-    // "UZAK GOZLUK" veya "YAKIN GOZLUK" metnini sayfada bul
-    var tumElementler = document.querySelectorAll("td, th, span, div, fieldset, legend");
-    var bolumElement = null;
+  // SGK sayfasinda goz verileri tablo satirlarinda bulunur.
+  // Her satir (UZAK veya YAKIN icin):
+  //   SAG: [checkbox] [+/- select] [sferik input] [+/- select] [silindirik input] [aks input]
+  //   SOL: [checkbox] [+/- select] [sferik input] [+/- select] [silindirik input] [aks input]
+  // Yani bir veri satirinda: 2 checkbox, 4 select, 6 text input vardir.
+  // Bu patern sayfada benzersizdir — ilk bulunan = UZAK, ikinci = YAKIN.
 
-    for (var i = 0; i < tumElementler.length; i++) {
-      var text = (tumElementler[i].textContent || "").trim().toUpperCase();
-      // Tam eslesmesine yakin ol (uzun textContent olanları atla)
-      if (text.indexOf(bolumBasligi) >= 0 && text.length < bolumBasligi.length + 30) {
-        bolumElement = tumElementler[i];
-        break;
-      }
-    }
+  function tumGozlukVerileriniOku() {
+    var allTables = document.querySelectorAll("table");
+    var eyeDataRows = [];
 
-    if (!bolumElement) return null;
+    for (var i = 0; i < allTables.length; i++) {
+      var rows = allTables[i].querySelectorAll("tr");
+      for (var j = 0; j < rows.length; j++) {
+        var cbs = rows[j].querySelectorAll("input[type='checkbox']");
+        var sels = rows[j].querySelectorAll("select");
 
-    // Bu elementin parent containerini bul (fieldset veya buyuk tablo)
-    var container = bolumElement;
-    for (var j = 0; j < 8; j++) {
-      if (!container.parentElement) break;
-      container = container.parentElement;
-      // Iceride "SAG CAM" ve "Kure" iceren tablo var mi kontrol et
-      var icerik = (container.textContent || "").toUpperCase();
-      if (icerik.indexOf("SAG CAM") >= 0 || icerik.indexOf("SA\u011e CAM") >= 0 ||
-          icerik.indexOf("SA\u0047 CAM") >= 0) {
-        if (icerik.indexOf("KURE") >= 0 || icerik.indexOf("K\u00dcRE") >= 0 ||
-            icerik.indexOf("K\u00dc") >= 0) {
-          break; // Dogru container
+        // Goz verisi satiri: en az 2 checkbox + en az 4 select
+        if (cbs.length >= 2 && sels.length >= 4) {
+          eyeDataRows.push(rows[j]);
         }
       }
-    }
-
-    // Container icerisindeki tum input ve select'leri topla
-    var sonuc = { sag: null, sol: null };
-    var tablolar = container.querySelectorAll("table");
-
-    for (var t = 0; t < tablolar.length; t++) {
-      var tabloMetni = (tablolar[t].textContent || "").toUpperCase();
-      var tabloTip = null;
-
-      if (tabloMetni.indexOf("SAG CAM") >= 0 || tabloMetni.indexOf("SA\u011e CAM") >= 0 ||
-          tabloMetni.indexOf("SA\u0047 CAM") >= 0) {
-        // Bu tablo icerisinde SOL CAM da var mi?
-        if (tabloMetni.indexOf("SOL CAM") >= 0) {
-          // Ikisi ayni tabloda — satirlardan ayir
-          sonuc.sag = tabloSatirindenOku(tablolar[t], "SAG");
-          sonuc.sol = tabloSatirindenOku(tablolar[t], "SOL");
-        } else {
-          tabloTip = "sag";
-        }
-      } else if (tabloMetni.indexOf("SOL CAM") >= 0) {
-        tabloTip = "sol";
-      }
-
-      if (tabloTip) {
-        var okunan = tabloInputlarindenOku(tablolar[t]);
-        if (okunan) sonuc[tabloTip] = okunan;
-      }
-    }
-
-    // Eger tablo bazli okuma basarisiz olduysa, tum inputlari sirali oku
-    if (!sonuc.sag && !sonuc.sol) {
-      sonuc = containerInputlarindenOku(container);
-    }
-
-    if (sonuc.sag || sonuc.sol) return sonuc;
-    return null;
-  }
-
-  // Tek bir tablodan SAG veya SOL satirini oku
-  function tabloSatirindenOku(tablo, tip) {
-    var satirlar = tablo.querySelectorAll("tr");
-    for (var i = 0; i < satirlar.length; i++) {
-      var satirText = (satirlar[i].textContent || "").toUpperCase();
-      var eslesme = (tip === "SAG") ?
-        (satirText.indexOf("SAG") >= 0 || satirText.indexOf("SA\u011e") >= 0) :
-        (satirText.indexOf("SOL") >= 0);
-
-      if (eslesme) {
-        return satirInputlarindenOku(satirlar[i]);
-      }
-    }
-    return null;
-  }
-
-  // Bir satirdaki input ve selectlerden goz degerlerini oku
-  function satirInputlarindenOku(satir) {
-    var inputs = satir.querySelectorAll("input[type='text'], input:not([type])");
-    var selects = satir.querySelectorAll("select");
-    var checkboxes = satir.querySelectorAll("input[type='checkbox']");
-
-    // En az 2 input olmali (kure, silindir) — aks ayri olabilir
-    if (inputs.length < 2) return null;
-
-    // Isaret selectleri: genellikle 2 tane (SPH icin, CYL icin)
-    var sphIsaret = "+";
-    var cylIsaret = "+";
-    if (selects.length >= 1) sphIsaret = selects[0].value === "-" ? "-" : "+";
-    if (selects.length >= 2) cylIsaret = selects[1].value === "-" ? "-" : "+";
-
-    var kure = parseFloat((inputs[0].value || "0").replace(",", ".")) || 0;
-    var silindir = parseFloat((inputs[1].value || "0").replace(",", ".")) || 0;
-    var aks = inputs.length >= 3 ? (parseInt(inputs[2].value) || 0) : 0;
-
-    // Isareti uygula
-    var sph = sphIsaret === "-" ? -Math.abs(kure) : Math.abs(kure);
-    var cyl = cylIsaret === "-" ? -Math.abs(silindir) : Math.abs(silindir);
-
-    return [sph, cyl, aks];
-  }
-
-  // Bir tablodan tum inputlari oku (basit yaklasim)
-  function tabloInputlarindenOku(tablo) {
-    var satirlar = tablo.querySelectorAll("tr");
-    // Header olmayan ilk satiri bul
-    for (var i = 0; i < satirlar.length; i++) {
-      var sonuc = satirInputlarindenOku(satirlar[i]);
-      if (sonuc) return sonuc;
-    }
-    return null;
-  }
-
-  // Container icerisindeki tum inputlari sirali oku (son care)
-  function containerInputlarindenOku(container) {
-    var inputs = container.querySelectorAll("input[type='text'], input:not([type])");
-    var selects = container.querySelectorAll("select");
-
-    // Checkbox olmayan inputlari filtrele
-    var numInputs = [];
-    for (var i = 0; i < inputs.length; i++) {
-      if (inputs[i].type !== "checkbox" && inputs[i].type !== "hidden") {
-        numInputs.push(inputs[i]);
-      }
-    }
-
-    // En az 6 input olmali: sag(kure,silindir,aks) + sol(kure,silindir,aks)
-    if (numInputs.length < 6) return { sag: null, sol: null };
-
-    // Selectlerden isaretleri oku
-    var isaretler = [];
-    for (var i = 0; i < selects.length; i++) {
-      if (selects[i].options && selects[i].options.length <= 3) {
-        isaretler.push(selects[i].value === "-" ? -1 : 1);
-      }
-    }
-
-    function okuIdx(idx, isaretIdx) {
-      var val = parseFloat((numInputs[idx].value || "0").replace(",", ".")) || 0;
-      var sign = (isaretIdx < isaretler.length) ? isaretler[isaretIdx] : 1;
-      return val * sign;
     }
 
     return {
-      sag: [okuIdx(0, 0), okuIdx(1, 1), parseInt(numInputs[2].value) || 0],
-      sol: [okuIdx(3, 2), okuIdx(4, 3), parseInt(numInputs[5].value) || 0]
+      uzak: eyeDataRows.length >= 1 ? satirOku(eyeDataRows[0]) : null,
+      yakin: eyeDataRows.length >= 2 ? satirOku(eyeDataRows[1]) : null
+    };
+  }
+
+  function satirOku(row) {
+    var allInp = row.querySelectorAll("input");
+    var txtInp = [];
+    for (var i = 0; i < allInp.length; i++) {
+      if (allInp[i].type !== "checkbox" && allInp[i].type !== "hidden") {
+        txtInp.push(allInp[i]);
+      }
+    }
+    var sels = row.querySelectorAll("select");
+
+    // En az 6 text input (sferik+silindirik+aks x2) ve 4 select (+/- isaretler)
+    if (txtInp.length < 6 || sels.length < 4) return null;
+
+    var rv = function(inp) { return parseFloat((inp.value || "0").replace(",", ".")) || 0; };
+    var sv = function(sel) { return sel.value === "-" ? -1 : 1; };
+
+    return {
+      sag: [rv(txtInp[0]) * sv(sels[0]), rv(txtInp[1]) * sv(sels[1]), parseInt(txtInp[2].value) || 0],
+      sol: [rv(txtInp[3]) * sv(sels[2]), rv(txtInp[4]) * sv(sels[3]), parseInt(txtInp[5].value) || 0]
     };
   }
 
@@ -223,40 +107,41 @@
   // ANA VERI TOPLAMA
   // ============================================================
   function sgkVerileriOku() {
-    // Compact format v2: kisa anahtarlar, isaret sayi icerisinde
     var veri = { v: 2 };
 
-    // Hasta / recete bilgileri
-    var doktor = etikettenDegerBul("Doktor Ad") || idSonuIleBul("doktorAd") || "";
-    var tarih = etikettenDegerBul("Tarih") || idSonuIleBul("receteTarih") || "";
-    var protokol = etikettenDegerBul("Protokol No") || idSonuIleBul("protokolNo") || "";
-    var sgkNo = etikettenDegerBul("Sosyal G") || etikettenDegerBul("venlik No") || idSonuIleBul("sgkNo") || "";
+    // Hasta bilgileri
+    var ad = etikettenDegerBul("Ad\u0131") || etikettenDegerBul("Ad\u00fd") || "";
+    var soyad = etikettenDegerBul("Soyad") || "";
+    var doktor = etikettenDegerBul("Doktor Ad") || "";
+    var tarih = etikettenDegerBul("Re\u00e7ete Tarih") || etikettenDegerBul("Recete Tarih") || "";
+    var protokol = etikettenDegerBul("Protokol No") || "";
+    var sgkNo = etikettenDegerBul("Sosyal G") || etikettenDegerBul("venlik No") || "";
 
-    // Recete tarihi: birden fazla tarih alani olabilir, ilkini al
+    // Tarih: birden fazla alan olabilir
     if (!tarih) {
       var tarihInputs = document.querySelectorAll('input[id*="arih"], input[id*="date"], input[id*="Tarih"]');
       if (tarihInputs.length > 0) tarih = tarihInputs[0].value || "";
     }
 
+    var adSoyad = ((ad || "") + " " + (soyad || "")).trim();
+    if (adSoyad) veri.a = turkceTemizle(adSoyad);
     if (doktor) veri.dr = turkceTemizle(doktor);
     if (tarih) veri.t = tarih;
     if (protokol) veri.p = protokol;
     if (sgkNo) veri.tc = sgkNo;
 
-    // Uzak gozluk
-    var uzak = gozlukBolumuOku("UZAK");
-    if (uzak) {
-      veri.u = {};
-      if (uzak.sag) veri.u.s = uzak.sag;
-      if (uzak.sol) veri.u.l = uzak.sol;
-    }
+    // Goz numaralari
+    var gozVerisi = tumGozlukVerileriniOku();
 
-    // Yakin gozluk
-    var yakin = gozlukBolumuOku("YAKIN");
-    if (yakin) {
+    if (gozVerisi.uzak) {
+      veri.u = {};
+      if (gozVerisi.uzak.sag) veri.u.s = gozVerisi.uzak.sag;
+      if (gozVerisi.uzak.sol) veri.u.l = gozVerisi.uzak.sol;
+    }
+    if (gozVerisi.yakin) {
       veri.y = {};
-      if (yakin.sag) veri.y.s = yakin.sag;
-      if (yakin.sol) veri.y.l = yakin.sol;
+      if (gozVerisi.yakin.sag) veri.y.s = gozVerisi.yakin.sag;
+      if (gozVerisi.yakin.sol) veri.y.l = gozVerisi.yakin.sol;
     }
 
     return veri;
@@ -271,7 +156,7 @@
     // Overlay
     var overlay = document.createElement("div");
     overlay.id = "kepekci-qr-overlay";
-    overlay.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);" +
+    overlay.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.92);" +
       "z-index:999999;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:Arial,sans-serif;";
 
     // Baslik
@@ -282,12 +167,12 @@
 
     // Hasta/doktor bilgisi
     var bilgi = document.createElement("div");
-    bilgi.style.cssText = "color:#aaa;font-size:14px;margin-bottom:16px;text-align:center;";
-    var bilgiText = [];
-    if (veri.dr) bilgiText.push("Dr. " + veri.dr);
-    if (veri.t) bilgiText.push(veri.t);
-    if (veri.p) bilgiText.push("P:" + veri.p);
-    bilgi.textContent = bilgiText.join(" | ") || "Bilgi okunamadi";
+    bilgi.style.cssText = "color:#aaa;font-size:14px;margin-bottom:12px;text-align:center;";
+    var bilgiParts = [];
+    if (veri.a) bilgiParts.push(veri.a);
+    if (veri.dr) bilgiParts.push("Dr. " + veri.dr);
+    if (veri.t) bilgiParts.push(veri.t);
+    bilgi.textContent = bilgiParts.join(" | ") || "Bilgi okunamadi";
     overlay.appendChild(bilgi);
 
     // Numara ozeti
@@ -324,23 +209,20 @@
     document.body.appendChild(overlay);
 
     // QR olustur
-    function qrYukleVeOlustur() {
-      if (typeof QRCode !== "undefined") {
-        qrOlustur(qrDiv, jsonStr);
-      } else {
-        var s = document.createElement("script");
-        s.src = "https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js";
-        s.onload = function() { qrOlustur(qrDiv, jsonStr); };
-        s.onerror = function() {
-          qrDiv.innerHTML = '<div style="padding:20px;text-align:center;color:#e74c3c;">' +
-            '<p style="font-weight:bold;">QR kutuphane yuklenemedi</p>' +
-            '<p style="font-size:12px;margin-top:8px;">Veri panoya kopyalandi.</p></div>';
-          panoyaKopyala(jsonStr);
-        };
-        document.head.appendChild(s);
-      }
+    if (typeof QRCode !== "undefined") {
+      qrOlustur(qrDiv, jsonStr);
+    } else {
+      var s = document.createElement("script");
+      s.src = "https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js";
+      s.onload = function() { qrOlustur(qrDiv, jsonStr); };
+      s.onerror = function() {
+        qrDiv.innerHTML = '<div style="padding:20px;text-align:center;color:#e74c3c;">' +
+          '<p style="font-weight:bold;">QR kutuphane yuklenemedi</p>' +
+          '<p style="font-size:12px;margin-top:8px;">Veri panoya kopyalandi.</p></div>';
+        panoyaKopyala(jsonStr);
+      };
+      document.head.appendChild(s);
     }
-    qrYukleVeOlustur();
   }
 
   function qrOlustur(container, metin) {
@@ -351,7 +233,7 @@
         height: 400,
         colorDark: "#000000",
         colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.L  // L = en dusuk hata duzeltme = en fazla kapasite
+        correctLevel: QRCode.CorrectLevel.L
       });
     } catch (e) {
       container.innerHTML = '<div style="padding:20px;text-align:center;color:#e74c3c;">' +
