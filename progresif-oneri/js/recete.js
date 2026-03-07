@@ -147,6 +147,62 @@ function manuelReceteYukle() {
 }
 
 // ============================================================
+// QR v2 KOMPAKT FORMATI v1'E CEVIRME
+// ============================================================
+// Bookmarklet v2 formati: {"v":2,"dr":"...","t":"...","p":"...","tc":"...",
+//   "u":{"s":[sph,cyl,aks],"l":[sph,cyl,aks]},
+//   "y":{"s":[sph,cyl,aks],"l":[sph,cyl,aks]}}
+// sph/cyl isareti sayinin icinde (orn: -0.25 = negatif)
+function v2yiV1eCevir(veri) {
+  function gozCevir(arr) {
+    if (!arr || !Array.isArray(arr)) return null;
+    var sph = arr[0] || 0;
+    var cyl = arr[1] || 0;
+    var aks = arr[2] || 0;
+    return {
+      sph: Math.abs(sph),
+      sphIsaret: sph < 0 ? "-" : "+",
+      cyl: Math.abs(cyl),
+      cylIsaret: cyl < 0 ? "-" : "+",
+      aks: aks
+    };
+  }
+
+  var sonuc = {
+    v: 1,
+    hasta: {
+      ad: "",
+      tc: veri.tc || "",
+      soyad: ""
+    },
+    recete: {
+      tarih: veri.t || "",
+      protokolNo: veri.p || "",
+      teshis: "",
+      doktor: veri.dr || ""
+    },
+    uzak: null,
+    yakin: null
+  };
+
+  // Uzak
+  if (veri.u) {
+    sonuc.uzak = {};
+    if (veri.u.s) sonuc.uzak.sag = gozCevir(veri.u.s);
+    if (veri.u.l) sonuc.uzak.sol = gozCevir(veri.u.l);
+  }
+
+  // Yakin
+  if (veri.y) {
+    sonuc.yakin = {};
+    if (veri.y.s) sonuc.yakin.sag = gozCevir(veri.y.s);
+    if (veri.y.l) sonuc.yakin.sol = gozCevir(veri.y.l);
+  }
+
+  return sonuc;
+}
+
+// ============================================================
 // RECETE YUKLEME (ortak — QR ve Manuel icin)
 // ============================================================
 function receteYukle(veri) {
@@ -514,10 +570,18 @@ function qrTarayiciBaslat() {
       qrTaramayiDurdur();
       try {
         var veri = JSON.parse(decodedText);
-        if (veri && veri.v && veri.uzak) {
+        if (!veri || !veri.v) {
+          bildirimGoster("Gecersiz QR kod verisi. Tekrar deneyin.", "hata");
+          return;
+        }
+        // v2 kompakt format ise v1'e cevir
+        if (veri.v === 2) {
+          veri = v2yiV1eCevir(veri);
+        }
+        if (veri.uzak || veri.yakin) {
           receteYukle(veri);
         } else {
-          bildirimGoster("Gecersiz QR kod verisi. Tekrar deneyin.", "hata");
+          bildirimGoster("QR kodda numara verisi bulunamadi.", "hata");
         }
       } catch (e) {
         bildirimGoster("QR kod okunamadi: " + e.message, "hata");
