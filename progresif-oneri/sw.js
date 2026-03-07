@@ -1,5 +1,5 @@
 // Kepekci Optik - Service Worker (Offline Destek)
-var CACHE_NAME = "kepekci-optik-v1";
+var CACHE_NAME = "kepekci-optik-v2";
 var OFFLINE_URLS = [
   "./index.html",
   "./css/style.css",
@@ -18,7 +18,10 @@ var OFFLINE_URLS = [
   "./js/kamera-olcum.js",
   "./hasta-talimati.html",
   "./olcek-karti.html",
-  "./olcum-rehberi.html"
+  "./olcum-rehberi.html",
+  "./recete.html",
+  "./js/recete.js",
+  "./sgk-kurulum.html"
 ];
 
 // Kurulum - dosyalari onbellege al

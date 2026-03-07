@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SGK Bookmarklet Kurulum - Kepekci Optik</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .header {
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--primary-light) 100%);
+      color: #ffffff;
+      padding: 1.2rem 1.5rem;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header__inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+    }
+    .header__brand { display: flex; flex-direction: column; }
+    .header__title { font-size: 1.6rem; font-weight: 700; letter-spacing: 0.5px; }
+    .header__subtitle { font-size: 0.85rem; opacity: 0.85; font-weight: 400; }
+
+    .kurulum-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    .kurulum-baslik {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .kurulum-baslik h1 {
+      font-size: 1.6rem;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+    .kurulum-baslik p {
+      color: var(--text-light);
+      font-size: 0.95rem;
+    }
+
+    .adim {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+    }
+    .adim h2 {
+      font-size: 1.15rem;
+      color: var(--primary);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .adim-no {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      background: var(--primary);
+      color: #fff;
+      border-radius: 50%;
+      font-weight: 700;
+      font-size: 0.95rem;
+      flex-shrink: 0;
+    }
+    .adim p {
+      color: var(--text);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+    .adim ul {
+      margin-left: 20px;
+      color: var(--text);
+      font-size: 0.95rem;
+      line-height: 1.8;
+    }
+
+    .bookmarklet-link {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: #fff;
+      padding: 14px 28px;
+      border-radius: var(--radius);
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: grab;
+      box-shadow: var(--shadow-lg);
+      transition: var(--transition);
+      margin: 16px 0;
+    }
+    .bookmarklet-link:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    }
+    .bookmarklet-link:active {
+      cursor: grabbing;
+    }
+
+    .uyari-kutu {
+      background: #fffbeb;
+      border: 1px solid var(--warning);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      margin: 12px 0;
+      font-size: 0.9rem;
+      color: #92400e;
+    }
+
+    .basari-kutu {
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      margin: 12px 0;
+      font-size: 0.9rem;
+      color: #065f46;
+    }
+
+    .kod-kutu {
+      background: #1a1a2e;
+      color: #a0e0a0;
+      padding: 16px;
+      border-radius: var(--radius-sm);
+      font-family: monospace;
+      font-size: 0.8rem;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+      margin: 12px 0;
+      line-height: 1.5;
+    }
+
+    .gorsel-aciklama {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin: 16px 0;
+      padding: 16px;
+      background: var(--bg);
+      border-radius: var(--radius-sm);
+    }
+    .gorsel-aciklama .numara {
+      background: var(--accent);
+      color: #fff;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+
+    .geri-link {
+      display: inline-block;
+      margin-top: 24px;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .geri-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="header__inner">
+      <div class="header__brand">
+        <div class="header__title">Kepekci Optik</div>
+        <div class="header__subtitle">SGK Bookmarklet Kurulum Rehberi</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="kurulum-container">
+
+    <div class="kurulum-baslik">
+      <h1>SGK Recete QR Bookmarklet Kurulumu</h1>
+      <p>Bu rehber, SGK e-recete sayfasindan reçete verilerini tek tikla QR koda donusturmenizi saglar.</p>
+    </div>
+
+    <!-- ADIM 1 -->
+    <div class="adim">
+      <h2><span class="adim-no">1</span> Bookmarklet Nedir?</h2>
+      <p>Bookmarklet, tarayicinizin yer imleri cubugundan calistirilan kucuk bir JavaScript kodudur. Normal bir yer imi gibi gorunur ama tiklandiginda sayfada islem yapar.</p>
+      <p><strong>Ne yapar:</strong> SGK e-recete sayfasindaki hasta bilgilerini ve numara degerlerini okur, bunlari QR kod olarak ekranda gosterir.</p>
+    </div>
+
+    <!-- ADIM 2 -->
+    <div class="adim">
+      <h2><span class="adim-no">2</span> Yer Imleri Cubugunu Gosterin</h2>
+      <p>Chrome tarayicida yer imleri cubugu gorunur degilse:</p>
+      <ul>
+        <li><strong>Ctrl + Shift + B</strong> tusuna basin (Windows)</li>
+        <li>veya Menu > Yer Imleri > Yer Imleri Cubugunu Goster</li>
+      </ul>
+    </div>
+
+    <!-- ADIM 3 -->
+    <div class="adim">
+      <h2><span class="adim-no">3</span> Bookmarklet'i Kurun</h2>
+      <p>Asagidaki mavi butonu <strong>surukleyip yer imleri cubuguna birakin</strong>:</p>
+
+      <div style="text-align:center; margin:20px 0;">
+        <a class="bookmarklet-link"
+           href="javascript:void((function(){var s=document.createElement('script');s.src='https://system0205-hub.github.io/kepekci-optik-progresif/js/sgk-bookmarklet.js?t='+Date.now();document.head.appendChild(s)})())">
+          SGK Recete QR
+        </a>
+      </div>
+
+      <div class="uyari-kutu">
+        <strong>Not:</strong> Buton suruklenmiyorsa, asagidaki kodu el ile yer imi olarak ekleyebilirsiniz:
+      </div>
+
+      <p><strong>Elle ekleme:</strong></p>
+      <div class="gorsel-aciklama">
+        <span class="numara">1</span>
+        <div>Yer imleri cubugunda bos bir yere sag tiklayin > "Sayfa ekle" secin</div>
+      </div>
+      <div class="gorsel-aciklama">
+        <span class="numara">2</span>
+        <div><strong>Ad:</strong> SGK Recete QR</div>
+      </div>
+      <div class="gorsel-aciklama">
+        <span class="numara">3</span>
+        <div><strong>URL:</strong> Asagidaki kodu kopyalayip URL alanina yapistin:</div>
+      </div>
+
+      <div class="kod-kutu">javascript:void((function(){var s=document.createElement('script');s.src='https://system0205-hub.github.io/kepekci-optik-progresif/js/sgk-bookmarklet.js?t='+Date.now();document.head.appendChild(s)})())</div>
+    </div>
+
+    <!-- ADIM 4 -->
+    <div class="adim">
+      <h2><span class="adim-no">4</span> Kullanim</h2>
+      <div class="gorsel-aciklama">
+        <span class="numara">1</span>
+        <div>SGK portaline gidin ve hastanin reçetesini acin (gss.sgk.gov.tr)</div>
+      </div>
+      <div class="gorsel-aciklama">
+        <span class="numara">2</span>
+        <div>Recete detay sayfasi gorunurken, yer imleri cubugundaki <strong>"SGK Recete QR"</strong> butonuna tiklayin</div>
+      </div>
+      <div class="gorsel-aciklama">
+        <span class="numara">3</span>
+        <div>Ekranda buyuk bir QR kod belirecek</div>
+      </div>
+      <div class="gorsel-aciklama">
+        <span class="numara">4</span>
+        <div>Tabletten <strong>SGK Recete</strong> sayfasini acin, <strong>"QR Kod Tara"</strong> butonuna basin ve PC ekranindaki QR'i tarayin</div>
+      </div>
+
+      <div class="basari-kutu">
+        <strong>Tamamdir!</strong> Recete verileri aninda tablete aktarilir. Hasta bilgileri, numara degerleri ve fiyat hesaplamalari otomatik olarak gosterilir.
+      </div>
+    </div>
+
+    <!-- ADIM 5 -->
+    <div class="adim">
+      <h2><span class="adim-no">5</span> Sorun Giderme</h2>
+      <p><strong>QR kod gorunmuyorsa:</strong></p>
+      <ul>
+        <li>SGK sayfasi tam yuklendiginden emin olun</li>
+        <li>Sayfayi yenileyip tekrar deneyin</li>
+        <li>Farkli bir tarayici deneyin (Chrome oneriliyor)</li>
+      </ul>
+      <p style="margin-top:12px;"><strong>Script calismiyorsa (CSP hatasi):</strong></p>
+      <ul>
+        <li>Bu durumda tabletteki <strong>"Manuel Giris"</strong> sekmesini kullanin</li>
+        <li>SGK sayfasindaki numaralari elle girin</li>
+      </ul>
+    </div>
+
+    <a href="recete.html" class="geri-link">&larr; SGK Recete Sayfasina Don</a>
+
+  </div>
+
+</body>
+</html>

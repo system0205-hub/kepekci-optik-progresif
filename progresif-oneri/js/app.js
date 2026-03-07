@@ -1674,30 +1674,51 @@ function fotoOlcumParametreleriniOku() {
   var params = new URLSearchParams(window.location.search);
   var kaynak = params.get("kaynak");
 
-  if (kaynak !== "foto" && kaynak !== "kamera") return;
+  if (kaynak !== "foto" && kaynak !== "kamera" && kaynak !== "recete") return;
 
-  var pdSag = params.get("pdSag");
-  var pdSol = params.get("pdSol");
-  var fhSag = params.get("fhSag");
-  var fhSol = params.get("fhSol");
+  if (kaynak === "recete") {
+    // Recete modulunden gelen numara verileri
+    var odSph = params.get("od_sph");
+    var odCyl = params.get("od_cyl");
+    var odAx = params.get("od_ax");
+    var odAdd = params.get("od_add");
+    var osSph = params.get("os_sph");
+    var osCyl = params.get("os_cyl");
+    var osAx = params.get("os_ax");
+    var osAdd = params.get("os_add");
 
-  // Degerleri forma yaz
-  if (pdSag) setInputValue("pd_sag", pdSag);
-  if (pdSol) setInputValue("pd_sol", pdSol);
+    if (odSph) setInputValue("od_sph", odSph);
+    if (odCyl) setInputValue("od_cyl", odCyl);
+    if (odAx) setInputValue("od_ax", odAx);
+    if (odAdd) setInputValue("od_add", odAdd);
+    if (osSph) setInputValue("os_sph", osSph);
+    if (osCyl) setInputValue("os_cyl", osCyl);
+    if (osAx) setInputValue("os_ax", osAx);
+    if (osAdd) setInputValue("os_add", osAdd);
 
-  // Fitting height: iki gozun ortalamasini al (genellikle ayni veya 1mm fark)
-  if (fhSag && fhSol) {
-    var fhOrtalama = Math.round((parseFloat(fhSag) + parseFloat(fhSol)) * 2) / 2;
-    setInputValue("fitting_height", fhOrtalama);
-  } else if (fhSag) {
-    setInputValue("fitting_height", fhSag);
-  } else if (fhSol) {
-    setInputValue("fitting_height", fhSol);
+    bildirimGoster("SGK recetesinden alinan numaralar forma aktarildi! Lutfen degerlerini kontrol edin.", "basarili");
+  } else {
+    // Foto/kamera olcumunden gelen PD ve FH verileri
+    var pdSag = params.get("pdSag");
+    var pdSol = params.get("pdSol");
+    var fhSag = params.get("fhSag");
+    var fhSol = params.get("fhSol");
+
+    if (pdSag) setInputValue("pd_sag", pdSag);
+    if (pdSol) setInputValue("pd_sol", pdSol);
+
+    if (fhSag && fhSol) {
+      var fhOrtalama = Math.round((parseFloat(fhSag) + parseFloat(fhSol)) * 2) / 2;
+      setInputValue("fitting_height", fhOrtalama);
+    } else if (fhSag) {
+      setInputValue("fitting_height", fhSag);
+    } else if (fhSol) {
+      setInputValue("fitting_height", fhSol);
+    }
+
+    var kaynakMesaj = kaynak === "kamera" ? "Kameradan" : "Fotograftan";
+    bildirimGoster(kaynakMesaj + " alinan olcumler forma aktarildi! Lutfen degerlerini kontrol edin.", "basarili");
   }
-
-  // Bildirim goster
-  var kaynakMesaj = kaynak === "kamera" ? "Kameradan" : "Fotograftan";
-  bildirimGoster(kaynakMesaj + " alinan olcumler forma aktarildi! Lutfen degerlerini kontrol edin.", "basarili");
 
   // URL parametrelerini temizle (sayfayi yeniden yuklemeden)
   if (window.history && window.history.replaceState) {

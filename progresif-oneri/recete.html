@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>SGK Recete - Kepekci Optik</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* Header stili (diger sayfalarla ayni) */
+    .header {
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--primary-light) 100%);
+      color: #ffffff;
+      padding: 1.2rem 1.5rem;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header__inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+    }
+    .header__brand { display: flex; flex-direction: column; }
+    .header__title { font-size: 1.6rem; font-weight: 700; letter-spacing: 0.5px; }
+    .header__subtitle { font-size: 0.85rem; opacity: 0.85; font-weight: 400; }
+    .header__nav { display: flex; gap: 0.3rem; }
+    .header__nav a {
+      color: rgba(255,255,255,0.75);
+      text-decoration: none;
+      padding: 0.45rem 1rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+    .header__nav a:hover { color: #fff; background: rgba(255,255,255,0.12); }
+    .header__nav a.active { color: #fff; background: rgba(255,255,255,0.2); font-weight: 600; }
+
+    /* Sayfa icerigi */
+    .recete-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* Sekme (tab) sistemi */
+    .tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 0;
+      border-bottom: 2px solid var(--border);
+    }
+    .tabs button {
+      flex: 1;
+      padding: 14px 20px;
+      border: none;
+      background: none;
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--text-light);
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      transition: var(--transition);
+    }
+    .tabs button:hover {
+      color: var(--text);
+      background: rgba(0,0,0,0.03);
+    }
+    .tabs button.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+      font-weight: 600;
+    }
+    .tab-icerik {
+      display: none;
+      padding: 24px 0;
+    }
+    .tab-icerik.active {
+      display: block;
+    }
+
+    /* QR tarayici alani */
+    #qr-okuyucu {
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto;
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .qr-durum {
+      text-align: center;
+      padding: 16px;
+      color: var(--text-light);
+      font-size: 0.95rem;
+    }
+
+    /* Manuel giris formu */
+    .recete-form {
+      display: grid;
+      gap: 24px;
+    }
+    .goz-bolumu {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+    .goz-bolumu h3 {
+      font-size: 1.1rem;
+      color: var(--primary);
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .goz-bolumu h3 .goz-etiket {
+      display: inline-block;
+      background: var(--primary);
+      color: #fff;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      margin-left: 8px;
+    }
+    .numara-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .numara-grid label {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--text-light);
+      margin-bottom: 4px;
+      font-weight: 500;
+    }
+    .numara-grid input, .numara-grid select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      text-align: center;
+      background: var(--bg);
+    }
+    .numara-grid input:focus, .numara-grid select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
+    }
+    .isaret-secici {
+      display: flex;
+      gap: 4px;
+    }
+    .isaret-secici select {
+      width: 60px;
+      flex-shrink: 0;
+      padding: 10px 4px;
+      text-align: center;
+    }
+    .isaret-secici input {
+      flex: 1;
+      min-width: 0;
+    }
+
+    /* Hasta bilgi formu */
+    .hasta-bilgi-form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .hasta-bilgi-form .tam-genislik {
+      grid-column: 1 / -1;
+    }
+    .hasta-bilgi-form label {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--text-light);
+      margin-bottom: 4px;
+      font-weight: 500;
+    }
+    .hasta-bilgi-form input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      background: var(--bg);
+    }
+    .hasta-bilgi-form input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
+    }
+
+    /* Butonlar */
+    .form-butonlar {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn--primary {
+      background: var(--primary);
+      color: #fff;
+      flex: 1;
+    }
+    .btn--primary:hover {
+      background: var(--primary-dark);
+    }
+    .btn--primary:disabled {
+      background: var(--text-muted);
+      cursor: not-allowed;
+    }
+    .btn--secondary {
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn--secondary:hover {
+      background: var(--border-light);
+    }
+    .btn--danger {
+      background: var(--danger);
+      color: #fff;
+    }
+    .btn--success {
+      background: var(--success);
+      color: #fff;
+    }
+    .btn--success:hover {
+      filter: brightness(0.9);
+    }
+
+    /* ==================== MUSTERI GOSTERIM BOLUMU ==================== */
+    #musteri-gosterim {
+      display: none;
+    }
+    #musteri-gosterim.gorunur {
+      display: block;
+    }
+
+    /* Hasta bilgi karti */
+    .hasta-kart {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+    }
+    .hasta-kart h2 {
+      font-size: 1.3rem;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+    .hasta-kart .hasta-detay {
+      font-size: 0.9rem;
+      color: var(--text-light);
+    }
+
+    /* Recete tablosu */
+    .recete-tablo-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+      overflow-x: auto;
+    }
+    .recete-tablo-container h3 {
+      font-size: 1rem;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+    .recete-tablo {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+    .recete-tablo th {
+      background: var(--bg);
+      padding: 10px 12px;
+      text-align: center;
+      font-weight: 600;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .recete-tablo td {
+      padding: 10px 12px;
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+    .recete-tablo tr:nth-child(even) {
+      background: var(--bg);
+    }
+
+    /* SGK uyari kutulari */
+    .sgk-uyari {
+      background: #fef2f2;
+      border: 2px solid var(--danger);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .sgk-uyari .uyari-ikon {
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+    .sgk-uyari .uyari-metin {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--danger);
+    }
+    .sgk-uyari .uyari-aciklama {
+      font-size: 0.85rem;
+      color: #991b1b;
+      margin-top: 2px;
+    }
+
+    /* Fiyat karti */
+    .fiyat-kart {
+      background: var(--bg-card);
+      border: 2px solid var(--primary);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin: 20px 0;
+      box-shadow: var(--shadow-lg);
+    }
+    .fiyat-kart h3 {
+      font-size: 1.1rem;
+      color: var(--primary);
+      margin-bottom: 16px;
+    }
+    .fiyat-satir {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .fiyat-satir:last-child {
+      border-bottom: none;
+    }
+    .fiyat-satir .etiket {
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+    .fiyat-satir .tutar {
+      font-weight: 700;
+      font-size: 1rem;
+    }
+    .fiyat-satir .tutar.indirim {
+      color: var(--success);
+    }
+    .fiyat-satir .tutar.toplam {
+      color: var(--primary);
+      font-size: 1.3rem;
+    }
+    .fiyat-satir.fiyat-toplam {
+      margin-top: 8px;
+      padding-top: 12px;
+      border-top: 2px solid var(--primary);
+    }
+
+    /* Ozel fiyat girisi */
+    .ozel-fiyat-kutu {
+      background: #fffbeb;
+      border: 1px solid var(--warning);
+      border-radius: var(--radius-sm);
+      padding: 12px 16px;
+      margin-top: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .ozel-fiyat-kutu label {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+    }
+    .ozel-fiyat-kutu input {
+      width: 140px;
+      padding: 8px 12px;
+      border: 1px solid var(--warning);
+      border-radius: var(--radius-sm);
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-align: right;
+    }
+    .ozel-fiyat-kutu input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.15);
+    }
+    .ozel-fiyat-kutu .birim {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    /* Alt butonlar */
+    .islem-butonlar {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+    .islem-butonlar .btn {
+      flex: 1;
+      min-width: 140px;
+      justify-content: center;
+    }
+
+    /* Bildirim */
+    .bildirim {
+      position: fixed;
+      top: 80px;
+      right: 20px;
+      padding: 14px 20px;
+      border-radius: var(--radius-sm);
+      font-size: 0.95rem;
+      font-weight: 500;
+      z-index: 1000;
+      transform: translateX(120%);
+      transition: transform 0.3s ease;
+      max-width: 360px;
+      box-shadow: var(--shadow-lg);
+    }
+    .bildirim.gorunur {
+      transform: translateX(0);
+    }
+    .bildirim.basarili {
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+    }
+    .bildirim.hata {
+      background: #fef2f2;
+      color: #991b1b;
+      border: 1px solid #fca5a5;
+    }
+    .bildirim.uyari {
+      background: #fffbeb;
+      color: #92400e;
+      border: 1px solid #fde68a;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header__nav {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .numara-grid {
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 8px;
+      }
+      .hasta-bilgi-form {
+        grid-template-columns: 1fr;
+      }
+      .islem-butonlar {
+        flex-direction: column;
+      }
+      .islem-butonlar .btn {
+        min-width: auto;
+      }
+    }
+    @media (max-width: 480px) {
+      .numara-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .recete-container {
+        padding: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header__inner">
+      <div class="header__brand">
+        <div class="header__title">Kepekci Optik</div>
+        <div class="header__subtitle">SGK Recete & Fiyat Sistemi</div>
+      </div>
+      <nav class="header__nav">
+        <a href="index.html">Ana Sayfa</a>
+        <a href="foto-olcum.html">Fotograftan Olcum</a>
+        <a href="kamera-olcum.html">Kameradan Olcum</a>
+        <a href="recete.html" class="active">SGK Recete</a>
+        <a href="olcum-rehberi.html">Olcum Rehberi</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ANA ICERIK -->
+  <div class="recete-container">
+
+    <!-- ==================== VERI GIRIS BOLUMU ==================== -->
+    <div id="veri-giris-bolumu">
+      <h1 style="text-align:center; font-size:1.6rem; color:var(--primary); margin-bottom:8px;">SGK Recete Girisi</h1>
+      <p style="text-align:center; color:var(--text-light); margin-bottom:24px; font-size:0.95rem;">
+        QR kod tarayarak veya manuel girerek recete bilgilerini yukleyin
+      </p>
+
+      <!-- Sekmeler -->
+      <div class="tabs">
+        <button id="tab-qr" class="active" onclick="sekmeGecis('qr')">QR Kod Tara</button>
+        <button id="tab-manuel" onclick="sekmeGecis('manuel')">Manuel Giris</button>
+      </div>
+
+      <!-- QR TAB -->
+      <div id="icerik-qr" class="tab-icerik active">
+        <div style="text-align:center; padding:20px 0;">
+          <div id="qr-okuyucu"></div>
+          <div id="qr-durum" class="qr-durum">
+            <p>QR kod taramak icin asagidaki butona basin.</p>
+            <p style="font-size:0.85rem; color:var(--text-muted); margin-top:8px;">
+              PC'deki SGK sayfasinda bookmarklet ile olusturulan QR kodu tarayin.
+            </p>
+          </div>
+          <button id="btn-qr-baslat" class="btn btn--primary" onclick="qrTaramayiBaslat()" style="margin-top:16px;">
+            Kamerayi Ac ve Tara
+          </button>
+          <button id="btn-qr-durdur" class="btn btn--secondary" onclick="qrTaramayiDurdur()" style="margin-top:8px; display:none;">
+            Taramayi Durdur
+          </button>
+        </div>
+      </div>
+
+      <!-- MANUEL TAB -->
+      <div id="icerik-manuel" class="tab-icerik">
+        <div class="recete-form">
+
+          <!-- Hasta Bilgileri -->
+          <div class="goz-bolumu">
+            <h3>Hasta Bilgileri</h3>
+            <div class="hasta-bilgi-form">
+              <div>
+                <label for="m_hasta_ad">Ad Soyad</label>
+                <input type="text" id="m_hasta_ad" placeholder="Ornek: MEHMET ALI ZAPTIYEOGLU" />
+              </div>
+              <div>
+                <label for="m_hasta_tc">TC Kimlik No</label>
+                <input type="text" id="m_hasta_tc" placeholder="11 haneli TC" maxlength="11" inputmode="numeric" />
+              </div>
+            </div>
+          </div>
+
+          <!-- UZAK GOZ NUMARALARI -->
+          <div class="goz-bolumu">
+            <h3>Uzak Gozluk Numaralari <span class="goz-etiket">UZAK</span></h3>
+            <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Sag ve Sol goz icin SPH, CYL, AKS degerlerini girin</p>
+
+            <!-- Sag Goz -->
+            <p style="font-size:0.85rem; font-weight:600; color:var(--text); margin-bottom:8px;">Sag Goz (OD)</p>
+            <div class="numara-grid" style="margin-bottom:16px;">
+              <div>
+                <label for="m_uzak_sag_sph">SPH</label>
+                <div class="isaret-secici">
+                  <select id="m_uzak_sag_sph_isaret">
+                    <option value="+">+</option>
+                    <option value="-">-</option>
+                  </select>
+                  <input type="number" id="m_uzak_sag_sph" value="0.00" step="0.25" min="0" max="20" inputmode="decimal" />
+                </div>
+              </div>
+              <div>
+                <label for="m_uzak_sag_cyl">CYL</label>
+                <div class="isaret-secici">
+                  <select id="m_uzak_sag_cyl_isaret">
+                    <option value="+">+</option>
+                    <option value="-">-</option>
+                  </select>
+                  <input type="number" id="m_uzak_sag_cyl" value="0.00" step="0.25" min="0" max="6" inputmode="decimal" />
+                </div>
+              </div>
+              <div>
+                <label for="m_uzak_sag_aks">AKS</label>
+                <input type="number" id="m_uzak_sag_aks" value="0" step="1" min="0" max="180" inputmode="numeric" />
+              </div>
+            </div>
+
+            <!-- Sol Goz -->
+            <p style="font-size:0.85rem; font-weight:600; color:var(--text); margin-bottom:8px;">Sol Goz (OS)</p>
+            <div class="numara-grid">
+              <div>
+                <label for="m_uzak_sol_sph">SPH</label>
+                <div class="isaret-secici">
+                  <select id="m_uzak_sol_sph_isaret">
+                    <option value="+">+</option>
+                    <option value="-">-</option>
+                  </select>
+                  <input type="number" id="m_uzak_sol_sph" value="0.00" step="0.25" min="0" max="20" inputmode="decimal" />
+                </div>
+              </div>
+              <div>
+                <label for="m_uzak_sol_cyl">CYL</label>
+                <div class="isaret-secici">
+                  <select id="m_uzak_sol_cyl_isaret">
+                    <option value="+">+</option>
+                    <option value="-">-</option>
+                  </select>
+                  <input type="number" id="m_uzak_sol_cyl" value="0.00" step="0.25" min="0" max="6" inputmode="decimal" />
+                </div>
+              </div>
+              <div>
+                <label for="m_uzak_sol_aks">AKS</label>
+                <input type="number" id="m_uzak_sol_aks" value="0" step="1" min="0" max="180" inputmode="numeric" />
+              </div>
+            </div>
+          </div>
+
+          <!-- YAKIN GOZ NUMARALARI -->
+          <div class="goz-bolumu">
+            <h3>
+              Yakin Gozluk Numaralari <span class="goz-etiket">YAKIN</span>
+              <label style="float:right; font-size:0.85rem; font-weight:normal; color:var(--text-light); cursor:pointer;">
+                <input type="checkbox" id="m_yakin_var" onchange="yakinBolumuToggle()" /> Yakin recete var
+              </label>
+            </h3>
+            <div id="yakin-form-alani" style="display:none;">
+              <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Yakin gozluk icin SPH, CYL, AKS degerlerini girin</p>
+
+              <!-- Sag Goz -->
+              <p style="font-size:0.85rem; font-weight:600; color:var(--text); margin-bottom:8px;">Sag Goz (OD)</p>
+              <div class="numara-grid" style="margin-bottom:16px;">
+                <div>
+                  <label for="m_yakin_sag_sph">SPH</label>
+                  <div class="isaret-secici">
+                    <select id="m_yakin_sag_sph_isaret">
+                      <option value="+">+</option>
+                      <option value="-">-</option>
+                    </select>
+                    <input type="number" id="m_yakin_sag_sph" value="0.00" step="0.25" min="0" max="20" inputmode="decimal" />
+                  </div>
+                </div>
+                <div>
+                  <label for="m_yakin_sag_cyl">CYL</label>
+                  <div class="isaret-secici">
+                    <select id="m_yakin_sag_cyl_isaret">
+                      <option value="+">+</option>
+                      <option value="-">-</option>
+                    </select>
+                    <input type="number" id="m_yakin_sag_cyl" value="0.00" step="0.25" min="0" max="6" inputmode="decimal" />
+                  </div>
+                </div>
+                <div>
+                  <label for="m_yakin_sag_aks">AKS</label>
+                  <input type="number" id="m_yakin_sag_aks" value="0" step="1" min="0" max="180" inputmode="numeric" />
+                </div>
+              </div>
+
+              <!-- Sol Goz -->
+              <p style="font-size:0.85rem; font-weight:600; color:var(--text); margin-bottom:8px;">Sol Goz (OS)</p>
+              <div class="numara-grid">
+                <div>
+                  <label for="m_yakin_sol_sph">SPH</label>
+                  <div class="isaret-secici">
+                    <select id="m_yakin_sol_sph_isaret">
+                      <option value="+">+</option>
+                      <option value="-">-</option>
+                    </select>
+                    <input type="number" id="m_yakin_sol_sph" value="0.00" step="0.25" min="0" max="20" inputmode="decimal" />
+                  </div>
+                </div>
+                <div>
+                  <label for="m_yakin_sol_cyl">CYL</label>
+                  <div class="isaret-secici">
+                    <select id="m_yakin_sol_cyl_isaret">
+                      <option value="+">+</option>
+                      <option value="-">-</option>
+                    </select>
+                    <input type="number" id="m_yakin_sol_cyl" value="0.00" step="0.25" min="0" max="6" inputmode="decimal" />
+                  </div>
+                </div>
+                <div>
+                  <label for="m_yakin_sol_aks">AKS</label>
+                  <input type="number" id="m_yakin_sol_aks" value="0" step="1" min="0" max="180" inputmode="numeric" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Form butonlari -->
+          <div class="form-butonlar">
+            <button class="btn btn--primary" onclick="manuelReceteYukle()">
+              Receteyi Yukle
+            </button>
+            <button class="btn btn--secondary" onclick="manuelFormuTemizle()">
+              Temizle
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== MUSTERI GOSTERIM BOLUMU ==================== -->
+    <div id="musteri-gosterim">
+
+      <!-- Hasta bilgi karti -->
+      <div class="hasta-kart">
+        <h2 id="g_hasta_ad">-</h2>
+        <div class="hasta-detay">
+          <span id="g_hasta_tc"></span>
+          <span id="g_recete_tarih"></span>
+          <span id="g_doktor"></span>
+        </div>
+      </div>
+
+      <!-- Recete ozet tablosu -->
+      <div class="recete-tablo-container">
+        <h3>Recete Ozeti</h3>
+        <table class="recete-tablo">
+          <thead>
+            <tr>
+              <th></th>
+              <th>SPH</th>
+              <th>CYL</th>
+              <th>AKS</th>
+            </tr>
+          </thead>
+          <tbody id="g_recete_tablo_body">
+            <!-- JS ile doldurulacak -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- SGK Uyarilari -->
+      <div id="g_sgk_uyarilar">
+        <!-- JS ile doldurulacak -->
+      </div>
+
+      <!-- Fiyat Karti -->
+      <div class="fiyat-kart" id="g_fiyat_kart">
+        <h3>Standart Cam & Cerceve Paketi</h3>
+        <div id="g_fiyat_detay">
+          <!-- JS ile doldurulacak -->
+        </div>
+
+        <!-- Ozel fiyat girisi -->
+        <div class="ozel-fiyat-kutu">
+          <label for="ozel_fiyat">Ozel Fiyat:</label>
+          <input type="number" id="ozel_fiyat" placeholder="Farkli tutar giriniz" step="50" min="0" inputmode="numeric" onchange="ozelFiyatGuncelle()" />
+          <span class="birim">TL</span>
+        </div>
+      </div>
+
+      <!-- Alt butonlar -->
+      <div class="islem-butonlar">
+        <button class="btn btn--success" id="btn-progresif" onclick="progresifOnerisineGit()">
+          Progresif Cam Onerisi
+        </button>
+        <button class="btn btn--primary" onclick="yeniRecete()">
+          Yeni Recete
+        </button>
+        <button class="btn btn--secondary" onclick="window.print()">
+          Yazdir
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bildirim -->
+  <div id="bildirim" class="bildirim"></div>
+
+  <!-- JS -->
+  <script src="js/recete.js"></script>
+</body>
+</html>
