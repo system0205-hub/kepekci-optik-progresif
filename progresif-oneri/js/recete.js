@@ -370,11 +370,13 @@ function fiyatKartiniDoldur(veri) {
   if (yakinVar) tipler.push("Yakin Gozluk");
 
   for (var i = 0; i < tipler.length; i++) {
-    html += '<div class="fiyat-grup-baslik">' + tipler[i] + '</div>';
-    html += '<div class="fiyat-satir"><span class="etiket">Cerceve</span><span class="tutar">' + FIYATLAR.cerceve + ' TL</span></div>';
-    html += '<div class="fiyat-satir"><span class="etiket">Standart Cam</span><span class="tutar">' + FIYATLAR.standartCam + ' TL</span></div>';
-    html += '<div class="fiyat-satir"><span class="etiket">SGK Katkisi</span><span class="tutar indirim">-' + FIYATLAR.sgkKatki + ' TL</span></div>';
-    html += '<div class="fiyat-satir"><span class="etiket">Magaza Indirimi</span><span class="tutar indirim">-' + FIYATLAR.magazaIndirimi + ' TL</span></div>';
+    var grupIkon = i === 0 ? "uzak-ikon" : "yakin-ikon";
+    var grupEmoji = i === 0 ? "&#128065;" : "&#128214;";
+    html += '<div class="fiyat-grup-baslik"><span class="grup-ikon ' + grupIkon + '">' + grupEmoji + '</span>' + tipler[i] + '</div>';
+    html += '<div class="fiyat-satir"><span class="etiket"><span class="satir-ikon cerceve-ikon">&#128083;</span>Cerceve</span><span class="tutar">' + FIYATLAR.cerceve + ' TL</span></div>';
+    html += '<div class="fiyat-satir"><span class="etiket"><span class="satir-ikon cam-ikon">&#128308;</span>Standart Cam (2 adet)</span><span class="tutar">' + FIYATLAR.standartCam + ' TL</span></div>';
+    html += '<div class="fiyat-satir"><span class="etiket"><span class="satir-ikon sgk-ikon">&#127975;</span>SGK Katkisi</span><span class="tutar indirim">-' + FIYATLAR.sgkKatki + ' TL</span></div>';
+    html += '<div class="fiyat-satir"><span class="etiket"><span class="satir-ikon indirim-ikon">&#11088;</span>Magaza Indirimi</span><span class="tutar indirim">-' + FIYATLAR.magazaIndirimi + ' TL</span></div>';
     html += '<div class="fiyat-satir alt-toplam"><span class="etiket">' + tipler[i] + ' Tutari</span><span class="tutar">' + FIYATLAR.musteriOder + ' TL</span></div>';
   }
 
