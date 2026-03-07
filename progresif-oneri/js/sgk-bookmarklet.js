@@ -1,10 +1,12 @@
 // ============================================================
-// SGK BOOKMARKLET v3 - Recete Veri Okuma & QR Kod Uretme
+// SGK BOOKMARKLET v4 - Recete Veri Okuma & QR Kod Uretme
 // Kepekci Optik - Modul 2
 //
 // SGK e-recete sayfasi: gss.sgk.gov.tr/Optik_Firma2_Web/ereceteGiris.faces
-// Strateji: Tablo satirlarindaki checkbox+select+input paterni ile
-//           goz verisi satirlarini bul (1. = UZAK, 2. = YAKIN)
+// Strateji v4: "SAG CAM" ve "SOL CAM" etiketlerini bulup her birinin
+//              kendi ic tablosundan ayri ayri oku.
+//              v3 bug: Parent row'da "Kontrol Sag Cam" ekstra inputlari
+//              index kaydiriyordu. v4 bunu cozuyor.
 // ============================================================
 
 (function() {
@@ -49,58 +51,101 @@
   }
 
   // ============================================================
-  // GOZ NUMARALARINI OKU - Satir bazli yaklasim
+  // GOZ NUMARALARINI OKU - v4: SAG CAM / SOL CAM etiket bazli
   // ============================================================
-  // SGK sayfasinda goz verileri tablo satirlarinda bulunur.
-  // Her satir (UZAK veya YAKIN icin):
-  //   SAG: [checkbox] [+/- select] [sferik input] [+/- select] [silindirik input] [aks input]
-  //   SOL: [checkbox] [+/- select] [sferik input] [+/- select] [silindirik input] [aks input]
-  // Yani bir veri satirinda: 2 checkbox, 4 select, 6 text input vardir.
-  // Bu patern sayfada benzersizdir — ilk bulunan = UZAK, ikinci = YAKIN.
+  // SGK sayfasinda goz verileri ic ice tablolarda bulunur.
+  // "SAG CAM" ve "SOL CAM" yazan hucreleri bul, her birinin
+  // kendi tablosundan verileri ayri ayri oku.
+  // Boylece aradaki "Kontrol Sag Cam" gibi ekstra inputlar
+  // index kaydirmaz.
+  //
+  // Her goz tablosunda veri satiri:
+  //   [checkbox] [+/- select] [sferik input] [+/- select] [silindirik input] [aks input]
+  // Yani: 1 checkbox, 2 select, 3 text input
+  //
+  // Sayfada ilk SAG+SOL cifti = UZAK, ikinci cifti = YAKIN.
 
-  function tumGozlukVerileriniOku() {
-    var allTables = document.querySelectorAll("table");
-    var eyeDataRows = [];
-
-    for (var i = 0; i < allTables.length; i++) {
-      var rows = allTables[i].querySelectorAll("tr");
-      for (var j = 0; j < rows.length; j++) {
-        var cbs = rows[j].querySelectorAll("input[type='checkbox']");
-        var sels = rows[j].querySelectorAll("select");
-
-        // Goz verisi satiri: en az 2 checkbox + en az 4 select
-        if (cbs.length >= 2 && sels.length >= 4) {
-          eyeDataRows.push(rows[j]);
-        }
-      }
+  // Element'in en yakin table atasini bul (closest IE destegi yok)
+  function enYakinTablo(el) {
+    var node = el;
+    while (node) {
+      node = node.parentElement;
+      if (node && node.tagName === "TABLE") return node;
     }
-
-    return {
-      uzak: eyeDataRows.length >= 1 ? satirOku(eyeDataRows[0]) : null,
-      yakin: eyeDataRows.length >= 2 ? satirOku(eyeDataRows[1]) : null
-    };
+    return null;
   }
 
-  function satirOku(row) {
-    var allInp = row.querySelectorAll("input");
-    var txtInp = [];
-    for (var i = 0; i < allInp.length; i++) {
-      if (allInp[i].type !== "checkbox" && allInp[i].type !== "hidden") {
-        txtInp.push(allInp[i]);
+  // Bir ic tablodan goz verisi oku (SAG veya SOL tek goz)
+  function gozTablosuOku(tablo) {
+    if (!tablo) return null;
+
+    // Tablodaki tum satirlari tara, veri satiri bul
+    var rows = tablo.querySelectorAll("tr");
+    for (var i = 0; i < rows.length; i++) {
+      var row = rows[i];
+      var sels = row.querySelectorAll("select");
+      var allInp = row.querySelectorAll("input");
+      var txtInp = [];
+      for (var k = 0; k < allInp.length; k++) {
+        if (allInp[k].type !== "checkbox" && allInp[k].type !== "hidden") {
+          txtInp.push(allInp[k]);
+        }
+      }
+
+      // Veri satiri: en az 2 select (+/- isaretler) ve 3 text input (sph, cyl, aks)
+      if (sels.length >= 2 && txtInp.length >= 3) {
+        var rv = function(inp) { return parseFloat((inp.value || "0").replace(",", ".")) || 0; };
+        var sv = function(sel) { return sel.value === "-" ? -1 : 1; };
+
+        return [rv(txtInp[0]) * sv(sels[0]), rv(txtInp[1]) * sv(sels[1]), parseInt(txtInp[2].value) || 0];
       }
     }
-    var sels = row.querySelectorAll("select");
+    return null;
+  }
 
-    // En az 6 text input (sferik+silindirik+aks x2) ve 4 select (+/- isaretler)
-    if (txtInp.length < 6 || sels.length < 4) return null;
+  // Sayfada "SAG CAM" ve "SOL CAM" etiketlerini bul, tablodan oku
+  function tumGozlukVerileriniOku() {
+    var cells = document.querySelectorAll("td, th, span, label");
+    var sagTabloListesi = [];
+    var solTabloListesi = [];
 
-    var rv = function(inp) { return parseFloat((inp.value || "0").replace(",", ".")) || 0; };
-    var sv = function(sel) { return sel.value === "-" ? -1 : 1; };
+    for (var i = 0; i < cells.length; i++) {
+      var txt = (cells[i].textContent || "").trim().toUpperCase();
+      // Turkce karakter normalizasyonu
+      txt = txt.replace(/\u015e/g, "S").replace(/\u011e/g, "G")
+               .replace(/\u0130/g, "I").replace(/\u00dc/g, "U")
+               .replace(/\u00d6/g, "O").replace(/\u00c7/g, "C");
 
-    return {
-      sag: [rv(txtInp[0]) * sv(sels[0]), rv(txtInp[1]) * sv(sels[1]), parseInt(txtInp[2].value) || 0],
-      sol: [rv(txtInp[3]) * sv(sels[2]), rv(txtInp[4]) * sv(sels[3]), parseInt(txtInp[5].value) || 0]
-    };
+      if (txt === "SAG CAM" || txt === "SAG" || txt.indexOf("SAG CAM") >= 0) {
+        var tbl = enYakinTablo(cells[i]);
+        if (tbl) sagTabloListesi.push(tbl);
+      }
+      if (txt === "SOL CAM" || txt === "SOL" || txt.indexOf("SOL CAM") >= 0) {
+        var tbl2 = enYakinTablo(cells[i]);
+        if (tbl2) solTabloListesi.push(tbl2);
+      }
+    }
+
+    // Ilk cift = UZAK, ikinci cift = YAKIN
+    var sonuc = { uzak: null, yakin: null };
+
+    if (sagTabloListesi.length >= 1 || solTabloListesi.length >= 1) {
+      var uzakSag = sagTabloListesi.length >= 1 ? gozTablosuOku(sagTabloListesi[0]) : null;
+      var uzakSol = solTabloListesi.length >= 1 ? gozTablosuOku(solTabloListesi[0]) : null;
+      if (uzakSag || uzakSol) {
+        sonuc.uzak = { sag: uzakSag, sol: uzakSol };
+      }
+    }
+
+    if (sagTabloListesi.length >= 2 || solTabloListesi.length >= 2) {
+      var yakinSag = sagTabloListesi.length >= 2 ? gozTablosuOku(sagTabloListesi[1]) : null;
+      var yakinSol = solTabloListesi.length >= 2 ? gozTablosuOku(solTabloListesi[1]) : null;
+      if (yakinSag || yakinSol) {
+        sonuc.yakin = { sag: yakinSag, sol: yakinSol };
+      }
+    }
+
+    return sonuc;
   }
 
   // ============================================================
