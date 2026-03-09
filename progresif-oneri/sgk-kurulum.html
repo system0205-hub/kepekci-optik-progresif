@@ -194,21 +194,21 @@
   <div class="kurulum-container">
 
     <div class="kurulum-baslik">
-      <h1>SGK Recete QR Bookmarklet Kurulumu</h1>
-      <p>Bu rehber, SGK e-recete sayfasindan reçete verilerini tek tikla QR koda donusturmenizi saglar.</p>
+      <h1>SGK Recete Bookmarklet Kurulumu</h1>
+      <p>Bu rehber, SGK e-recete sayfasindan recete verilerini tek tikla aktarmanizi saglar. PC ve iPad icin ayri kurulum talimatlari asagidadir.</p>
     </div>
 
     <!-- ADIM 1 -->
     <div class="adim">
       <h2><span class="adim-no">1</span> Bookmarklet Nedir?</h2>
-      <p>Bookmarklet, tarayicinizin yer imleri cubugundan calistirilan kucuk bir JavaScript kodudur. Normal bir yer imi gibi gorunur ama tiklandiginda sayfada islem yapar.</p>
-      <p><strong>Ne yapar:</strong> SGK e-recete sayfasindaki hasta bilgilerini ve numara degerlerini okur, bunlari QR kod olarak ekranda gosterir.</p>
+      <p>Bookmarklet, tarayicinizin yer imlerinden calistirilan kucuk bir JavaScript kodudur. Normal bir yer imi gibi gorunur ama tiklandiginda sayfada islem yapar.</p>
+      <p><strong>Ne yapar:</strong> SGK e-recete sayfasindaki hasta bilgilerini ve goz numaralarini okur, recete sayfasini otomatik acar ve verileri doldurur. Tek tik, tek cihaz!</p>
     </div>
 
     <!-- ADIM 2 -->
     <div class="adim">
-      <h2><span class="adim-no">2</span> Yer Imleri Cubugunu Gosterin</h2>
-      <p>Chrome tarayicida yer imleri cubugu gorunur degilse:</p>
+      <h2><span class="adim-no">2</span> PC Kurulumu (Chrome/Edge)</h2>
+      <p>Chrome veya Edge tarayicida yer imleri cubugu gorunur degilse:</p>
       <ul>
         <li><strong>Ctrl + Shift + B</strong> tusuna basin (Windows)</li>
         <li>veya Menu > Yer Imleri > Yer Imleri Cubugunu Goster</li>
@@ -223,7 +223,7 @@
       <div style="text-align:center; margin:20px 0;">
         <a class="bookmarklet-link"
            href="javascript:void((function(){var s=document.createElement('script');s.src='https://system0205-hub.github.io/kepekci-optik-progresif/js/sgk-bookmarklet.js?t='+Date.now();document.head.appendChild(s)})())">
-          SGK Recete QR
+          SGK Aktar
         </a>
       </div>
 
@@ -231,14 +231,14 @@
         <strong>Not:</strong> Buton suruklenmiyorsa, asagidaki kodu el ile yer imi olarak ekleyebilirsiniz:
       </div>
 
-      <p><strong>Elle ekleme:</strong></p>
+      <p><strong>Elle ekleme (PC):</strong></p>
       <div class="gorsel-aciklama">
         <span class="numara">1</span>
         <div>Yer imleri cubugunda bos bir yere sag tiklayin > "Sayfa ekle" secin</div>
       </div>
       <div class="gorsel-aciklama">
         <span class="numara">2</span>
-        <div><strong>Ad:</strong> SGK Recete QR</div>
+        <div><strong>Ad:</strong> SGK Aktar</div>
       </div>
       <div class="gorsel-aciklama">
         <span class="numara">3</span>
@@ -248,43 +248,83 @@
       <div class="kod-kutu">javascript:void((function(){var s=document.createElement('script');s.src='https://system0205-hub.github.io/kepekci-optik-progresif/js/sgk-bookmarklet.js?t='+Date.now();document.head.appendChild(s)})())</div>
     </div>
 
+    <!-- ADIM 3.5: iPad Kurulumu -->
+    <div class="adim">
+      <h2><span class="adim-no">3b</span> iPad / Tablet Kurulumu (Safari)</h2>
+      <p>iPad'de yer imleri cubugu yoktur, ama yer imi olarak ayni sekilde calisir:</p>
+
+      <div class="gorsel-aciklama">
+        <span class="numara">1</span>
+        <div>Safari'de herhangi bir sayfayi acin (ornegin google.com)</div>
+      </div>
+      <div class="gorsel-aciklama">
+        <span class="numara">2</span>
+        <div>Paylas butonuna basin (kare + yukari ok) > <strong>"Yer Imi Ekle"</strong> secin > Kaydedin</div>
+      </div>
+      <div class="gorsel-aciklama">
+        <span class="numara">3</span>
+        <div>Yer imleri ikonuna basin (kitap ikonu) > Kaydedilen yer imini bulun > <strong>"Duzenle"</strong> ye basin</div>
+      </div>
+      <div class="gorsel-aciklama">
+        <span class="numara">4</span>
+        <div><strong>Adini</strong> "SGK Aktar" olarak degistirin</div>
+      </div>
+      <div class="gorsel-aciklama">
+        <span class="numara">5</span>
+        <div><strong>URL alanini tamamen silin</strong> ve asagidaki kodu yapistin:</div>
+      </div>
+
+      <div class="kod-kutu">javascript:void((function(){var s=document.createElement('script');s.src='https://system0205-hub.github.io/kepekci-optik-progresif/js/sgk-bookmarklet.js?t='+Date.now();document.head.appendChild(s)})())</div>
+
+      <div class="gorsel-aciklama">
+        <span class="numara">6</span>
+        <div>"Bitti" veya "Tamam" a basin. Kurulum tamamlandi!</div>
+      </div>
+
+      <div class="basari-kutu">
+        <strong>iPad'de kullanim:</strong> SGK sayfasi acikken adres cubuguna dokunun, "SGK" yazin, listede "SGK Aktar" yer imini goreceksiniz, ona dokunun. Recete sayfasi otomatik acilir!
+      </div>
+    </div>
+
     <!-- ADIM 4 -->
     <div class="adim">
       <h2><span class="adim-no">4</span> Kullanim</h2>
       <div class="gorsel-aciklama">
         <span class="numara">1</span>
-        <div>SGK portaline gidin ve hastanin reçetesini acin (gss.sgk.gov.tr)</div>
+        <div>SGK portaline gidin ve hastanin e-recetesini acin (gss.sgk.gov.tr)</div>
       </div>
       <div class="gorsel-aciklama">
         <span class="numara">2</span>
-        <div>Recete detay sayfasi gorunurken, yer imleri cubugundaki <strong>"SGK Recete QR"</strong> butonuna tiklayin</div>
+        <div><strong>PC'de:</strong> Yer imleri cubugundaki <strong>"SGK Aktar"</strong> butonuna tiklayin<br>
+          <strong>iPad'de:</strong> Adres cubuguna dokunup "SGK" yazin, <strong>"SGK Aktar"</strong> yer imine dokunun</div>
       </div>
       <div class="gorsel-aciklama">
         <span class="numara">3</span>
-        <div>Ekranda buyuk bir QR kod belirecek</div>
-      </div>
-      <div class="gorsel-aciklama">
-        <span class="numara">4</span>
-        <div>Tabletten <strong>SGK Recete</strong> sayfasini acin, <strong>"QR Kod Tara"</strong> butonuna basin ve PC ekranindaki QR'i tarayin</div>
+        <div>Recete sayfasi yeni sekmede otomatik acilir, tum veriler hazir gelir!</div>
       </div>
 
       <div class="basari-kutu">
-        <strong>Tamamdir!</strong> Recete verileri aninda tablete aktarilir. Hasta bilgileri, numara degerleri ve fiyat hesaplamalari otomatik olarak gosterilir.
+        <strong>Tek tik, tek cihaz!</strong> Hasta bilgileri, goz numaralari ve fiyat hesaplamalari aninda gosterilir. Ikinci cihaza veya QR taramaya gerek yok.
       </div>
     </div>
 
     <!-- ADIM 5 -->
     <div class="adim">
       <h2><span class="adim-no">5</span> Sorun Giderme</h2>
-      <p><strong>QR kod gorunmuyorsa:</strong></p>
+      <p><strong>Recete sayfasi acilmiyorsa:</strong></p>
       <ul>
         <li>SGK sayfasi tam yuklendiginden emin olun</li>
+        <li>Popup engelleyici kapaliysa kontrol edin (yeni sekme aciliyor)</li>
         <li>Sayfayi yenileyip tekrar deneyin</li>
-        <li>Farkli bir tarayici deneyin (Chrome oneriliyor)</li>
+      </ul>
+      <p style="margin-top:12px;"><strong>"Goz numarasi okunamadi" hatasi:</strong></p>
+      <ul>
+        <li>E-recete detay sayfasinda oldugunuzdan emin olun (goz numaralari gorunur olmali)</li>
+        <li>Recete detaylari tam yuklenmemis olabilir, bekleyin ve tekrar deneyin</li>
       </ul>
       <p style="margin-top:12px;"><strong>Script calismiyorsa (CSP hatasi):</strong></p>
       <ul>
-        <li>Bu durumda tabletteki <strong>"Manuel Giris"</strong> sekmesini kullanin</li>
+        <li>Bu durumda <strong>"Manuel Giris"</strong> sekmesini kullanin</li>
         <li>SGK sayfasindaki numaralari elle girin</li>
       </ul>
     </div>

@@ -636,8 +636,38 @@ function qrTaramayiDurdur() {
 }
 
 // ============================================================
+// URL PARAMETRE ALGILAMA (Bookmarklet v6 direkt aktarim)
+// ============================================================
+// Bookmarklet SGK verisini okuyup recete.html?d=ENCODED_JSON seklinde acar.
+// Bu fonksiyon ?d= parametresini algilar, cozumler ve receteYukle() ile yukler.
+function urlParametresiKontrol() {
+  try {
+    var params = new URLSearchParams(window.location.search);
+    var d = params.get("d");
+    if (!d) return;
+
+    // URL'yi temizle (adres cubugundan veriyi kaldir)
+    history.replaceState({}, "", window.location.pathname);
+
+    // JSON coz
+    var veri = JSON.parse(d);
+
+    // v2 formatini v1'e cevir
+    if (veri.v === 2) {
+      veri = v2yiV1eCevir(veri);
+    }
+
+    // Receteyi yukle
+    receteYukle(veri);
+  } catch (e) {
+    bildirimGoster("Veri aktarim hatasi: " + e.message, "hata");
+  }
+}
+
+// ============================================================
 // SAYFA YUKLEME
 // ============================================================
 document.addEventListener("DOMContentLoaded", function() {
-  // Sayfa hazir
+  // URL'den gelen veri var mi kontrol et (bookmarklet v6)
+  urlParametresiKontrol();
 });

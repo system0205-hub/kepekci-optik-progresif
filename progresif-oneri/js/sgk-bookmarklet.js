@@ -1,21 +1,17 @@
 // ============================================================
-// SGK BOOKMARKLET v5 - Recete Veri Okuma & QR Kod Uretme
+// SGK BOOKMARKLET v6 - Recete Veri Okuma & Direkt Aktarma
 // Kepekci Optik - Modul 2
 //
 // SGK e-recete sayfasi: gss.sgk.gov.tr/Optik_Firma2_Web/ereceteGiris.faces
-// Strateji v5: table.detaylarKutuCam class'i ile goz tablolarini bul.
+// Strateji v6: table.detaylarKutuCam class'i ile goz tablolarini bul.
 //              Sira: [0]=UZAK SAG, [1]=UZAK SOL, [2]=YAKIN SAG, [3]=YAKIN SOL
-//              Gercek SGK DOM'undan dogrulanmis yaklasim.
+//              QR yerine recete.html'e URL ile direkt aktarim.
 // ============================================================
 
 (function() {
   "use strict";
 
-  // Zaten calisiyorsa kapat
-  if (document.getElementById("kepekci-qr-overlay")) {
-    document.getElementById("kepekci-qr-overlay").remove();
-    return;
-  }
+  var RECETE_URL = "https://system0205-hub.github.io/kepekci-optik-progresif/recete.html";
 
   // ============================================================
   // YARDIMCI FONKSIYONLAR
@@ -146,115 +142,28 @@
   }
 
   // ============================================================
-  // QR KOD GOSTERME
+  // RECETEYE AKTAR - URL ile direkt yonlendirme
   // ============================================================
-  function qrKoduGoster(veri) {
+  function receteyeAktar(veri) {
     var jsonStr = JSON.stringify(veri);
+    var encoded = encodeURIComponent(jsonStr);
+    var url = RECETE_URL + "?d=" + encoded;
 
-    // Overlay
-    var overlay = document.createElement("div");
-    overlay.id = "kepekci-qr-overlay";
-    overlay.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.92);" +
-      "z-index:999999;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:Arial,sans-serif;";
-
-    // Baslik
-    var baslik = document.createElement("div");
-    baslik.style.cssText = "color:#fff;font-size:20px;font-weight:bold;margin-bottom:4px;";
-    baslik.textContent = "Kepekci Optik - SGK Recete QR";
-    overlay.appendChild(baslik);
-
-    // Hasta/doktor bilgisi
-    var bilgi = document.createElement("div");
-    bilgi.style.cssText = "color:#aaa;font-size:14px;margin-bottom:12px;text-align:center;";
+    // Bilgi ozeti
     var bilgiParts = [];
     if (veri.a) bilgiParts.push(veri.a);
-    if (veri.dr) bilgiParts.push("Dr. " + veri.dr);
-    if (veri.t) bilgiParts.push(veri.t);
-    bilgi.textContent = bilgiParts.join(" | ") || "Bilgi okunamadi";
-    overlay.appendChild(bilgi);
+    if (veri.u && veri.u.s) bilgiParts.push("U-S:" + veri.u.s.join("/"));
+    if (veri.u && veri.u.l) bilgiParts.push("U-L:" + veri.u.l.join("/"));
+    if (veri.y && veri.y.s) bilgiParts.push("Y-S:" + veri.y.s.join("/"));
+    if (veri.y && veri.y.l) bilgiParts.push("Y-L:" + veri.y.l.join("/"));
 
-    // Numara ozeti
-    var ozet = document.createElement("div");
-    ozet.style.cssText = "color:#6f6;font-size:13px;margin-bottom:12px;text-align:center;font-family:monospace;";
-    var ozetParts = [];
-    if (veri.u && veri.u.s) ozetParts.push("U-S:" + veri.u.s.join("/"));
-    if (veri.u && veri.u.l) ozetParts.push("U-L:" + veri.u.l.join("/"));
-    if (veri.y && veri.y.s) ozetParts.push("Y-S:" + veri.y.s.join("/"));
-    if (veri.y && veri.y.l) ozetParts.push("Y-L:" + veri.y.l.join("/"));
-    ozet.textContent = ozetParts.join("  ") || "Numara okunamadi";
-    overlay.appendChild(ozet);
+    // Yeni sekmede ac
+    var yeniSekme = window.open(url, "_blank");
 
-    // QR container
-    var qrDiv = document.createElement("div");
-    qrDiv.id = "kepekci-qr-container";
-    qrDiv.style.cssText = "background:#fff;padding:16px;border-radius:12px;";
-    overlay.appendChild(qrDiv);
-
-    // Alt bilgi
-    var alt = document.createElement("div");
-    alt.style.cssText = "color:#888;font-size:12px;margin-top:12px;text-align:center;";
-    alt.textContent = "Tabletten SGK Recete sayfasini acin ve QR kodu tarayin. (" + jsonStr.length + " kr)";
-    overlay.appendChild(alt);
-
-    // Kapat butonu
-    var kapatBtn = document.createElement("button");
-    kapatBtn.textContent = "Kapat";
-    kapatBtn.style.cssText = "margin-top:16px;padding:12px 40px;background:#e74c3c;color:#fff;border:none;" +
-      "border-radius:8px;font-size:16px;cursor:pointer;font-weight:bold;";
-    kapatBtn.onclick = function() { overlay.remove(); };
-    overlay.appendChild(kapatBtn);
-
-    document.body.appendChild(overlay);
-
-    // QR olustur
-    if (typeof QRCode !== "undefined") {
-      qrOlustur(qrDiv, jsonStr);
-    } else {
-      var s = document.createElement("script");
-      s.src = "https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js";
-      s.onload = function() { qrOlustur(qrDiv, jsonStr); };
-      s.onerror = function() {
-        qrDiv.innerHTML = '<div style="padding:20px;text-align:center;color:#e74c3c;">' +
-          '<p style="font-weight:bold;">QR kutuphane yuklenemedi</p>' +
-          '<p style="font-size:12px;margin-top:8px;">Veri panoya kopyalandi.</p></div>';
-        panoyaKopyala(jsonStr);
-      };
-      document.head.appendChild(s);
+    // Popup engellenirse ayni sekmede ac
+    if (!yeniSekme || yeniSekme.closed) {
+      window.location.href = url;
     }
-  }
-
-  function qrOlustur(container, metin) {
-    try {
-      new QRCode(container, {
-        text: metin,
-        width: 400,
-        height: 400,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.L
-      });
-    } catch (e) {
-      container.innerHTML = '<div style="padding:20px;text-align:center;color:#e74c3c;">' +
-        '<p>QR olusturulamadi: ' + e.message + '</p>' +
-        '<p style="font-size:12px;margin-top:8px;">Veri panoya kopyalandi.</p></div>';
-      panoyaKopyala(metin);
-    }
-  }
-
-  function panoyaKopyala(metin) {
-    try {
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText(metin);
-      } else {
-        var ta = document.createElement("textarea");
-        ta.value = metin;
-        ta.style.cssText = "position:fixed;left:-9999px;";
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand("copy");
-        ta.remove();
-      }
-    } catch (e) {}
   }
 
   // ============================================================
@@ -262,7 +171,14 @@
   // ============================================================
   try {
     var veri = sgkVerileriOku();
-    qrKoduGoster(veri);
+
+    // En az bir goz verisi okunmus mu kontrol et
+    if (!veri.u && !veri.y) {
+      alert("Kepekci Optik:\n\nGoz numarasi okunamadi.\nLutfen e-recete sayfasinda goz bilgilerinin dolu oldugunu kontrol edin.\n\nManuel giris kullanabilirsiniz.");
+      return;
+    }
+
+    receteyeAktar(veri);
   } catch (e) {
     alert("Kepekci Optik Bookmarklet Hatasi:\n" + e.message + "\n\nManuel giris kullanin.");
   }
