@@ -706,6 +706,115 @@
       color: #475569;
     }
 
+    /* ==================== CAM ONERI KARTI ==================== */
+    .cam-oneri-kart {
+      border-radius: 16px;
+      padding: 22px 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+      position: relative;
+      overflow: hidden;
+      color: #ffffff;
+    }
+    .cam-oneri-kart::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      right: -15%;
+      width: 180px;
+      height: 180px;
+      background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .cam-oneri-kart::after {
+      content: '';
+      position: absolute;
+      bottom: -30%;
+      left: -10%;
+      width: 140px;
+      height: 140px;
+      background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    /* Kademe 1 - Amber/Altin (dusuk numara) */
+    .cam-oneri-kart.kademe-1 {
+      background: linear-gradient(135deg, #78350f 0%, #92400e 30%, #b45309 70%, #d97706 100%);
+    }
+    /* Kademe 2 - Turuncu (orta numara) */
+    .cam-oneri-kart.kademe-2 {
+      background: linear-gradient(135deg, #7c2d12 0%, #9a3412 30%, #c2410c 70%, #ea580c 100%);
+    }
+    /* Kademe 3 - Kirmizi/Koyu (yuksek numara) */
+    .cam-oneri-kart.kademe-3 {
+      background: linear-gradient(135deg, #450a0a 0%, #7f1d1d 30%, #b91c1c 70%, #dc2626 100%);
+    }
+    .cam-oneri-ust {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 12px;
+      position: relative;
+      z-index: 1;
+    }
+    .cam-oneri-ikon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.18);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+      backdrop-filter: blur(4px);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .cam-oneri-baslik {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      opacity: 0.8;
+      margin-bottom: 4px;
+    }
+    .cam-oneri-indeks {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .cam-oneri-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255, 255, 255, 0.22);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      backdrop-filter: blur(4px);
+      white-space: nowrap;
+    }
+    .cam-oneri-mesaj {
+      font-size: 0.88rem;
+      line-height: 1.5;
+      opacity: 0.9;
+      position: relative;
+      z-index: 1;
+      font-style: italic;
+      padding-left: 62px;
+    }
+    @media (max-width: 480px) {
+      .cam-oneri-kart { padding: 18px 16px; }
+      .cam-oneri-indeks { font-size: 1.2rem; }
+      .cam-oneri-mesaj { padding-left: 0; font-size: 0.82rem; }
+      .cam-oneri-ikon { width: 40px; height: 40px; font-size: 1.1rem; }
+    }
+
     /* Alt butonlar - Gradient premium */
     .islem-butonlar {
       display: grid;
@@ -1048,6 +1157,11 @@
 
       <!-- SGK Uyarilari -->
       <div class="sgk-uyarilar-container" id="g_sgk_uyarilar">
+        <!-- JS ile doldurulacak -->
+      </div>
+
+      <!-- Cam Oneri Karti -->
+      <div id="g_cam_oneri">
         <!-- JS ile doldurulacak -->
       </div>
 

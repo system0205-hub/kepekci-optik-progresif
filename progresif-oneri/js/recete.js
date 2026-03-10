@@ -253,6 +253,9 @@ function receteYukle(veri) {
   // SGK uyarilarini goster
   sgkUyarilariGoster(veri);
 
+  // Cam oneri kartini doldur (fiyat kartinin ustunde)
+  camOneriKartiniDoldur(veri);
+
   // Fiyat kartini doldur
   fiyatKartiniDoldur(veri);
 
@@ -354,6 +357,80 @@ function sgkUyarilariGoster(veri) {
       0.15
     );
   }
+
+  container.innerHTML = html;
+}
+
+// ============================================================
+// CAM ONERI KARTI (kademeli gradient)
+// ============================================================
+function camOneriKartiniDoldur(veri) {
+  var container = document.getElementById("g_cam_oneri");
+  if (!container) return;
+
+  // Uzak recete yoksa oneri gosterme
+  if (!veri || !veri.uzak) {
+    container.innerHTML = "";
+    return;
+  }
+
+  // hesaplaIndeksOnerisi engine.js'de tanimli — recete.sag/sol formatinda
+  var indeks;
+  if (typeof hesaplaIndeksOnerisi === "function") {
+    indeks = hesaplaIndeksOnerisi(veri.uzak);
+  } else {
+    // Fallback: basit hesaplama
+    var sphMax = Math.max(
+      Math.abs(parseFloat(veri.uzak.sag.sph) || 0),
+      Math.abs(parseFloat(veri.uzak.sol.sph) || 0)
+    );
+    var cylMax = Math.max(
+      Math.abs(parseFloat(veri.uzak.sag.cyl) || 0),
+      Math.abs(parseFloat(veri.uzak.sol.cyl) || 0)
+    );
+    if (sphMax >= 6.00) indeks = "1.74";
+    else if (sphMax >= 4.00 || cylMax >= 2.50) indeks = "1.67";
+    else if (sphMax >= 2.00 || cylMax >= 1.50) indeks = "1.60";
+    else indeks = "1.56";
+  }
+
+  // Indeks -> inceltme yuzde ve kademe eslestirmesi
+  var inceltme, kademe, mesaj;
+  switch (indeks) {
+    case "1.74":
+      inceltme = 60;
+      kademe = 3;
+      mesaj = "Yuksek numaraniz icin inceltilmis cam siddetle tavsiye edilir — daha hafif, daha ince gozluk deneyimi";
+      break;
+    case "1.67":
+      inceltme = 50;
+      kademe = 3;
+      mesaj = "Yuksek numaraniz icin inceltilmis cam siddetle tavsiye edilir — daha hafif, daha ince gozluk deneyimi";
+      break;
+    case "1.60":
+      inceltme = 35;
+      kademe = 2;
+      mesaj = "Numaraniza uygun inceltilmis cam ile daha ince ve estetik bir gorunum elde edin";
+      break;
+    default: // 1.56
+      inceltme = 20;
+      kademe = 1;
+      mesaj = "Gorus kalitenizi artirmak icin antirefle kaplama ve mavi isik filtreli cam onerilir";
+      break;
+  }
+
+  var html = '<div class="cam-oneri-kart kademe-' + kademe + '">';
+  html += '<div class="cam-oneri-ust">';
+  html += '<div class="cam-oneri-ikon">&#128142;</div>';
+  html += '<div>';
+  html += '<div class="cam-oneri-baslik">Cam Onerisi</div>';
+  html += '<div class="cam-oneri-indeks">' + indeks + ' Indeks ';
+  html += '<span class="cam-oneri-badge">%' + inceltme + ' Inceltme</span>';
+  html += '</div>';
+  html += '</div>';
+  html += '</div>';
+  html += '<div class="cam-oneri-mesaj">' + mesaj + '</div>';
+  html += '</div>';
 
   container.innerHTML = html;
 }
