@@ -409,7 +409,7 @@ function fiyatKartiniDoldur(veri) {
     etiketEl.textContent = "TOPLAM VATANDAS ODEYECEGI";
     toplamEl.style.color = "#fbbf24";
   } else {
-    etiketEl.textContent = "EN DUSUK UCRET";
+    etiketEl.textContent = "VATANDASIN ODEYECEGI EN DUSUK TUTAR";
     toplamEl.style.color = "#ffffff";
   }
   toplamEl.textContent = formatParaTL(toplamMusteriOder);
