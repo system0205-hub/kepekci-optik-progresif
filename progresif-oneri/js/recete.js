@@ -402,10 +402,17 @@ function fiyatKartiniDoldur(veri) {
 
   container.innerHTML = html;
 
-  // Footer toplam tutarini guncelle
+  // Footer etiket ve toplam tutarini guncelle
+  var etiketEl = document.getElementById("g_toplam_etiket");
   var toplamEl = document.getElementById("g_toplam_tutar");
+  if (ekCamUcreti > 0) {
+    etiketEl.textContent = "TOPLAM VATANDAS ODEYECEGI";
+    toplamEl.style.color = "#fbbf24";
+  } else {
+    etiketEl.textContent = "EN DUSUK UCRET";
+    toplamEl.style.color = "#ffffff";
+  }
   toplamEl.textContent = formatParaTL(toplamMusteriOder);
-  toplamEl.style.color = ekCamUcreti > 0 ? "#fbbf24" : "#ffffff";
 }
 
 // ============================================================
