@@ -387,27 +387,70 @@ function fiyatKartiniDoldur(veri) {
 
   // Ozel fiyat alanini temizle
   document.getElementById("ozel_fiyat").value = "";
+
+  // Kampanya satirini da temizle
+  var kampanyaDiv = document.getElementById("g_kampanya_satir");
+  if (kampanyaDiv) {
+    kampanyaDiv.style.display = "none";
+    kampanyaDiv.innerHTML = "";
+  }
+  var temizleBtn = document.getElementById("btn-ozel-temizle");
+  if (temizleBtn) temizleBtn.style.display = "none";
 }
 
 // ============================================================
-// OZEL FIYAT GUNCELLE
+// OZEL FIYAT UYGULA (butonlu kampanya sistemi)
 // ============================================================
-function ozelFiyatGuncelle() {
-  var ozelInput = document.getElementById("ozel_fiyat");
-  var toplamEl = document.getElementById("g_toplam_tutar");
-  if (!toplamEl) return;
-
-  var val = parseFloat((ozelInput.value || "").replace(",", "."));
-  if (val > 0) {
-    toplamEl.textContent = formatParaTL(val);
-    toplamEl.style.color = "#fbbf24";
-  } else {
-    // Standart fiyata don
-    var yakinVar = mevcutRecete && mevcutRecete.yakin;
-    var adet = yakinVar ? 2 : 1;
-    toplamEl.textContent = formatParaTL(FIYATLAR.musteriOder * adet);
-    toplamEl.style.color = "#ffffff";
+function ozelFiyatUygula() {
+  var input = document.getElementById("ozel_fiyat");
+  var val = parseFloat((input.value || "").replace(",", "."));
+  if (!val || val <= 0) {
+    bildirimGoster("Gecerli bir fiyat girin", "uyari");
+    return;
   }
+
+  // Kampanya satirini goster (footer'in hemen ustunde)
+  var kampanyaDiv = document.getElementById("g_kampanya_satir");
+  kampanyaDiv.style.display = "block";
+  kampanyaDiv.innerHTML = '<div class="kampanya-satir">' +
+    '<span class="kampanya-etiket"><span class="kampanya-badge">KAMPANYA</span>Magaza Ozel Fiyati</span>' +
+    '<span class="kampanya-tutar">' + formatParaTL(val) + '</span>' +
+    '</div>';
+
+  // Footer toplam tutarini guncelle (sari renk)
+  var toplamEl = document.getElementById("g_toplam_tutar");
+  toplamEl.textContent = formatParaTL(val);
+  toplamEl.style.color = "#fbbf24";
+
+  // Temizle butonunu goster
+  document.getElementById("btn-ozel-temizle").style.display = "inline-block";
+
+  bildirimGoster("Ozel fiyat uygulandi: " + formatParaTL(val), "basarili");
+}
+
+// ============================================================
+// OZEL FIYAT TEMIZLE
+// ============================================================
+function ozelFiyatTemizle() {
+  // Input temizle
+  document.getElementById("ozel_fiyat").value = "";
+
+  // Kampanya satirini gizle
+  var kampanyaDiv = document.getElementById("g_kampanya_satir");
+  kampanyaDiv.style.display = "none";
+  kampanyaDiv.innerHTML = "";
+
+  // Footer toplam tutarini standart fiyata dondur
+  var toplamEl = document.getElementById("g_toplam_tutar");
+  var yakinVar = mevcutRecete && mevcutRecete.yakin;
+  var adet = yakinVar ? 2 : 1;
+  toplamEl.textContent = formatParaTL(FIYATLAR.musteriOder * adet);
+  toplamEl.style.color = "#ffffff";
+
+  // Temizle butonunu gizle
+  document.getElementById("btn-ozel-temizle").style.display = "none";
+
+  bildirimGoster("Standart fiyata donuldu", "basarili");
 }
 
 // ============================================================
