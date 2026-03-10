@@ -15,6 +15,9 @@ var FIYATLAR = {
 // Mevcut yuklenmis recete verisi
 var mevcutRecete = null;
 
+// Ek cam ucreti (global - fiyat karti yeniden olusturulurken kullanilir)
+var ekCamUcreti = 0;
+
 // QR tarayici referansi
 var qrTarayici = null;
 
@@ -362,7 +365,9 @@ function fiyatKartiniDoldur(veri) {
   var container = document.getElementById("g_fiyat_detay");
   var yakinVar = veri.yakin !== null && veri.yakin !== undefined;
   var adet = yakinVar ? 2 : 1;
-  var toplamMusteriOder = FIYATLAR.musteriOder * adet;
+
+  // Ek cam ucretini toplama dahil et (bir kez, grup basina degil)
+  var toplamMusteriOder = FIYATLAR.musteriOder * adet + ekCamUcreti;
 
   var html = "";
 
@@ -377,80 +382,54 @@ function fiyatKartiniDoldur(veri) {
     html += '<div class="fiyat-satir"><span class="etiket"><span class="satir-ikon cam-ikon">&#128308;</span>Standart Cam (2 adet)</span><span class="tutar">' + FIYATLAR.standartCam + ' TL</span></div>';
     html += '<div class="fiyat-satir"><span class="etiket"><span class="satir-ikon sgk-ikon">&#127975;</span>SGK Katkisi</span><span class="tutar indirim">-' + FIYATLAR.sgkKatki + ' TL</span></div>';
     html += '<div class="fiyat-satir"><span class="etiket"><span class="satir-ikon indirim-ikon">&#11088;</span>Magaza Indirimi</span><span class="tutar indirim">-' + FIYATLAR.magazaIndirimi + ' TL</span></div>';
-    html += '<div class="fiyat-satir alt-toplam"><span class="etiket">' + tipler[i] + ' Tutari</span><span class="tutar">' + FIYATLAR.musteriOder + ' TL</span></div>';
+    html += '<div class="fiyat-satir alt-toplam"><span class="etiket">' + tipler[i] + ' Tutari</span><span class="tutar">' + formatParaTL(FIYATLAR.musteriOder) + '</span></div>';
   }
+
+  // Ek cam ucreti satiri (gruplardan sonra, input'tan once - tek satirda gosterilir)
+  if (ekCamUcreti > 0) {
+    html += '<div class="fiyat-satir ek-cam"><span class="etiket"><span class="satir-ikon ekcam-ikon">&#128142;</span>Ek Cam Ucreti</span><span class="tutar ek-cam-tutar">+' + formatParaTL(ekCamUcreti) + '</span></div>';
+  }
+
+  // Ek Cam Ucreti giris alani (fiyat karti body icinde, gruplardan sonra)
+  html += '<div class="ek-cam-girisi">';
+  html += '<span class="ek-cam-ikon">&#128142;</span>';
+  html += '<label for="ek_cam_fiyat">Ek Cam Ucreti:</label>';
+  html += '<input type="number" id="ek_cam_fiyat" placeholder="Tutar" step="50" min="0" inputmode="numeric" value="' + (ekCamUcreti > 0 ? ekCamUcreti : '') + '" />';
+  html += '<span class="birim">TL</span>';
+  html += '<button class="btn-ek-uygula" onclick="ekCamUygula()">Uygula</button>';
+  html += '<button class="btn-ek-temizle" onclick="ekCamTemizle()" style="' + (ekCamUcreti > 0 ? '' : 'display:none;') + '">Temizle</button>';
+  html += '</div>';
 
   container.innerHTML = html;
 
   // Footer toplam tutarini guncelle
-  document.getElementById("g_toplam_tutar").textContent = formatParaTL(toplamMusteriOder);
-
-  // Ozel fiyat alanini temizle
-  document.getElementById("ozel_fiyat").value = "";
-
-  // Kampanya satirini da temizle
-  var kampanyaDiv = document.getElementById("g_kampanya_satir");
-  if (kampanyaDiv) {
-    kampanyaDiv.style.display = "none";
-    kampanyaDiv.innerHTML = "";
-  }
-  var temizleBtn = document.getElementById("btn-ozel-temizle");
-  if (temizleBtn) temizleBtn.style.display = "none";
+  var toplamEl = document.getElementById("g_toplam_tutar");
+  toplamEl.textContent = formatParaTL(toplamMusteriOder);
+  toplamEl.style.color = ekCamUcreti > 0 ? "#fbbf24" : "#ffffff";
 }
 
 // ============================================================
-// OZEL FIYAT UYGULA (butonlu kampanya sistemi)
+// EK CAM UCRETI UYGULA
 // ============================================================
-function ozelFiyatUygula() {
-  var input = document.getElementById("ozel_fiyat");
+function ekCamUygula() {
+  var input = document.getElementById("ek_cam_fiyat");
   var val = parseFloat((input.value || "").replace(",", "."));
   if (!val || val <= 0) {
-    bildirimGoster("Gecerli bir fiyat girin", "uyari");
+    bildirimGoster("Gecerli bir tutar girin", "uyari");
     return;
   }
-
-  // Kampanya satirini goster (footer'in hemen ustunde)
-  var kampanyaDiv = document.getElementById("g_kampanya_satir");
-  kampanyaDiv.style.display = "block";
-  kampanyaDiv.innerHTML = '<div class="kampanya-satir">' +
-    '<span class="kampanya-etiket"><span class="kampanya-badge">KAMPANYA</span>Magaza Ozel Fiyati</span>' +
-    '<span class="kampanya-tutar">' + formatParaTL(val) + '</span>' +
-    '</div>';
-
-  // Footer toplam tutarini guncelle (sari renk)
-  var toplamEl = document.getElementById("g_toplam_tutar");
-  toplamEl.textContent = formatParaTL(val);
-  toplamEl.style.color = "#fbbf24";
-
-  // Temizle butonunu goster
-  document.getElementById("btn-ozel-temizle").style.display = "inline-block";
-
-  bildirimGoster("Ozel fiyat uygulandi: " + formatParaTL(val), "basarili");
+  ekCamUcreti = val;
+  fiyatKartiniDoldur(mevcutRecete);
+  bildirimGoster("Ek cam ucreti eklendi: " + formatParaTL(val), "basarili");
 }
 
 // ============================================================
-// OZEL FIYAT TEMIZLE
+// EK CAM UCRETI TEMIZLE
 // ============================================================
-function ozelFiyatTemizle() {
-  // Input temizle
-  document.getElementById("ozel_fiyat").value = "";
-
-  // Kampanya satirini gizle
-  var kampanyaDiv = document.getElementById("g_kampanya_satir");
-  kampanyaDiv.style.display = "none";
-  kampanyaDiv.innerHTML = "";
-
-  // Footer toplam tutarini standart fiyata dondur
-  var toplamEl = document.getElementById("g_toplam_tutar");
-  var yakinVar = mevcutRecete && mevcutRecete.yakin;
-  var adet = yakinVar ? 2 : 1;
-  toplamEl.textContent = formatParaTL(FIYATLAR.musteriOder * adet);
-  toplamEl.style.color = "#ffffff";
-
-  // Temizle butonunu gizle
-  document.getElementById("btn-ozel-temizle").style.display = "none";
-
-  bildirimGoster("Standart fiyata donuldu", "basarili");
+function ekCamTemizle() {
+  ekCamUcreti = 0;
+  fiyatKartiniDoldur(mevcutRecete);
+  bildirimGoster("Ek cam ucreti kaldirildi", "basarili");
 }
 
 // ============================================================
