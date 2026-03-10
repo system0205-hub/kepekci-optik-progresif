@@ -430,9 +430,111 @@ function camOneriKartiniDoldur(veri) {
   html += '</div>';
   html += '</div>';
   html += '<div class="cam-oneri-mesaj">' + mesaj + '</div>';
+  html += '<button class="btn-karsilastir" onclick="camKarsilastirmaToggle()" id="btn-karsilastir">';
+  html += '<span>Camlari Karsilastir</span> <span class="ok-ikon">&#9660;</span>';
+  html += '</button>';
   html += '</div>';
 
   container.innerHTML = html;
+}
+
+// ============================================================
+// CAM KARSILASTIRMA TABLOSU
+// ============================================================
+var CAM_INDEKS_BILGI = {
+  "1.56": { inceltme: 20, kalinlik: 100, agirlik: "Standart", kaplama: "Sert Kaplama", fiyatFarki: 0 },
+  "1.60": { inceltme: 35, kalinlik: 70,  agirlik: "Hafif",    kaplama: "Antirefle + UV", fiyatFarki: 200 },
+  "1.67": { inceltme: 50, kalinlik: 45,  agirlik: "Cok Hafif", kaplama: "Antirefle + UV + Mavi Isik", fiyatFarki: 500 },
+  "1.74": { inceltme: 60, kalinlik: 30,  agirlik: "Ultra Hafif", kaplama: "Antirefle + UV + Mavi Isik + Hidrofobik", fiyatFarki: 900 }
+};
+
+function camKarsilastirmaToggle() {
+  var container = document.getElementById("g_cam_karsilastirma");
+  var btn = document.getElementById("btn-karsilastir");
+  if (!container) return;
+
+  if (container.style.display === "none" || !container.style.display) {
+    camKarsilastirmaTablosunuOlustur();
+    container.style.display = "block";
+    if (btn) btn.classList.add("acik");
+  } else {
+    container.style.display = "none";
+    if (btn) btn.classList.remove("acik");
+  }
+}
+
+function camKarsilastirmaTablosunuOlustur() {
+  var container = document.getElementById("g_cam_karsilastirma");
+  if (!container || !mevcutRecete || !mevcutRecete.uzak) return;
+
+  var onerilen = _hesaplaOnerilen();
+  var indeksler = ["1.56", "1.60", "1.67", "1.74"];
+  var html = '<div class="cam-karsilastirma">';
+  html += '<div class="cam-karsilastirma-header">';
+  html += '<span>&#128269;</span> Cam Indeks Karsilastirmasi';
+  html += '</div>';
+  html += '<div class="cam-karsilastirma-grid">';
+
+  for (var i = 0; i < indeksler.length; i++) {
+    var idx = indeksler[i];
+    var bilgi = CAM_INDEKS_BILGI[idx];
+    var isOnerilen = (idx === onerilen);
+
+    html += '<div class="cam-sutun' + (isOnerilen ? ' onerilen' : '') + '">';
+    html += '<div class="cam-sutun-indeks">' + idx + '</div>';
+    html += '<div class="cam-sutun-inceltme">%' + bilgi.inceltme + ' Inceltme</div>';
+
+    // Kalinlik bar
+    html += '<div class="cam-ozellik-satir">';
+    html += '<div class="cam-ozellik-etiket">Kalinlik</div>';
+    html += '<div class="cam-kalinlik-bar"><div class="cam-kalinlik-bar-dolu" style="width:' + bilgi.kalinlik + '%;"></div></div>';
+    html += '</div>';
+
+    // Agirlik
+    html += '<div class="cam-ozellik-satir">';
+    html += '<div class="cam-ozellik-etiket">Agirlik</div>';
+    html += '<div class="cam-ozellik-deger">' + bilgi.agirlik + '</div>';
+    html += '</div>';
+
+    // Kaplama
+    html += '<div class="cam-ozellik-satir">';
+    html += '<div class="cam-ozellik-etiket">Kaplama</div>';
+    html += '<div class="cam-ozellik-deger" style="font-size:0.72rem;">' + bilgi.kaplama + '</div>';
+    html += '</div>';
+
+    // Fiyat farki
+    html += '<div class="cam-sutun-fiyat">';
+    if (bilgi.fiyatFarki === 0) {
+      html += '<div class="fiyat-farki baz">Baz Fiyat</div>';
+      html += '<div class="fiyat-aciklama">Standart cam dahil</div>';
+    } else {
+      html += '<div class="fiyat-farki artis">+' + formatParaTL(bilgi.fiyatFarki) + '</div>';
+      html += '<div class="fiyat-aciklama">Standart cama ek</div>';
+    }
+    html += '</div>';
+
+    html += '</div>'; // cam-sutun
+  }
+
+  html += '</div>'; // grid
+  html += '</div>'; // cam-karsilastirma
+  container.innerHTML = html;
+}
+
+function _hesaplaOnerilen() {
+  if (!mevcutRecete || !mevcutRecete.uzak) return "1.56";
+  var sphMax = Math.max(
+    Math.abs(parseFloat(mevcutRecete.uzak.sag.sph) || 0),
+    Math.abs(parseFloat(mevcutRecete.uzak.sol.sph) || 0)
+  );
+  var cylMax = Math.max(
+    Math.abs(parseFloat(mevcutRecete.uzak.sag.cyl) || 0),
+    Math.abs(parseFloat(mevcutRecete.uzak.sol.cyl) || 0)
+  );
+  if (sphMax >= 6.00) return "1.74";
+  if (sphMax >= 4.00 || cylMax >= 2.50) return "1.67";
+  if (sphMax >= 2.00 || cylMax >= 1.50) return "1.60";
+  return "1.56";
 }
 
 // ============================================================

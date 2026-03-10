@@ -808,11 +808,167 @@
       font-style: italic;
       padding-left: 62px;
     }
+    /* Karsilastir butonu (cam oneri karti icinde) */
+    .btn-karsilastir {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 12px;
+      margin-left: 62px;
+      padding: 8px 18px;
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+      z-index: 1;
+      backdrop-filter: blur(4px);
+    }
+    .btn-karsilastir:hover {
+      background: rgba(255,255,255,0.3);
+      transform: translateY(-1px);
+    }
+    .btn-karsilastir .ok-ikon {
+      transition: transform 0.3s ease;
+      font-size: 0.7rem;
+    }
+    .btn-karsilastir.acik .ok-ikon {
+      transform: rotate(180deg);
+    }
+
+    /* Cam karsilastirma tablosu */
+    .cam-karsilastirma {
+      background: #ffffff;
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      border: 1px solid rgba(0,0,0,0.06);
+      animation: fadeInUp 0.3s ease;
+    }
+    .cam-karsilastirma-header {
+      background: linear-gradient(135deg, #1e293b, #334155);
+      padding: 14px 20px;
+      color: #fff;
+      font-size: 0.9rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .cam-karsilastirma-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+    }
+    .cam-sutun {
+      padding: 16px 12px;
+      text-align: center;
+      border-right: 1px solid #f1f5f9;
+      transition: background 0.2s ease;
+    }
+    .cam-sutun:last-child { border-right: none; }
+    .cam-sutun.onerilen {
+      background: linear-gradient(180deg, #ecfdf5, #f0fdf4);
+      border: 2px solid #22c55e;
+      position: relative;
+    }
+    .cam-sutun.onerilen::before {
+      content: "ONERILEN";
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #22c55e;
+      color: #fff;
+      font-size: 0.6rem;
+      font-weight: 700;
+      padding: 2px 10px;
+      border-radius: 0 0 8px 8px;
+      letter-spacing: 1px;
+    }
+    .cam-sutun-indeks {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #1e293b;
+      margin-bottom: 4px;
+      margin-top: 8px;
+    }
+    .cam-sutun-inceltme {
+      display: inline-block;
+      background: #f1f5f9;
+      color: #475569;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .cam-sutun.onerilen .cam-sutun-inceltme {
+      background: #dcfce7;
+      color: #166534;
+    }
+    .cam-ozellik-satir {
+      padding: 8px 0;
+      border-top: 1px solid #f1f5f9;
+    }
+    .cam-ozellik-etiket {
+      font-size: 0.65rem;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 2px;
+    }
+    .cam-ozellik-deger {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #334155;
+    }
+    .cam-kalinlik-bar {
+      height: 6px;
+      border-radius: 3px;
+      background: #e2e8f0;
+      margin: 6px auto 0;
+      width: 80%;
+      overflow: hidden;
+    }
+    .cam-kalinlik-bar-dolu {
+      height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, #22c55e, #eab308, #ef4444);
+    }
+    .cam-sutun-fiyat {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 2px solid #e2e8f0;
+    }
+    .cam-sutun-fiyat .fiyat-farki {
+      font-size: 1.1rem;
+      font-weight: 800;
+      font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+    }
+    .cam-sutun-fiyat .fiyat-farki.baz { color: #64748b; }
+    .cam-sutun-fiyat .fiyat-farki.artis { color: #ea580c; }
+    .cam-sutun.onerilen .cam-sutun-fiyat .fiyat-farki { color: #16a34a; }
+    .cam-sutun-fiyat .fiyat-aciklama {
+      font-size: 0.65rem;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+
     @media (max-width: 480px) {
       .cam-oneri-kart { padding: 18px 16px; }
       .cam-oneri-indeks { font-size: 1.2rem; }
       .cam-oneri-mesaj { padding-left: 0; font-size: 0.82rem; }
       .cam-oneri-ikon { width: 40px; height: 40px; font-size: 1.1rem; }
+      .cam-karsilastirma-grid { grid-template-columns: repeat(2, 1fr); }
+      .cam-sutun { border-bottom: 1px solid #f1f5f9; }
+      .cam-sutun-indeks { font-size: 1.1rem; }
+      .btn-karsilastir { margin-left: 0; }
     }
 
     /* Alt butonlar - Gradient premium */
@@ -1162,6 +1318,11 @@
 
       <!-- Cam Oneri Karti -->
       <div id="g_cam_oneri">
+        <!-- JS ile doldurulacak -->
+      </div>
+
+      <!-- Cam Karsilastirma Tablosu -->
+      <div id="g_cam_karsilastirma" style="display:none;">
         <!-- JS ile doldurulacak -->
       </div>
 
