@@ -398,22 +398,22 @@ function camOneriKartiniDoldur(veri) {
   var inceltme, kademe, mesaj;
   switch (indeks) {
     case "1.74":
-      inceltme = 60;
+      inceltme = "60-65";
       kademe = 3;
       mesaj = "Yuksek numaraniz icin inceltilmis cam siddetle tavsiye edilir — daha hafif, daha ince gozluk deneyimi";
       break;
     case "1.67":
-      inceltme = 50;
+      inceltme = "50-55";
       kademe = 3;
       mesaj = "Yuksek numaraniz icin inceltilmis cam siddetle tavsiye edilir — daha hafif, daha ince gozluk deneyimi";
       break;
     case "1.60":
-      inceltme = 35;
+      inceltme = "35-40";
       kademe = 2;
       mesaj = "Numaraniza uygun inceltilmis cam ile daha ince ve estetik bir gorunum elde edin";
       break;
     default: // 1.56
-      inceltme = 20;
+      inceltme = "20";
       kademe = 1;
       mesaj = "Gorus kalitenizi artirmak icin antirefle kaplama ve mavi isik filtreli cam onerilir";
       break;
@@ -442,10 +442,10 @@ function camOneriKartiniDoldur(veri) {
 // CAM KARSILASTIRMA TABLOSU
 // ============================================================
 var CAM_INDEKS_BILGI = {
-  "1.56": { inceltme: 20, kalinlik: 100, agirlik: "Standart", kaplama: "Sert Kaplama", fiyatFarki: 0 },
-  "1.60": { inceltme: 35, kalinlik: 70,  agirlik: "Hafif",    kaplama: "Antirefle + UV", fiyatFarki: 200 },
-  "1.67": { inceltme: 50, kalinlik: 45,  agirlik: "Cok Hafif", kaplama: "Antirefle + UV + Mavi Isik", fiyatFarki: 500 },
-  "1.74": { inceltme: 60, kalinlik: 30,  agirlik: "Ultra Hafif", kaplama: "Antirefle + UV + Mavi Isik + Hidrofobik", fiyatFarki: 900 }
+  "1.56": { inceltme: "20",    kalinlik: 100, agirlik: "Standart",    kaplama: "HMC UV-400",                             fiyatFarki: 400 },
+  "1.60": { inceltme: "35-40", kalinlik: 70,  agirlik: "Hafif",       kaplama: "SHMC UV-400",                            fiyatFarki: 1200 },
+  "1.67": { inceltme: "50-55", kalinlik: 45,  agirlik: "Cok Hafif",   kaplama: "SHMC UV-400 + Mavi Isik",                fiyatFarki: 2200 },
+  "1.74": { inceltme: "60-65", kalinlik: 30,  agirlik: "Ultra Hafif", kaplama: "SHMC UV-400 + Mavi Isik + Hidrofobik",   fiyatFarki: 3300 }
 };
 
 function camKarsilastirmaToggle() {
@@ -502,15 +502,10 @@ function camKarsilastirmaTablosunuOlustur() {
     html += '<div class="cam-ozellik-deger" style="font-size:0.72rem;">' + bilgi.kaplama + '</div>';
     html += '</div>';
 
-    // Fiyat farki
+    // Fiyat farki — hepsi 1.50 standart pakete gore
     html += '<div class="cam-sutun-fiyat">';
-    if (bilgi.fiyatFarki === 0) {
-      html += '<div class="fiyat-farki baz">Baz Fiyat</div>';
-      html += '<div class="fiyat-aciklama">Standart cam dahil</div>';
-    } else {
-      html += '<div class="fiyat-farki artis">+' + formatParaTL(bilgi.fiyatFarki) + '</div>';
-      html += '<div class="fiyat-aciklama">Standart cama ek</div>';
-    }
+    html += '<div class="fiyat-farki artis">+' + formatParaTL(bilgi.fiyatFarki) + '</div>';
+    html += '<div class="fiyat-aciklama">Standart pakete ek</div>';
     html += '</div>';
 
     html += '</div>'; // cam-sutun
