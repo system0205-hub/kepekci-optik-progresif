@@ -534,6 +534,22 @@ var CAM_INDEKS_BILGI = {
 // CAM_INDEKS_BILGI tanimlandiktan sonra fiyat farklarini guncelle
 fiyatlariYukle();
 
+// Baska sekmede fiyat panelinden degisiklik yapilinca otomatik guncelle
+window.addEventListener("storage", function(e) {
+  if (e.key === "kepekci_fiyat_override") {
+    fiyatlariYukle();
+    // Acik karsilastirma tablosu varsa yeniden olustur
+    var container = document.getElementById("g_cam_karsilastirma");
+    if (container && container.style.display === "block") {
+      camKarsilastirmaTablosunuOlustur();
+    }
+    // Acik fiyat karti varsa yeniden doldur
+    if (typeof fiyatKartiniDoldur === "function") {
+      fiyatKartiniDoldur();
+    }
+  }
+});
+
 function camKarsilastirmaToggle() {
   var container = document.getElementById("g_cam_karsilastirma");
   var btn = document.getElementById("btn-karsilastir");
