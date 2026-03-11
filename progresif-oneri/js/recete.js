@@ -3,13 +3,47 @@
 // Kepekci Optik - Modul 2
 // ============================================================
 
-// Fiyat sabitleri
+// ============================================================
+// VARSAYILAN FIYATLAR (stok fiyat listesi 01.03.2025)
+// ============================================================
+var VARSAYILAN_FIYATLAR = {
+  stokCam: {
+    "1.50_organik_65_70_4_2": 250,
+    "1.56_hmc_65_70_4_2": 500,
+    "1.56_hmc_65_70_4_4": 700,
+    "1.56_hmc_55_4_2": 800,
+    "1.56_hmc_55_4_4": 1000,
+    "1.60_shmc_70_75_6_2": 900,
+    "1.60_shmc_70_75_6_4": 1000,
+    "1.67_shmc_70_75_8_2": 1400,
+    "1.67_shmc_70_75_8_4": 2000,
+    "1.74_shmc_70_75_10_2": 2200,
+    "1.74_shmc_70_75_10_4": 2800,
+    "1.58_kirilmaz_65_70_4_2": 1000,
+    "1.58_kirilmaz_65_70_4_4": 1300,
+    "1.56_fotokromik_65_70_4_2": 1000,
+    "1.56_fotokromik_65_70_4_4": 1300,
+    "1.56_blue_65_70_4_2": 1000,
+    "1.56_blue_65_70_4_4": 1300,
+    "1.60_blue_70_75_6_2": 1400,
+    "1.60_blue_70_75_6_4": 1700
+  },
+  cerceve: { silikon: 700, metal: 900 },
+  ekUcret: { sgkKatki: 150, magazaIndirimi: 100, fasetIscilik: 400, camTransferi: 200 },
+  kontakLens: {
+    acuveOasys: 1200, acuveOasysToric: 1400,
+    eleganceComfort: 1000, eleganceComfortToric: 1200,
+    freshlook: 1000, airOptixColors: 1000, eleganceFreshcolors: 800
+  }
+};
+
+// Fiyat sabitleri (fiyatlariYukle ile guncellenir)
 var FIYATLAR = {
-  cerceve: 750,
-  standartCam: 300,
+  cerceve: 700,
+  standartCam: 500,  // 1.50 organik 4/2 x2
   sgkKatki: 150,
   magazaIndirimi: 100,
-  musteriOder: 800  // 750 + 300 - 150 - 100
+  musteriOder: 800   // 700 + 500 - 150 - 100 (magaza ind. haric gosterilir)
 };
 
 // Mevcut yuklenmis recete verisi
@@ -17,6 +51,53 @@ var mevcutRecete = null;
 
 // Ek cam ucreti (global - fiyat karti yeniden olusturulurken kullanilir)
 var ekCamUcreti = 0;
+
+// ============================================================
+// FIYAT YUKLEME — localStorage override ile
+// ============================================================
+function fiyatlariYukle() {
+  var override = {};
+  try {
+    var raw = localStorage.getItem("kepekci_fiyat_override");
+    if (raw) override = JSON.parse(raw);
+  } catch(e) { /* ignore */ }
+
+  // Deep merge: varsayilan + override
+  var f = JSON.parse(JSON.stringify(VARSAYILAN_FIYATLAR));
+  for (var kat in override) {
+    if (f[kat]) {
+      for (var key in override[kat]) {
+        f[kat][key] = override[kat][key];
+      }
+    }
+  }
+
+  // FIYATLAR objesini guncelle
+  FIYATLAR.cerceve = f.cerceve.silikon;
+  FIYATLAR.standartCam = f.stokCam["1.50_organik_65_70_4_2"] * 2;
+  FIYATLAR.sgkKatki = f.ekUcret.sgkKatki;
+  FIYATLAR.magazaIndirimi = f.ekUcret.magazaIndirimi;
+  FIYATLAR.musteriOder = FIYATLAR.cerceve + FIYATLAR.standartCam - FIYATLAR.sgkKatki - FIYATLAR.magazaIndirimi;
+
+  // CAM_INDEKS_BILGI fiyat farklarini guncelle
+  var standartPaket = (f.stokCam["1.50_organik_65_70_4_2"] * 2) + f.cerceve.silikon - f.ekUcret.sgkKatki;
+  var idx56paket = (f.stokCam["1.56_hmc_65_70_4_2"] * 2) + f.cerceve.silikon - f.ekUcret.sgkKatki;
+  var idx60paket = (f.stokCam["1.60_shmc_70_75_6_2"] * 2) + f.cerceve.silikon - f.ekUcret.sgkKatki;
+  var idx67paket = (f.stokCam["1.67_shmc_70_75_8_2"] * 2) + f.cerceve.silikon - f.ekUcret.sgkKatki;
+  var idx74paket = (f.stokCam["1.74_shmc_70_75_10_2"] * 2) + f.cerceve.silikon - f.ekUcret.sgkKatki;
+
+  if (typeof CAM_INDEKS_BILGI !== "undefined") {
+    CAM_INDEKS_BILGI["1.56"].fiyatFarki = idx56paket - standartPaket;
+    CAM_INDEKS_BILGI["1.60"].fiyatFarki = idx60paket - standartPaket;
+    CAM_INDEKS_BILGI["1.67"].fiyatFarki = idx67paket - standartPaket;
+    CAM_INDEKS_BILGI["1.74"].fiyatFarki = idx74paket - standartPaket;
+  }
+
+  return f;
+}
+
+// Sayfa yuklendiginde fiyatlari yukle
+fiyatlariYukle();
 
 // QR tarayici referansi
 var qrTarayici = null;
