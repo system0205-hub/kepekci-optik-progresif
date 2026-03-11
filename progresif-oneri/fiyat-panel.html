@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <title>Fiyat Paneli - Kepekci Optik</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    :root {
+      --primary: #1a5276;
+      --primary-light: #2980b9;
+      --primary-dark: #0e2f44;
+      --accent: #e67e22;
+      --success: #27ae60;
+      --danger: #e74c3c;
+      --bg: #f4f6f9;
+      --bg-card: #ffffff;
+      --text: #2c3e50;
+      --text-light: #7f8c8d;
+      --border: #dce1e8;
+      --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.12);
+      --radius: 10px;
+      --radius-sm: 6px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); }
+
+    /* Header */
+    .header { background: linear-gradient(135deg, var(--primary-dark), var(--primary)); color: #fff; padding: 16px 20px; }
+    .header__inner { max-width: 900px; margin: 0 auto; }
+    .header__title { font-size: 1.4rem; font-weight: 800; }
+    .header__subtitle { font-size: 0.8rem; opacity: 0.8; }
+    .header__nav { display: flex; gap: 0; margin-top: 10px; overflow-x: auto; white-space: nowrap; }
+    .header__nav a { color: rgba(255,255,255,0.75); text-decoration: none; font-size: 0.82rem; padding: 6px 14px; border-radius: 6px 6px 0 0; }
+    .header__nav a:hover { color: #fff; background: rgba(255,255,255,0.1); }
+    .header__nav a.active { color: #fff; background: rgba(255,255,255,0.2); font-weight: 700; }
+
+    /* Container */
+    .panel-container { max-width: 900px; margin: 20px auto; padding: 0 16px; }
+
+    /* PIN Ekrani */
+    .pin-ekran { max-width: 400px; margin: 80px auto; text-align: center; }
+    .pin-kart { background: var(--bg-card); border-radius: var(--radius); padding: 40px 30px; box-shadow: var(--shadow-lg); }
+    .pin-ikon { font-size: 3rem; margin-bottom: 16px; }
+    .pin-baslik { font-size: 1.3rem; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
+    .pin-aciklama { font-size: 0.85rem; color: var(--text-light); margin-bottom: 24px; }
+    .pin-input { width: 180px; text-align: center; font-size: 2rem; letter-spacing: 12px; padding: 12px; border: 2px solid var(--border); border-radius: var(--radius-sm); outline: none; font-family: monospace; }
+    .pin-input:focus { border-color: var(--primary-light); }
+    .pin-input-2 { margin-top: 12px; }
+    .pin-btn { display: block; width: 100%; margin-top: 20px; padding: 14px; background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: #fff; border: none; border-radius: var(--radius-sm); font-size: 1rem; font-weight: 700; cursor: pointer; }
+    .pin-btn:hover { opacity: 0.9; }
+    .pin-hata { color: var(--danger); font-size: 0.85rem; margin-top: 12px; min-height: 20px; }
+
+    /* Panel */
+    .panel { display: none; }
+    .panel.acik { display: block; }
+
+    /* Sekmeler */
+    .tab-bar { display: flex; gap: 0; background: var(--bg-card); border-radius: var(--radius) var(--radius) 0 0; box-shadow: var(--shadow); overflow-x: auto; }
+    .tab-btn { flex: 1; padding: 14px 16px; border: none; background: transparent; font-size: 0.85rem; font-weight: 600; color: var(--text-light); cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; }
+    .tab-btn:hover { color: var(--text); background: rgba(0,0,0,0.02); }
+    .tab-btn.aktif { color: var(--primary); border-bottom-color: var(--primary); background: rgba(26,82,118,0.05); }
+    .tab-icerik { display: none; background: var(--bg-card); padding: 20px; border-radius: 0 0 var(--radius) var(--radius); box-shadow: var(--shadow); }
+    .tab-icerik.aktif { display: block; }
+
+    /* Kategori basligi */
+    .kategori-baslik { background: linear-gradient(135deg, var(--primary-dark), var(--primary)); color: #fff; padding: 10px 16px; font-size: 0.85rem; font-weight: 700; margin-top: 16px; border-radius: var(--radius-sm); }
+    .kategori-baslik:first-child { margin-top: 0; }
+
+    /* Fiyat satiri */
+    .fiyat-satir { display: flex; align-items: center; padding: 10px 16px; border-bottom: 1px solid var(--border); gap: 10px; }
+    .fiyat-satir:last-child { border-bottom: none; }
+    .fiyat-satir.degismis { background: rgba(234, 179, 8, 0.08); }
+    .fiyat-urun { flex: 1; font-size: 0.85rem; }
+    .fiyat-deger { font-size: 1rem; font-weight: 700; color: var(--primary); min-width: 80px; text-align: right; }
+    .fiyat-deger.degismis { color: var(--accent); }
+    .fiyat-btn { padding: 5px 12px; border: 1px solid var(--border); background: var(--bg); border-radius: var(--radius-sm); font-size: 0.75rem; cursor: pointer; color: var(--text-light); }
+    .fiyat-btn:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    /* Edit mode */
+    .fiyat-edit-input { width: 90px; padding: 6px 8px; border: 2px solid var(--primary-light); border-radius: var(--radius-sm); font-size: 1rem; font-weight: 700; text-align: right; font-family: monospace; outline: none; }
+    .fiyat-btn-kaydet { padding: 5px 12px; background: var(--success); color: #fff; border: none; border-radius: var(--radius-sm); font-size: 0.75rem; cursor: pointer; font-weight: 700; }
+    .fiyat-btn-iptal { padding: 5px 12px; background: var(--text-light); color: #fff; border: none; border-radius: var(--radius-sm); font-size: 0.75rem; cursor: pointer; }
+
+    /* Sifirla butonu */
+    .sifirla-bar { margin-top: 16px; text-align: right; }
+    .btn-sifirla { padding: 10px 20px; background: linear-gradient(135deg, var(--danger), #c0392b); color: #fff; border: none; border-radius: var(--radius-sm); font-size: 0.85rem; font-weight: 700; cursor: pointer; }
+    .btn-sifirla:hover { opacity: 0.9; }
+
+    /* Bildirim */
+    .bildirim { position: fixed; top: 20px; right: 20px; padding: 12px 20px; border-radius: var(--radius-sm); color: #fff; font-size: 0.85rem; font-weight: 600; z-index: 9999; opacity: 0; transition: opacity 0.3s; }
+    .bildirim.goster { opacity: 1; }
+    .bildirim.basarili { background: var(--success); }
+    .bildirim.uyari { background: var(--accent); }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .fiyat-satir { flex-wrap: wrap; }
+      .fiyat-urun { flex-basis: 100%; margin-bottom: 4px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="header__inner">
+      <div class="header__brand">
+        <div class="header__title">Kepekci Optik</div>
+        <div class="header__subtitle">Fiyat Guncelleme Paneli</div>
+      </div>
+      <nav class="header__nav">
+        <a href="index.html">Ana Sayfa</a>
+        <a href="foto-olcum.html">Fotograftan Olcum</a>
+        <a href="kamera-olcum.html">Kameradan Olcum</a>
+        <a href="recete.html">SGK Recete</a>
+        <a href="fiyat-panel.html" class="active">Fiyat Paneli</a>
+        <a href="olcum-rehberi.html">Olcum Rehberi</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- PIN GIRIS EKRANI -->
+  <div id="pin-ekran" class="pin-ekran">
+    <div class="pin-kart">
+      <div class="pin-ikon">&#128274;</div>
+      <div class="pin-baslik" id="pin-baslik">Fiyat Paneli Girisi</div>
+      <div class="pin-aciklama" id="pin-aciklama">4 haneli PIN kodunuzu girin</div>
+      <input type="password" id="pin-input-1" class="pin-input" maxlength="4" inputmode="numeric" pattern="[0-9]*" placeholder="****" autofocus />
+      <input type="password" id="pin-input-2" class="pin-input pin-input-2" maxlength="4" inputmode="numeric" pattern="[0-9]*" placeholder="****" style="display:none;" />
+      <button class="pin-btn" id="pin-btn" onclick="pinIslem()">Giris</button>
+      <div class="pin-hata" id="pin-hata"></div>
+    </div>
+  </div>
+
+  <!-- FIYAT PANELI -->
+  <div id="panel" class="panel panel-container">
+
+    <!-- Sekmeler -->
+    <div class="tab-bar">
+      <button class="tab-btn aktif" onclick="sekmeGoster('stokCam')">Stok Cam</button>
+      <button class="tab-btn" onclick="sekmeGoster('cerceve')">Cerceve & Ek</button>
+      <button class="tab-btn" onclick="sekmeGoster('kontakLens')">Kontak Lens</button>
+    </div>
+
+    <!-- Sekme 1: Stok Cam -->
+    <div id="tab-stokCam" class="tab-icerik aktif"></div>
+
+    <!-- Sekme 2: Cerceve & Ek Ucretler -->
+    <div id="tab-cerceve" class="tab-icerik"></div>
+
+    <!-- Sekme 3: Kontak Lens -->
+    <div id="tab-kontakLens" class="tab-icerik"></div>
+
+    <!-- Sifirla -->
+    <div class="sifirla-bar">
+      <button class="btn-sifirla" onclick="tumFiyatlariSifirla()">Tum Fiyatlari Sifirla</button>
+    </div>
+  </div>
+
+  <!-- Bildirim -->
+  <div id="bildirim" class="bildirim"></div>
+
+<script>
+// ============================================================
+// VARSAYILAN FIYATLAR (recete.js ile ayni)
+// ============================================================
+var VARSAYILAN_FIYATLAR = {
+  stokCam: {
+    "1.50_organik_65_70_4_2": 250,
+    "1.56_hmc_65_70_4_2": 500,
+    "1.56_hmc_65_70_4_4": 700,
+    "1.56_hmc_55_4_2": 800,
+    "1.56_hmc_55_4_4": 1000,
+    "1.60_shmc_70_75_6_2": 900,
+    "1.60_shmc_70_75_6_4": 1000,
+    "1.67_shmc_70_75_8_2": 1400,
+    "1.67_shmc_70_75_8_4": 2000,
+    "1.74_shmc_70_75_10_2": 2200,
+    "1.74_shmc_70_75_10_4": 2800,
+    "1.58_kirilmaz_65_70_4_2": 1000,
+    "1.58_kirilmaz_65_70_4_4": 1300,
+    "1.56_fotokromik_65_70_4_2": 1000,
+    "1.56_fotokromik_65_70_4_4": 1300,
+    "1.56_blue_65_70_4_2": 1000,
+    "1.56_blue_65_70_4_4": 1300,
+    "1.60_blue_70_75_6_2": 1400,
+    "1.60_blue_70_75_6_4": 1700
+  },
+  cerceve: { silikon: 700, metal: 900 },
+  ekUcret: { sgkKatki: 150, magazaIndirimi: 100, fasetIscilik: 400, camTransferi: 200 },
+  kontakLens: {
+    acuveOasys: 1200, acuveOasysToric: 1400,
+    eleganceComfort: 1000, eleganceComfortToric: 1200,
+    freshlook: 1000, airOptixColors: 1000, eleganceFreshcolors: 800
+  }
+};
+
+// Urun adi mapping (key -> okunabilir ad)
+var URUN_ADLARI = {
+  // Stok cam
+  "1.50_organik_65_70_4_2": "1.50 Organik 65/70mm 4/2",
+  "1.56_hmc_65_70_4_2": "1.56 HMC-UV 65/70mm 4/2",
+  "1.56_hmc_65_70_4_4": "1.56 HMC-UV 65/70mm 4/4",
+  "1.56_hmc_55_4_2": "1.56 HMC-UV 55mm 4/2",
+  "1.56_hmc_55_4_4": "1.56 HMC-UV 55mm 4/4",
+  "1.60_shmc_70_75_6_2": "1.60 SHMC-UV 70/75mm 6/2",
+  "1.60_shmc_70_75_6_4": "1.60 SHMC-UV 70/75mm 6/4",
+  "1.67_shmc_70_75_8_2": "1.67 SHMC-UV 70/75mm 8/2",
+  "1.67_shmc_70_75_8_4": "1.67 SHMC-UV 70/75mm 8/4",
+  "1.74_shmc_70_75_10_2": "1.74 SHMC-UV 70/75mm 10/2",
+  "1.74_shmc_70_75_10_4": "1.74 SHMC-UV 70/75mm 10/4",
+  "1.58_kirilmaz_65_70_4_2": "1.58 Kirilmaz 65/70mm 4/2",
+  "1.58_kirilmaz_65_70_4_4": "1.58 Kirilmaz 65/70mm 4/4",
+  "1.56_fotokromik_65_70_4_2": "1.56 Fotokromik 65/70mm 4/2",
+  "1.56_fotokromik_65_70_4_4": "1.56 Fotokromik 65/70mm 4/4",
+  "1.56_blue_65_70_4_2": "1.56 Blue 65/70mm 4/2",
+  "1.56_blue_65_70_4_4": "1.56 Blue 65/70mm 4/4",
+  "1.60_blue_70_75_6_2": "1.60 Blue 70/75mm 6/2",
+  "1.60_blue_70_75_6_4": "1.60 Blue 70/75mm 6/4",
+  // Cerceve
+  silikon: "Silikon Ekonomik Cerceve",
+  metal: "Metal Ekonomik Cerceve",
+  // Ek ucret
+  sgkKatki: "SGK Katki Payi",
+  magazaIndirimi: "Magaza Indirimi",
+  fasetIscilik: "Faset Iscilik",
+  camTransferi: "Cam Transferi",
+  // Kontak lens
+  acuveOasys: "Acuve Oasys",
+  acuveOasysToric: "Acuve Oasys Toric",
+  eleganceComfort: "Elegance Comfort",
+  eleganceComfortToric: "Elegance Comfort Toric",
+  freshlook: "Freshlook",
+  airOptixColors: "AirOptix Colors",
+  eleganceFreshcolors: "Elegance Freshcolors"
+};
+
+// Kategori gruplari (stok cam icin)
+var STOK_KATEGORILER = [
+  { baslik: "1.50 Std. Organik — UV-400", keyler: ["1.50_organik_65_70_4_2"] },
+  { baslik: "1.56 HMC — UV-400", keyler: ["1.56_hmc_65_70_4_2","1.56_hmc_65_70_4_4","1.56_hmc_55_4_2","1.56_hmc_55_4_4"] },
+  { baslik: "1.60 SHMC — UV-400", keyler: ["1.60_shmc_70_75_6_2","1.60_shmc_70_75_6_4"] },
+  { baslik: "1.67 SHMC — UV-400", keyler: ["1.67_shmc_70_75_8_2","1.67_shmc_70_75_8_4"] },
+  { baslik: "1.74 SHMC — UV-400", keyler: ["1.74_shmc_70_75_10_2","1.74_shmc_70_75_10_4"] },
+  { baslik: "1.58 Kirilmaz Green SHMC — UV-400", keyler: ["1.58_kirilmaz_65_70_4_2","1.58_kirilmaz_65_70_4_4"] },
+  { baslik: "1.56 Fotokromik Green SHMC — UV-370", keyler: ["1.56_fotokromik_65_70_4_2","1.56_fotokromik_65_70_4_4"] },
+  { baslik: "1.56 Blue Green SHMC — UV-420", keyler: ["1.56_blue_65_70_4_2","1.56_blue_65_70_4_4"] },
+  { baslik: "1.60 Blue Green SHMC — UV-420", keyler: ["1.60_blue_70_75_6_2","1.60_blue_70_75_6_4"] }
+];
+
+// ============================================================
+// PIN SISTEMI
+// ============================================================
+var PIN_KEY = "kepekci_fiyat_pin";
+
+async function pinHash(pin) {
+  var enc = new TextEncoder().encode(pin);
+  var hash = await crypto.subtle.digest("SHA-256", enc);
+  return Array.from(new Uint8Array(hash)).map(function(b) { return b.toString(16).padStart(2, "0"); }).join("");
+}
+
+async function pinIslem() {
+  var input1 = document.getElementById("pin-input-1");
+  var input2 = document.getElementById("pin-input-2");
+  var hata = document.getElementById("pin-hata");
+  var pin = input1.value.trim();
+  var kayitliHash = localStorage.getItem(PIN_KEY);
+
+  hata.textContent = "";
+
+  if (!kayitliHash) {
+    // Ilk kullanim: PIN olustur
+    if (input2.style.display === "none") {
+      if (pin.length !== 4 || !/^\d{4}$/.test(pin)) {
+        hata.textContent = "PIN 4 haneli sayi olmali";
+        return;
+      }
+      input2.style.display = "block";
+      document.getElementById("pin-aciklama").textContent = "PIN'i tekrar girin (onay)";
+      document.getElementById("pin-btn").textContent = "PIN Olustur";
+      input2.focus();
+      return;
+    }
+    // Onay asamasi
+    var pin2 = input2.value.trim();
+    if (pin !== pin2) {
+      hata.textContent = "PIN'ler eslesmiyor";
+      return;
+    }
+    var h = await pinHash(pin);
+    localStorage.setItem(PIN_KEY, h);
+    paneliAc();
+  } else {
+    // Normal giris
+    if (pin.length !== 4) {
+      hata.textContent = "4 haneli PIN girin";
+      return;
+    }
+    var h = await pinHash(pin);
+    if (h === kayitliHash) {
+      paneliAc();
+    } else {
+      hata.textContent = "Yanlis PIN";
+      input1.value = "";
+      input1.focus();
+    }
+  }
+}
+
+function paneliAc() {
+  document.getElementById("pin-ekran").style.display = "none";
+  document.getElementById("panel").classList.add("acik");
+  stokCamTablosunuOlustur();
+  cerceveTablosunuOlustur();
+  kontakLensTablosunuOlustur();
+}
+
+// Sayfa yuklendiginde PIN durumu kontrol
+(function() {
+  var kayitliHash = localStorage.getItem(PIN_KEY);
+  if (!kayitliHash) {
+    document.getElementById("pin-baslik").textContent = "PIN Olustur";
+    document.getElementById("pin-aciklama").textContent = "Ilk kullanim: 4 haneli PIN belirleyin";
+    document.getElementById("pin-btn").textContent = "Devam";
+  }
+  // Enter ile giris
+  document.getElementById("pin-input-1").addEventListener("keyup", function(e) {
+    if (e.key === "Enter") pinIslem();
+  });
+  document.getElementById("pin-input-2").addEventListener("keyup", function(e) {
+    if (e.key === "Enter") pinIslem();
+  });
+})();
+
+// ============================================================
+// SEKME DEGISTIRME
+// ============================================================
+function sekmeGoster(sekme) {
+  var tabs = document.querySelectorAll(".tab-btn");
+  var iceriks = document.querySelectorAll(".tab-icerik");
+  for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove("aktif");
+  for (var i = 0; i < iceriks.length; i++) iceriks[i].classList.remove("aktif");
+
+  document.getElementById("tab-" + sekme).classList.add("aktif");
+  // Aktif tab butonunu bul
+  var btnTexts = { stokCam: "Stok Cam", cerceve: "Cerceve", kontakLens: "Kontak Lens" };
+  for (var i = 0; i < tabs.length; i++) {
+    if (tabs[i].textContent.indexOf(btnTexts[sekme]) !== -1) tabs[i].classList.add("aktif");
+  }
+}
+
+// ============================================================
+// OVERRIDE YONETIMI
+// ============================================================
+function overrideAl() {
+  try {
+    var raw = localStorage.getItem("kepekci_fiyat_override");
+    return raw ? JSON.parse(raw) : {};
+  } catch(e) { return {}; }
+}
+
+function overrideKaydet(kategori, key, deger) {
+  var ov = overrideAl();
+  if (!ov[kategori]) ov[kategori] = {};
+  // Varsayilan ile ayniysa override'dan cikar
+  if (VARSAYILAN_FIYATLAR[kategori][key] === deger) {
+    delete ov[kategori][key];
+    if (Object.keys(ov[kategori]).length === 0) delete ov[kategori];
+  } else {
+    ov[kategori][key] = deger;
+  }
+  localStorage.setItem("kepekci_fiyat_override", JSON.stringify(ov));
+}
+
+function mevcutFiyatAl(kategori, key) {
+  var ov = overrideAl();
+  if (ov[kategori] && ov[kategori][key] !== undefined) return ov[kategori][key];
+  return VARSAYILAN_FIYATLAR[kategori][key];
+}
+
+function isDegismis(kategori, key) {
+  var ov = overrideAl();
+  return ov[kategori] && ov[kategori][key] !== undefined;
+}
+
+// ============================================================
+// SEKME 1: STOK CAM TABLOSU
+// ============================================================
+function stokCamTablosunuOlustur() {
+  var container = document.getElementById("tab-stokCam");
+  var html = "";
+
+  for (var k = 0; k < STOK_KATEGORILER.length; k++) {
+    var kat = STOK_KATEGORILER[k];
+    html += '<div class="kategori-baslik">' + kat.baslik + '</div>';
+    for (var j = 0; j < kat.keyler.length; j++) {
+      var key = kat.keyler[j];
+      var fiyat = mevcutFiyatAl("stokCam", key);
+      var degismis = isDegismis("stokCam", key);
+      html += fiyatSatirHTML("stokCam", key, fiyat, degismis);
+    }
+  }
+  container.innerHTML = html;
+}
+
+// ============================================================
+// SEKME 2: CERCEVE & EK UCRETLER
+// ============================================================
+function cerceveTablosunuOlustur() {
+  var container = document.getElementById("tab-cerceve");
+  var html = "";
+
+  html += '<div class="kategori-baslik">Cerceve</div>';
+  var cerceveKeys = ["silikon", "metal"];
+  for (var i = 0; i < cerceveKeys.length; i++) {
+    var key = cerceveKeys[i];
+    html += fiyatSatirHTML("cerceve", key, mevcutFiyatAl("cerceve", key), isDegismis("cerceve", key));
+  }
+
+  html += '<div class="kategori-baslik">Ek Ucretler</div>';
+  var ekKeys = ["sgkKatki", "magazaIndirimi", "fasetIscilik", "camTransferi"];
+  for (var i = 0; i < ekKeys.length; i++) {
+    var key = ekKeys[i];
+    html += fiyatSatirHTML("ekUcret", key, mevcutFiyatAl("ekUcret", key), isDegismis("ekUcret", key));
+  }
+
+  container.innerHTML = html;
+}
+
+// ============================================================
+// SEKME 3: KONTAK LENS
+// ============================================================
+function kontakLensTablosunuOlustur() {
+  var container = document.getElementById("tab-kontakLens");
+  var html = '<div class="kategori-baslik">Kontak Lens</div>';
+  var keys = Object.keys(VARSAYILAN_FIYATLAR.kontakLens);
+  for (var i = 0; i < keys.length; i++) {
+    var key = keys[i];
+    html += fiyatSatirHTML("kontakLens", key, mevcutFiyatAl("kontakLens", key), isDegismis("kontakLens", key));
+  }
+  container.innerHTML = html;
+}
+
+// ============================================================
+// FIYAT SATIRI HTML
+// ============================================================
+function fiyatSatirHTML(kategori, key, fiyat, degismis) {
+  var ad = URUN_ADLARI[key] || key;
+  var cls = degismis ? " degismis" : "";
+  var fCls = degismis ? " degismis" : "";
+  return '<div class="fiyat-satir' + cls + '" id="satir-' + kategori + '-' + key + '">' +
+    '<div class="fiyat-urun">' + ad + '</div>' +
+    '<div class="fiyat-deger' + fCls + '">' + formatTL(fiyat) + '</div>' +
+    '<button class="fiyat-btn" onclick="duzenleBasla(\'' + kategori + '\',\'' + key + '\',' + fiyat + ')">Duzenle</button>' +
+    '</div>';
+}
+
+function formatTL(n) {
+  return n.toLocaleString("tr-TR") + " TL";
+}
+
+// ============================================================
+// INLINE DUZENLEME
+// ============================================================
+function duzenleBasla(kategori, key, mevcutFiyat) {
+  var satir = document.getElementById("satir-" + kategori + "-" + key);
+  if (!satir) return;
+  var ad = URUN_ADLARI[key] || key;
+  satir.innerHTML =
+    '<div class="fiyat-urun">' + ad + '</div>' +
+    '<input type="number" class="fiyat-edit-input" id="edit-' + kategori + '-' + key + '" value="' + mevcutFiyat + '" inputmode="numeric" />' +
+    '<button class="fiyat-btn-kaydet" onclick="duzenleKaydet(\'' + kategori + '\',\'' + key + '\')">Kaydet</button>' +
+    '<button class="fiyat-btn-iptal" onclick="duzenleIptal(\'' + kategori + '\',\'' + key + '\')">Iptal</button>';
+
+  var input = document.getElementById("edit-" + kategori + "-" + key);
+  input.focus();
+  input.select();
+  input.addEventListener("keyup", function(e) {
+    if (e.key === "Enter") duzenleKaydet(kategori, key);
+    if (e.key === "Escape") duzenleIptal(kategori, key);
+  });
+}
+
+function duzenleKaydet(kategori, key) {
+  var input = document.getElementById("edit-" + kategori + "-" + key);
+  var yeniFiyat = parseFloat(input.value);
+  if (isNaN(yeniFiyat) || yeniFiyat < 0) {
+    bildirimGoster("Gecerli bir fiyat girin", "uyari");
+    return;
+  }
+  overrideKaydet(kategori, key, yeniFiyat);
+
+  // Satiri yeniden render et
+  var satir = document.getElementById("satir-" + kategori + "-" + key);
+  var degismis = isDegismis(kategori, key);
+  satir.outerHTML = fiyatSatirHTML(kategori, key, yeniFiyat, degismis);
+
+  bildirimGoster((URUN_ADLARI[key] || key) + ": " + formatTL(yeniFiyat), "basarili");
+}
+
+function duzenleIptal(kategori, key) {
+  var fiyat = mevcutFiyatAl(kategori, key);
+  var degismis = isDegismis(kategori, key);
+  var satir = document.getElementById("satir-" + kategori + "-" + key);
+  satir.outerHTML = fiyatSatirHTML(kategori, key, fiyat, degismis);
+}
+
+// ============================================================
+// TUM FIYATLARI SIFIRLA
+// ============================================================
+function tumFiyatlariSifirla() {
+  if (!confirm("Tum fiyatlar varsayilana donecek. Emin misiniz?")) return;
+  localStorage.removeItem("kepekci_fiyat_override");
+  stokCamTablosunuOlustur();
+  cerceveTablosunuOlustur();
+  kontakLensTablosunuOlustur();
+  bildirimGoster("Tum fiyatlar varsayilana donduruldu", "basarili");
+}
+
+// ============================================================
+// BILDIRIM
+// ============================================================
+function bildirimGoster(mesaj, tip) {
+  var el = document.getElementById("bildirim");
+  el.textContent = mesaj;
+  el.className = "bildirim " + tip + " goster";
+  setTimeout(function() { el.classList.remove("goster"); }, 2500);
+}
+</script>
+</body>
+</html>
