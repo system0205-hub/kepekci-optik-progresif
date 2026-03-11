@@ -86,7 +86,9 @@ function fiyatlariYukle() {
   var idx67paket = (f.stokCam["1.67_shmc_70_75_8_2"] * 2) + f.cerceve.silikon - f.ekUcret.sgkKatki;
   var idx74paket = (f.stokCam["1.74_shmc_70_75_10_2"] * 2) + f.cerceve.silikon - f.ekUcret.sgkKatki;
 
-  if (typeof CAM_INDEKS_BILGI !== "undefined") {
+  // CAM_INDEKS_BILGI fiyat farklarini SADECE override varsa guncelle
+  // Override yoksa kullanicinin belirledigi psikolojik fiyatlar korunur
+  if (typeof CAM_INDEKS_BILGI !== "undefined" && Object.keys(override).length > 0) {
     CAM_INDEKS_BILGI["1.56"].fiyatFarki = idx56paket - standartPaket;
     CAM_INDEKS_BILGI["1.60"].fiyatFarki = idx60paket - standartPaket;
     CAM_INDEKS_BILGI["1.67"].fiyatFarki = idx67paket - standartPaket;
@@ -528,6 +530,9 @@ var CAM_INDEKS_BILGI = {
   "1.67": { inceltme: "50-55", kalinlik: 45,  agirlik: "Cok Hafif",   kaplama: "SHMC UV-400 + Mavi Isik",                fiyatFarki: 2200 },
   "1.74": { inceltme: "60-65", kalinlik: 30,  agirlik: "Ultra Hafif", kaplama: "SHMC UV-400 + Mavi Isik + Hidrofobik",   fiyatFarki: 3300 }
 };
+
+// CAM_INDEKS_BILGI tanimlandiktan sonra fiyat farklarini guncelle
+fiyatlariYukle();
 
 function camKarsilastirmaToggle() {
   var container = document.getElementById("g_cam_karsilastirma");
