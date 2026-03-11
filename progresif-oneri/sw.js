@@ -1,5 +1,5 @@
 // Kepekci Optik - Service Worker (Offline Destek)
-var CACHE_NAME = "kepekci-optik-v12";
+var CACHE_NAME = "kepekci-optik-v13";
 var OFFLINE_URLS = [
   "./index.html",
   "./css/style.css",
@@ -72,24 +72,25 @@ self.addEventListener("fetch", function(event) {
     return;
   }
 
-  // Yerel dosyalar icin cache-first
+  // Yerel dosyalar icin network-first (guncelleme sorunu yasanmasin)
+  // Internet varsa en guncel kodu al, yoksa cache'den sun
   event.respondWith(
-    caches.match(event.request).then(function(cached) {
-      if (cached) return cached;
-      return fetch(event.request).then(function(response) {
-        if (response.status === 200) {
-          var clone = response.clone();
-          caches.open(CACHE_NAME).then(function(cache) {
-            cache.put(event.request, clone);
-          });
-        }
-        return response;
-      });
-    }).catch(function() {
-      // Offline ve cache'te yok - HTML istegiyse ana sayfayi goster
-      if (event.request.headers.get("accept").indexOf("text/html") !== -1) {
-        return caches.match("./index.html");
+    fetch(event.request).then(function(response) {
+      if (response.status === 200) {
+        var clone = response.clone();
+        caches.open(CACHE_NAME).then(function(cache) {
+          cache.put(event.request, clone);
+        });
       }
+      return response;
+    }).catch(function() {
+      return caches.match(event.request).then(function(cached) {
+        if (cached) return cached;
+        // Offline ve cache'te yok - HTML istegiyse ana sayfayi goster
+        if (event.request.headers.get("accept").indexOf("text/html") !== -1) {
+          return caches.match("./index.html");
+        }
+      });
     })
   );
 });
