@@ -916,14 +916,17 @@
     }
     .cam-karsilastirma-grid {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(5, minmax(120px, 1fr));
       gap: 0;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
     }
     .cam-sutun {
-      padding: 16px 12px;
+      padding: 14px 8px;
       text-align: center;
       border-right: 1px solid #f1f5f9;
       transition: background 0.2s ease;
+      min-width: 120px;
     }
     .cam-sutun:last-child { border-right: none; }
     .cam-sutun.onerilen {
