@@ -528,6 +528,7 @@ function camOneriKartiniDoldur(veri) {
 // CAM KARSILASTIRMA TABLOSU
 // ============================================================
 var CAM_INDEKS_BILGI = {
+  "1.50": { inceltme: "-",     kalinlik: 130, agirlik: "Normal",      kaplama: "Organik Sert Kaplama",                   fiyatFarki: 0 },
   "1.56": { inceltme: "20",    kalinlik: 100, agirlik: "Standart",    kaplama: "HMC UV-400",                             fiyatFarki: 400 },
   "1.60": { inceltme: "35-40", kalinlik: 70,  agirlik: "Hafif",       kaplama: "SHMC UV-400",                            fiyatFarki: 1200 },
   "1.67": { inceltme: "50-55", kalinlik: 45,  agirlik: "Cok Hafif",   kaplama: "SHMC UV-400 + Mavi Isik",                fiyatFarki: 2200 },
@@ -573,7 +574,7 @@ function camKarsilastirmaTablosunuOlustur() {
   if (!container || !mevcutRecete || !mevcutRecete.uzak) return;
 
   var onerilen = _hesaplaOnerilen();
-  var indeksler = ["1.56", "1.60", "1.67", "1.74"];
+  var indeksler = ["1.50", "1.56", "1.60", "1.67", "1.74"];
   var html = '<div class="cam-karsilastirma">';
   html += '<div class="cam-karsilastirma-header">';
   html += '<span>&#128269;</span> Cam Indeks Karsilastirmasi';
@@ -588,12 +589,12 @@ function camKarsilastirmaTablosunuOlustur() {
 
     html += '<div class="cam-sutun' + (isOnerilen ? ' onerilen' : '') + (isSecili ? ' secili' : '') + '">';
     html += '<div class="cam-sutun-indeks">' + idx + '</div>';
-    html += '<div class="cam-sutun-inceltme">%' + bilgi.inceltme + ' Inceltme</div>';
+    html += '<div class="cam-sutun-inceltme">' + (bilgi.inceltme === "-" ? "Standart Cam" : "%" + bilgi.inceltme + " Inceltme") + '</div>';
 
     // Kalinlik bar
     html += '<div class="cam-ozellik-satir">';
     html += '<div class="cam-ozellik-etiket">Kalinlik</div>';
-    html += '<div class="cam-kalinlik-bar"><div class="cam-kalinlik-bar-dolu" style="width:' + bilgi.kalinlik + '%;"></div></div>';
+    html += '<div class="cam-kalinlik-bar"><div class="cam-kalinlik-bar-dolu" style="width:' + Math.min(bilgi.kalinlik, 100) + '%;"></div></div>';
     html += '</div>';
 
     // Agirlik
@@ -610,12 +611,24 @@ function camKarsilastirmaTablosunuOlustur() {
 
     // Fiyat farki — hepsi 1.50 standart pakete gore
     html += '<div class="cam-sutun-fiyat">';
-    html += '<div class="fiyat-farki artis">+' + formatParaTL(bilgi.fiyatFarki) + '</div>';
-    html += '<div class="fiyat-aciklama">Standart pakete ek</div>';
+    if (bilgi.fiyatFarki === 0) {
+      html += '<div class="fiyat-farki baz">Baz Paket</div>';
+      html += '<div class="fiyat-aciklama">SGK standart</div>';
+    } else {
+      html += '<div class="fiyat-farki artis">+' + formatParaTL(bilgi.fiyatFarki) + '</div>';
+      html += '<div class="fiyat-aciklama">Standart pakete ek</div>';
+    }
     html += '</div>';
 
     // Sec / Secili butonu
-    if (isSecili) {
+    if (idx === "1.50") {
+      // 1.50 = standart paket, secim yokken zaten aktif
+      if (!secilenPaketIndeks) {
+        html += '<button class="btn-paket-sec secili-btn" disabled>&#10003; Standart</button>';
+      } else {
+        html += '<button class="btn-paket-sec" onclick="paketIptal()">Standarta Don</button>';
+      }
+    } else if (isSecili) {
       html += '<button class="btn-paket-sec secili-btn" onclick="paketIptal()">&#10003; Secildi</button>';
     } else {
       html += '<button class="btn-paket-sec" onclick="paketSec(\'' + idx + '\')">Sec</button>';
