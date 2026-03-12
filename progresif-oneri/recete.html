@@ -599,6 +599,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
     }
     .fiyat-kart-footer .toplam-etiket {
       color: rgba(255, 255, 255, 0.7);
@@ -704,6 +705,59 @@
     .btn-ek-temizle:hover {
       background: #e2e8f0;
       color: #475569;
+    }
+
+    /* ==================== BILGI NOTU ==================== */
+    .fiyat-bilgi-notu {
+      width: 100%;
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 0.7rem;
+      color: rgba(255, 255, 255, 0.5);
+      font-style: italic;
+      line-height: 1.4;
+      text-align: center;
+    }
+
+    /* ==================== PAKET SECIM BUTONU ==================== */
+    .btn-paket-sec {
+      display: block;
+      width: 100%;
+      margin-top: 8px;
+      padding: 8px 0;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 8px;
+      background: transparent;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-paket-sec:hover {
+      border-color: #4ecdc4;
+      color: #4ecdc4;
+      background: rgba(78, 205, 196, 0.1);
+    }
+    .btn-paket-sec.secili-btn {
+      border-color: #4ecdc4;
+      background: rgba(78, 205, 196, 0.2);
+      color: #4ecdc4;
+    }
+    .cam-sutun.secili {
+      border: 2px solid #4ecdc4 !important;
+      box-shadow: 0 0 15px rgba(78, 205, 196, 0.3);
+    }
+    .paket-secim-mesaj {
+      margin-top: 12px;
+      padding: 12px 16px;
+      background: rgba(78, 205, 196, 0.15);
+      border: 1px solid rgba(78, 205, 196, 0.3);
+      border-radius: 10px;
+      color: #4ecdc4;
+      font-size: 0.85rem;
+      text-align: center;
     }
 
     /* ==================== CAM ONERI KARTI ==================== */
@@ -1339,6 +1393,7 @@
         <div class="fiyat-kart-footer">
           <span class="toplam-etiket" id="g_toplam_etiket">VATANDASIN ODEYECEGI EN DUSUK TUTAR</span>
           <span class="toplam-tutar" id="g_toplam_tutar">0 TL</span>
+          <div class="fiyat-bilgi-notu">Bu fiyat silikon cerceve ile hesaplanmistir. Daha ust grup cerceve veya cam tercih edilmesi durumunda fiyat degisiklik gosterebilir.</div>
         </div>
       </div>
 

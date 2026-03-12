@@ -49,8 +49,11 @@ var FIYATLAR = {
 // Mevcut yuklenmis recete verisi
 var mevcutRecete = null;
 
-// Ek cam ucreti (global - fiyat karti yeniden olusturulurken kullanilir)
-var ekCamUcreti = 0;
+// Manuel magaza indirimi (global - fiyat karti yeniden olusturulurken kullanilir)
+var manuelMagazaIndirimi = 0;
+
+// Secilen paket indeksi (null = standart 1.50)
+var secilenPaketIndeks = null;
 
 // ============================================================
 // FIYAT YUKLEME — localStorage override ile
@@ -544,8 +547,8 @@ window.addEventListener("storage", function(e) {
       camKarsilastirmaTablosunuOlustur();
     }
     // Acik fiyat karti varsa yeniden doldur
-    if (typeof fiyatKartiniDoldur === "function") {
-      fiyatKartiniDoldur();
+    if (typeof fiyatKartiniDoldur === "function" && mevcutRecete) {
+      fiyatKartiniDoldur(mevcutRecete);
     }
   }
 });
@@ -581,8 +584,9 @@ function camKarsilastirmaTablosunuOlustur() {
     var idx = indeksler[i];
     var bilgi = CAM_INDEKS_BILGI[idx];
     var isOnerilen = (idx === onerilen);
+    var isSecili = (idx === secilenPaketIndeks);
 
-    html += '<div class="cam-sutun' + (isOnerilen ? ' onerilen' : '') + '">';
+    html += '<div class="cam-sutun' + (isOnerilen ? ' onerilen' : '') + (isSecili ? ' secili' : '') + '">';
     html += '<div class="cam-sutun-indeks">' + idx + '</div>';
     html += '<div class="cam-sutun-inceltme">%' + bilgi.inceltme + ' Inceltme</div>';
 
@@ -610,12 +614,49 @@ function camKarsilastirmaTablosunuOlustur() {
     html += '<div class="fiyat-aciklama">Standart pakete ek</div>';
     html += '</div>';
 
+    // Sec / Secili butonu
+    if (isSecili) {
+      html += '<button class="btn-paket-sec secili-btn" onclick="paketIptal()">&#10003; Secildi</button>';
+    } else {
+      html += '<button class="btn-paket-sec" onclick="paketSec(\'' + idx + '\')">Sec</button>';
+    }
+
     html += '</div>'; // cam-sutun
   }
 
   html += '</div>'; // grid
+
+  // Secili paket bilgi mesaji
+  if (secilenPaketIndeks && CAM_INDEKS_BILGI[secilenPaketIndeks]) {
+    var seciliBilgi = CAM_INDEKS_BILGI[secilenPaketIndeks];
+    var yakinVar = mevcutRecete.yakin !== null && mevcutRecete.yakin !== undefined;
+    var adet = yakinVar ? 2 : 1;
+    var paketToplam = (FIYATLAR.musteriOder * adet) + seciliBilgi.fiyatFarki - manuelMagazaIndirimi;
+    if (paketToplam < 0) paketToplam = 0;
+    html += '<div class="paket-secim-mesaj">';
+    html += '&#10003; <strong>' + secilenPaketIndeks + ' Paketi secilmistir</strong> &mdash; Toplam: <strong>' + formatParaTL(paketToplam) + '</strong>';
+    html += '</div>';
+  }
+
   html += '</div>'; // cam-karsilastirma
   container.innerHTML = html;
+}
+
+// ============================================================
+// PAKET SEC / IPTAL
+// ============================================================
+function paketSec(indeks) {
+  secilenPaketIndeks = indeks;
+  camKarsilastirmaTablosunuOlustur();
+  fiyatKartiniDoldur(mevcutRecete);
+  bildirimGoster(indeks + " paketi secildi", "basarili");
+}
+
+function paketIptal() {
+  secilenPaketIndeks = null;
+  camKarsilastirmaTablosunuOlustur();
+  fiyatKartiniDoldur(mevcutRecete);
+  bildirimGoster("Paket secimi iptal edildi", "basarili");
 }
 
 function _hesaplaOnerilen() {
@@ -639,11 +680,19 @@ function _hesaplaOnerilen() {
 // ============================================================
 function fiyatKartiniDoldur(veri) {
   var container = document.getElementById("g_fiyat_detay");
+  if (!veri) return;
   var yakinVar = veri.yakin !== null && veri.yakin !== undefined;
   var adet = yakinVar ? 2 : 1;
 
-  // Ek cam ucretini toplama dahil et (bir kez, grup basina degil)
-  var toplamMusteriOder = FIYATLAR.musteriOder * adet + ekCamUcreti;
+  // Secilen paket fiyat farkini hesapla
+  var paketFarki = 0;
+  if (secilenPaketIndeks && CAM_INDEKS_BILGI[secilenPaketIndeks]) {
+    paketFarki = CAM_INDEKS_BILGI[secilenPaketIndeks].fiyatFarki;
+  }
+
+  // Toplam: (standart paket * adet) + paket farki - manuel magaza indirimi
+  var toplamMusteriOder = (FIYATLAR.musteriOder * adet) + paketFarki - manuelMagazaIndirimi;
+  if (toplamMusteriOder < 0) toplamMusteriOder = 0;
 
   var html = "";
 
@@ -661,19 +710,24 @@ function fiyatKartiniDoldur(veri) {
     html += '<div class="fiyat-satir alt-toplam"><span class="etiket">' + tipler[i] + ' Tutari</span><span class="tutar">' + formatParaTL(FIYATLAR.musteriOder) + '</span></div>';
   }
 
-  // Ek cam ucreti satiri (gruplardan sonra, input'tan once - tek satirda gosterilir)
-  if (ekCamUcreti > 0) {
-    html += '<div class="fiyat-satir ek-cam"><span class="etiket"><span class="satir-ikon ekcam-ikon">&#128142;</span>Ek Cam Ucreti</span><span class="tutar ek-cam-tutar">+' + formatParaTL(ekCamUcreti) + '</span></div>';
+  // Secilen paket fark satiri
+  if (secilenPaketIndeks && paketFarki > 0) {
+    html += '<div class="fiyat-satir ek-cam"><span class="etiket"><span class="satir-ikon ekcam-ikon">&#128142;</span>' + secilenPaketIndeks + ' Paket Farki</span><span class="tutar ek-cam-tutar">+' + formatParaTL(paketFarki) + '</span></div>';
   }
 
-  // Ek Cam Ucreti giris alani (fiyat karti body icinde, gruplardan sonra)
+  // Manuel magaza indirimi satiri
+  if (manuelMagazaIndirimi > 0) {
+    html += '<div class="fiyat-satir"><span class="etiket"><span class="satir-ikon indirim-ikon">&#11088;</span>Ek Magaza Indirimi</span><span class="tutar indirim">-' + formatParaTL(manuelMagazaIndirimi) + '</span></div>';
+  }
+
+  // Magaza Indirimi giris alani
   html += '<div class="ek-cam-girisi">';
-  html += '<span class="ek-cam-ikon">&#128142;</span>';
-  html += '<label for="ek_cam_fiyat">Ek Cam Ucreti:</label>';
-  html += '<input type="number" id="ek_cam_fiyat" placeholder="Tutar" step="50" min="0" inputmode="numeric" value="' + (ekCamUcreti > 0 ? ekCamUcreti : '') + '" />';
+  html += '<span class="ek-cam-ikon">&#11088;</span>';
+  html += '<label for="magaza_indirim_fiyat">Magaza Indirimi:</label>';
+  html += '<input type="number" id="magaza_indirim_fiyat" placeholder="Tutar" step="50" min="0" inputmode="numeric" value="' + (manuelMagazaIndirimi > 0 ? manuelMagazaIndirimi : '') + '" />';
   html += '<span class="birim">TL</span>';
-  html += '<button class="btn-ek-uygula" onclick="ekCamUygula()">Uygula</button>';
-  html += '<button class="btn-ek-temizle" onclick="ekCamTemizle()" style="' + (ekCamUcreti > 0 ? '' : 'display:none;') + '">Temizle</button>';
+  html += '<button class="btn-ek-uygula" onclick="magazaIndirimiUygula()">Uygula</button>';
+  html += '<button class="btn-ek-temizle" onclick="magazaIndirimiTemizle()" style="' + (manuelMagazaIndirimi > 0 ? '' : 'display:none;') + '">Temizle</button>';
   html += '</div>';
 
   container.innerHTML = html;
@@ -681,8 +735,8 @@ function fiyatKartiniDoldur(veri) {
   // Footer etiket ve toplam tutarini guncelle
   var etiketEl = document.getElementById("g_toplam_etiket");
   var toplamEl = document.getElementById("g_toplam_tutar");
-  if (ekCamUcreti > 0) {
-    etiketEl.textContent = "TOPLAM VATANDAS ODEYECEGI";
+  if (manuelMagazaIndirimi > 0 || secilenPaketIndeks) {
+    etiketEl.textContent = "VATANDAS ODEYECEGI TUTAR";
     toplamEl.style.color = "#fbbf24";
   } else {
     etiketEl.textContent = "VATANDASIN ODEYECEGI EN DUSUK TUTAR";
@@ -692,27 +746,27 @@ function fiyatKartiniDoldur(veri) {
 }
 
 // ============================================================
-// EK CAM UCRETI UYGULA
+// MAGAZA INDIRIMI UYGULA
 // ============================================================
-function ekCamUygula() {
-  var input = document.getElementById("ek_cam_fiyat");
+function magazaIndirimiUygula() {
+  var input = document.getElementById("magaza_indirim_fiyat");
   var val = parseFloat((input.value || "").replace(",", "."));
   if (!val || val <= 0) {
     bildirimGoster("Gecerli bir tutar girin", "uyari");
     return;
   }
-  ekCamUcreti = val;
+  manuelMagazaIndirimi = val;
   fiyatKartiniDoldur(mevcutRecete);
-  bildirimGoster("Ek cam ucreti eklendi: " + formatParaTL(val), "basarili");
+  bildirimGoster("Magaza indirimi uygulandi: -" + formatParaTL(val), "basarili");
 }
 
 // ============================================================
-// EK CAM UCRETI TEMIZLE
+// MAGAZA INDIRIMI TEMIZLE
 // ============================================================
-function ekCamTemizle() {
-  ekCamUcreti = 0;
+function magazaIndirimiTemizle() {
+  manuelMagazaIndirimi = 0;
   fiyatKartiniDoldur(mevcutRecete);
-  bildirimGoster("Ek cam ucreti kaldirildi", "basarili");
+  bildirimGoster("Magaza indirimi kaldirildi", "basarili");
 }
 
 // ============================================================
