@@ -435,6 +435,41 @@ window.LENS_DATABASE = {
         // 20+ gercek Novax progresif modeli Faz 1.4'te eklenecek (Nucleo 5D, Nexus 4D,
         // Trion 3D, Matrix HD, Genius, Ventro, Novum NG, Sportive, DriveOn, Officient,
         // Serenity, vb.)
+      ],
+      // Novax kaplamalari (PixAR serisi). Standart olarak tum Novax camlarinda
+      // GRANITE Standart ucretsiz gelir; GRANITE Kisisel ekstra ucretlidir.
+      // BLUV (mavi isik), DRIVE (sürüs), AQUA (su iticilik) Faz 1.5'te eklenecek.
+      kaplamalar: [
+        {
+          id: "novax-pixar-granite-standart",
+          ad: "PixAR GRANITE Standart",
+          tip: "anti-refle",
+          ucretsiz: true,
+          ozellikler: {
+            superHidrofobik: true,
+            uvFiltresi: "UV400",
+            sertlik: "9H",
+            antiStatik: true,
+            kisisel: false
+          },
+          hedefKitle: "Tum Novax cam alicilari (varsayilan)",
+          aciklama: "Novax camlarinda standart olarak gelir. Super hidrofobik yuzey, UV400 koruma, 9H yuzey sertligi."
+        },
+        {
+          id: "novax-pixar-granite-kisisel",
+          ad: "PixAR GRANITE Kisisel",
+          tip: "anti-refle",
+          ucretsiz: false,
+          ozellikler: {
+            superHidrofobik: true,
+            uvFiltresi: "UV400",
+            sertlik: "9H",
+            antiStatik: true,
+            kisisel: true
+          },
+          hedefKitle: "Kisiselletirilmis renk tonu isteyen musteriler",
+          aciklama: "GRANITE Standart'in kisisel renk tonu secenekleriyle (yesil/mavi/kirmizi) guclendirilmis hali. Ekstra ucretli."
+        }
       ]
     },
 

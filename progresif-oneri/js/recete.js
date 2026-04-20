@@ -897,7 +897,8 @@ function _progresifOnerisineGit_Devam(odSph, osSph, odCyl, osCyl, odAdd, osAdd, 
 
 // Isaret ve mutlak degeri birlestirip sayi dondur
 function isaretliDeger(mutlakDeger, isaret) {
-  var val = parseFloat(mutlakDeger) || 0;
+  // sayiOku: Turkce virgul destegi + NaN-guvenli. QR/bookmarklet "3,50" gibi deger gonderebilir.
+  var val = sayiOku(mutlakDeger, 0);
   if (isaret === "-") return -Math.abs(val);
   return Math.abs(val);
 }
