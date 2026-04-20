@@ -220,6 +220,7 @@ window.LENS_DATABASE = {
           tasarim: "freeform",
           koridorlar: [13, 14, 15, 16, 17, 18],
           minFittingHeight: 14,
+          uyumGarantisi: true,
           teknolojiler: ["Vision First", "i-Sync", "DRO", "FreeForm", "Desentrasyon"],
           ozellikler: {
             genisMesafe: true,
@@ -240,7 +241,8 @@ window.LENS_DATABASE = {
           seviye: "premium",
           tasarim: "freeform",
           koridorlar: [13, 14, 16, 18],
-          minFittingHeight: 14,
+          minFittingHeight: 13,
+          uyumGarantisi: true,
           teknolojiler: ["Vision First", "i-Sync", "Desentrasyon"],
           ozellikler: {
             genisMesafe: true,
@@ -252,20 +254,21 @@ window.LENS_DATABASE = {
           },
           goruntuProfilleri: ["Cok Yonlu", "Uzak", "Ekran", "Yakin"],
           indeksler: ["1.50", "1.56", "1.60", "1.67"],
-          fiyatAraligi: { min: 21000, max: 34000 },
+          fiyatAraligi: { min: 21000, max: 34900 },
           hedefKitle: "Sehir yasami, coklu aktivite",
-          aciklama: "4 farkli gorus profili: Cok Yonlu, Uzak (surus), Ekran (bilgisayar), Yakin (okuma). UV/mavi isik koruma."
+          aciklama: "4 farkli gorus profili: Cok Yonlu (All-Around), Uzak (Extended), Ekran (Screen), Yakin (Proximity). UV/mavi isik koruma. Polarize secenegi."
         },
         {
           id: "kodak-atlas",
           ad: "Atlas",
           seviye: "orta",
           tasarim: "freeform",
-          koridorlar: [17],
-          minFittingHeight: 18,
+          koridorlar: [13, 14, 16, 18],
+          minFittingHeight: 14,
+          uyumGarantisi: true,
           teknolojiler: ["Vision First", "i-Sync", "FreeForm", "Desentrasyon"],
           ozellikler: {
-            genisMesafe: false,
+            genisMesafe: true,
             genisYakin: true,
             genisOrta: true,
             yuzmeEtkisiAzaltma: false,
@@ -275,17 +278,16 @@ window.LENS_DATABASE = {
           indeksler: ["1.50", "1.56", "1.60", "1.67"],
           fiyatAraligi: { min: 14000, max: 26400 },
           hedefKitle: "6+ saat ekran kullanan 40+ kullanicilar",
-          aciklama: "Dijital cihaz odakli, genis yakin alan. Sabit 17mm gecis bolgesi. Bilgisayar calisanlari icin ideal."
+          aciklama: "Dijital cihaz odakli, genis yakin alan. 4 koridor (13/14/16/18mm). Bilgisayar calisanlari icin ideal."
         },
         {
           id: "kodak-precise",
           ad: "Precise",
           seviye: "orta",
           tasarim: "freeform",
-          koridorlar: [18],
-          koridorlarShort: [13],
-          minFittingHeight: 19,
-          minFittingHeightShort: 14,
+          koridorlar: [17],
+          minFittingHeight: 18,
+          uyumGarantisi: true,
           teknolojiler: ["Vision First", "FreeForm", "Desentrasyon", "Baz Kontrolu"],
           ozellikler: {
             genisMesafe: true,
@@ -298,16 +300,17 @@ window.LENS_DATABASE = {
           indeksler: ["1.50", "1.56", "1.60", "1.67"],
           fiyatAraligi: { min: 9750, max: 22400 },
           hedefKitle: "40+ genel kullanim",
-          aciklama: "Yumusak gecis. Kucuk cerceve icin Short versiyonu (13mm) mevcut."
+          aciklama: "Yumusak gecis. 17mm sabit koridor. Tek odakli konforunda progresif."
         },
         {
           id: "kodak-intro",
           ad: "Intro PAL",
           seviye: "baslangic",
-          tasarim: "dijital",
-          koridorlar: [13, 18],
-          minFittingHeight: 14,
-          teknolojiler: ["Vision First", "Baz Kontrolu"],
+          tasarim: "freeform",
+          koridorlar: [18],
+          minFittingHeight: 19,
+          uyumGarantisi: false,
+          teknolojiler: ["Vision First", "Baz Kontrolu", "FreeForm"],
           ozellikler: {
             genisMesafe: true,
             genisYakin: false,
@@ -317,10 +320,70 @@ window.LENS_DATABASE = {
             surusOptimize: false
           },
           indeksler: ["1.50", "1.56", "1.60", "1.67"],
-          fiyatAraligi: { min: 6950, max: 18400 },
+          fiyatAraligi: { min: 7000, max: 20600 },
           hedefKitle: "Ilk kez progresif cam kullananlar",
-          aciklama: "Giris seviyesi. Yumusak tasarim, kolay alisma. Ilk kullanici icin ideal."
+          aciklama: "Giris seviyesi. Yumusak tasarim, kolay alisma. 18mm sabit koridor. UYUM GARANTISI YOK."
         }
+      ],
+      // Kodak kaplamalari (Subat 2026 katalogu)
+      kaplamalar: [
+        {
+          id: "kodak-cnc-uv",
+          ad: "CNC UV",
+          tip: "anti-refle",
+          ozellikler: { uvFiltresi: "UV400", antiRefle: true },
+          aciklama: "Standart AR kaplama. UV400 koruma."
+        },
+        {
+          id: "kodak-cnc-uv-blue",
+          ad: "CNC UV BLUE",
+          tip: "anti-refle-mavi-isik",
+          ozellikler: { uvFiltresi: "UV400", maviIsikFiltresi: true, antiRefle: true },
+          hedefKitle: "Uzun saat ekran karsisinda calisanlar",
+          aciklama: "Mavi-mor isigi filtreler. Ekran kullanicilari icin."
+        },
+        {
+          id: "kodak-cnc-uv-drive",
+          ad: "CNC UV DRIVE",
+          tip: "anti-refle-surus",
+          ozellikler: { uvFiltresi: "UV400", parlamaAzaltma: "%90", antiRefle: true, geceSurus: true },
+          hedefKitle: "Sik gece surusu yapanlar",
+          aciklama: "Farlardan/panolardan gelen parlamalari %90 azaltir. Gece surus konforu."
+        },
+        {
+          id: "kodak-clean-n-clear",
+          ad: "Clean'N'CleAR",
+          tip: "anti-refle-premium",
+          ozellikler: { uvFiltresi: "UV400", antiRefle: true, tozTutmaz: true, kolayTemizlik: true, cizilmeyeDayanikli: true },
+          aciklama: "En yuksek standart AR. Toz tutmaz, kolay temizlenir, cizilmeye dayanikli."
+        },
+        {
+          id: "kodak-zerofog",
+          ad: "ZeroFog",
+          tip: "bugu-onleyici",
+          ozellikler: { buguOnleyici: true },
+          aciklama: "Bugu olusumunu engeller. Maske kullanicilari / soguk hava gecisleri icin."
+        }
+      ],
+      // Kodak ozel islemler (Subat 2026 katalogu)
+      ozelIslemler: [
+        { id: "ozel-baz", ad: "Ozel Baz", ucret: 990 },
+        { id: "prizmatik", ad: "Prizmatik", ucret: 610 },
+        { id: "kal", ad: "KAL (Ozel Kalinlik)", ucret: 990 },
+        { id: "mos", ad: "MOS (Model Secimli Rx)", ucret: 990 },
+        { id: "bov-kov", ad: "BOV / KOV", ucret: 990 },
+        { id: "orx", ad: "ORX (Olcekli Rx)", ucret: 990 },
+        { id: "bls", ad: "BLS (Kalinlik Dengeleme)", ucret: 990 },
+        { id: "nil", ad: "NIL (Nilor Kalinligi)", ucret: 990 },
+        { id: "dec-tek-odakli", ad: "DEC (Odak Kaydirma) Tek Odakli", ucret: 990 },
+        { id: "lazer-isaret", ad: "Lazer Ozel Isaretleme", ucret: 990 },
+        { id: "acil-siparis", ad: "Acil Siparis", ucret: 1100 },
+        { id: "siskod", ad: "SisKod", ucret: 990 },
+        { id: "boyama-duz", ad: "Boyama Duz", ucret: 1400 },
+        { id: "boyama-degrade", ad: "Boyama Degrade", ucret: 1900 },
+        { id: "boyama-numune", ad: "Boyama Numuneye Gore", ucret: 2200 },
+        { id: "boyama-uv400", ad: "UV 400 Boyama", ucret: 1400 },
+        { id: "boyama-renk-suzer", ad: "Renk Suzer Boyama", ucret: 2600 }
       ]
     },
 
