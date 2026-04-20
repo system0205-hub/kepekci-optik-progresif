@@ -267,3 +267,131 @@ function formDegeriOku(id) {
   if (isNaN(num)) return null;
   return num;
 }
+
+/**
+ * HTML kacis karakterleri - XSS koruma
+ * Kullanici verisini innerHTML'e vermeden once sar
+ */
+function escapeHtml(s) {
+  if (s === null || s === undefined) return "";
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+/**
+ * Raw bir degeri guvenli sayi olarak oku
+ * formDegeriOku'dan farki: bu fonksiyon bir ID degil ham deger alir
+ * Bos / null / undefined / NaN durumunda varsayilan dondurur
+ * Turkce virgul otomatik noktaya cevrilir
+ */
+function sayiOku(x, varsayilan) {
+  if (varsayilan === undefined) varsayilan = null;
+  if (x === null || x === undefined || x === "") return varsayilan;
+  var str = String(x).trim();
+  if (str === "") return varsayilan;
+  var normalized = str.replace(",", ".");
+  var num = parseFloat(normalized);
+  if (isNaN(num)) return varsayilan;
+  return num;
+}
+
+/**
+ * Basit modal ac - baslik + icerik + butonlar
+ * butonlar: [{text: "Tamam", onClick: fn, tip: "primary|danger|ghost"}, ...]
+ * ESC ile kapanir, arka planda focus trap
+ * Uyari/onay/hata mesajlari icin kullanilir
+ */
+function modalAc(baslik, icerik, butonlar) {
+  // Varsayilan butonlar
+  if (!butonlar || butonlar.length === 0) {
+    butonlar = [{ text: "Tamam", onClick: null, tip: "primary" }];
+  }
+  // Overlay
+  var overlay = document.createElement("div");
+  overlay.className = "modal-overlay";
+  overlay.setAttribute("role", "dialog");
+  overlay.setAttribute("aria-modal", "true");
+  overlay.setAttribute("aria-labelledby", "modal-baslik");
+  overlay.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:9999;";
+
+  // Icerik kutusu
+  var kutu = document.createElement("div");
+  kutu.className = "modal-kutu";
+  kutu.style.cssText = "background:#fff;border-radius:12px;padding:24px;max-width:480px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3);";
+
+  // Baslik
+  var h = document.createElement("h3");
+  h.id = "modal-baslik";
+  h.textContent = baslik;
+  h.style.cssText = "margin:0 0 16px 0;font-size:18px;color:#1f2937;";
+  kutu.appendChild(h);
+
+  // Icerik (kullanici veri icerebilir - escape et)
+  var body = document.createElement("div");
+  body.className = "modal-icerik";
+  // icerik HTML icerebilir ama cagiran sorumlu - biz escape etmeyiz, ham veriyle cagrilsinsa textContent kullansinlar
+  if (typeof icerik === "string") {
+    body.innerHTML = icerik;
+  } else if (icerik instanceof HTMLElement) {
+    body.appendChild(icerik);
+  }
+  body.style.cssText = "margin-bottom:20px;color:#374151;line-height:1.6;";
+  kutu.appendChild(body);
+
+  // Butonlar
+  var butonKutu = document.createElement("div");
+  butonKutu.style.cssText = "display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;";
+  var ilkButon = null;
+  butonlar.forEach(function (b, idx) {
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.textContent = b.text;
+    var renk = "#3b82f6"; // primary mavi
+    if (b.tip === "danger") renk = "#ef4444";
+    else if (b.tip === "ghost") renk = "transparent";
+    var yazi = b.tip === "ghost" ? "#6b7280" : "#fff";
+    btn.style.cssText = "padding:10px 20px;border-radius:8px;border:" + (b.tip === "ghost" ? "1px solid #d1d5db" : "none") + ";background:" + renk + ";color:" + yazi + ";font-size:14px;font-weight:500;cursor:pointer;min-height:44px;min-width:80px;";
+    btn.addEventListener("click", function () {
+      if (b.onClick) b.onClick();
+      kapat();
+    });
+    butonKutu.appendChild(btn);
+    if (idx === 0) ilkButon = btn;
+  });
+  kutu.appendChild(butonKutu);
+  overlay.appendChild(kutu);
+
+  // Focus trap - sadece modal icindeki elementlere tab
+  function focusTrap(e) {
+    if (e.key === "Tab") {
+      var focuslanabilir = kutu.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+      if (focuslanabilir.length === 0) return;
+      var ilk = focuslanabilir[0];
+      var son = focuslanabilir[focuslanabilir.length - 1];
+      if (e.shiftKey && document.activeElement === ilk) {
+        e.preventDefault();
+        son.focus();
+      } else if (!e.shiftKey && document.activeElement === son) {
+        e.preventDefault();
+        ilk.focus();
+      }
+    } else if (e.key === "Escape") {
+      kapat();
+    }
+  }
+
+  function kapat() {
+    document.removeEventListener("keydown", focusTrap);
+    if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+  }
+
+  document.body.appendChild(overlay);
+  document.addEventListener("keydown", focusTrap);
+  if (ilkButon) ilkButon.focus();
+
+  return { kapat: kapat, overlay: overlay };
+}

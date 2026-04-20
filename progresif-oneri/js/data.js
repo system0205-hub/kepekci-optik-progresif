@@ -426,50 +426,15 @@ window.LENS_DATABASE = {
           fiyatAraligi: { min: 29500, max: 96500 },
           hedefKitle: "En ust seviye, kisisel deneyim arayanlar",
           aciklama: "VR gozluk ile goz/bas hareketi analizi. Yapay zeka ile tamamen kisisel tasarim."
-        },
-        {
-          id: "novax-granite-kisisel",
-          ad: "Granite Kisisel",
-          seviye: "premium",
-          tasarim: "freeform",
-          koridorlar: [],
-          minFittingHeight: 14,
-          teknolojiler: ["Degisken Bazli Kisisel"],
-          ozellikler: {
-            genisMesafe: true,
-            genisYakin: true,
-            genisOrta: true,
-            yuzmeEtkisiAzaltma: false,
-            dijitalCihazOptimize: true,
-            surusOptimize: true
-          },
-          goruntuProfilleri: ["Drive", "Sport", "Pilot", "Ofis"],
-          indeksler: ["1.50", "1.58", "1.61", "1.67", "1.74"],
-          fiyatAraligi: { min: 17500, max: 48500 },
-          hedefKitle: "Kisisel, yuksek performans arayanlar",
-          aciklama: "4 farkli profil: Surus, Spor, Pilot, Ofis. Degisken baz ile kisisel uretim."
-        },
-        {
-          id: "novax-granite-standart",
-          ad: "Granite Standart",
-          seviye: "baslangic",
-          tasarim: "standart",
-          koridorlar: [],
-          minFittingHeight: 16,
-          teknolojiler: [],
-          ozellikler: {
-            genisMesafe: true,
-            genisYakin: false,
-            genisOrta: false,
-            yuzmeEtkisiAzaltma: false,
-            dijitalCihazOptimize: false,
-            surusOptimize: false
-          },
-          indeksler: ["1.50", "1.58", "1.61", "1.67", "1.74"],
-          fiyatAraligi: { min: 7500, max: 28000 },
-          hedefKitle: "Genel kullanim, uygun fiyat",
-          aciklama: "4 farkli standart seri (MX, GN, VR, NG). Genis indeks yelpazesi."
         }
+        // NOT (2026-04-20): "Granite Kisisel" ve "Granite Standart" buradan silindi.
+        // Granite bir CAM MODELI degil, PixAR GRANITE adli KAPLAMADIR.
+        // Novax'in tum camlarinda standart olarak gelen super hidrofobik anti-refle
+        // kaplamadir (ucretsiz, UV400, 9H sertlik). Kaplamalar asagida
+        // "markalar.novax.kaplamalar[]" listesinde tanimlanmistir.
+        // 20+ gercek Novax progresif modeli Faz 1.4'te eklenecek (Nucleo 5D, Nexus 4D,
+        // Trion 3D, Matrix HD, Genius, Ventro, Novum NG, Sportive, DriveOn, Officient,
+        // Serenity, vb.)
       ]
     },
 

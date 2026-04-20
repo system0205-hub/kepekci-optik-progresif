@@ -155,8 +155,11 @@ function bildirimGoster(mesaj, tip) {
 function manuelFormDegerOku(id) {
   var el = document.getElementById(id);
   if (!el) return 0;
-  var val = el.value.replace(",", ".");
-  return parseFloat(val) || 0;
+  // sayiOku (utils.js): Turkce virgul destegi + NaN koruma + bos alan handling
+  // Geriye donuk uyumluluk icin default 0 (legacy davranis)
+  // Faz 3'te form 5-adim sihirbaza gectiginde bu fonksiyon bos alanlari null
+  // dondurecek + alan bazli kirmizi kenar + "bu alan zorunlu" uyarisi gosterecek
+  return sayiOku(el.value, 0);
 }
 
 function manuelReceteYukle() {
@@ -319,17 +322,18 @@ function receteYukle(veri) {
   // Detay grid (yeni kart bazli yapi)
   var detayGrid = document.getElementById("g_hasta_detay_grid");
   var detayHtml = "";
+  // XSS koruma: kullanici verisi innerHTML'e verilmeden once escapeHtml ile sar
   if (veri.hasta && veri.hasta.tc) {
-    detayHtml += '<div class="detay-item"><div class="detay-etiket">TC Kimlik</div><div class="detay-deger">' + veri.hasta.tc + '</div></div>';
+    detayHtml += '<div class="detay-item"><div class="detay-etiket">TC Kimlik</div><div class="detay-deger">' + escapeHtml(veri.hasta.tc) + '</div></div>';
   }
   if (veri.recete && veri.recete.tarih) {
-    detayHtml += '<div class="detay-item"><div class="detay-etiket">Recete Tarihi</div><div class="detay-deger">' + veri.recete.tarih + '</div></div>';
+    detayHtml += '<div class="detay-item"><div class="detay-etiket">Recete Tarihi</div><div class="detay-deger">' + escapeHtml(veri.recete.tarih) + '</div></div>';
   }
   if (veri.recete && veri.recete.doktor) {
-    detayHtml += '<div class="detay-item"><div class="detay-etiket">Doktor</div><div class="detay-deger">Dr. ' + veri.recete.doktor + '</div></div>';
+    detayHtml += '<div class="detay-item"><div class="detay-etiket">Doktor</div><div class="detay-deger">Dr. ' + escapeHtml(veri.recete.doktor) + '</div></div>';
   }
   if (veri.recete && veri.recete.protokolNo) {
-    detayHtml += '<div class="detay-item"><div class="detay-etiket">Protokol No</div><div class="detay-deger">' + veri.recete.protokolNo + '</div></div>';
+    detayHtml += '<div class="detay-item"><div class="detay-etiket">Protokol No</div><div class="detay-deger">' + escapeHtml(veri.recete.protokolNo) + '</div></div>';
   }
   detayGrid.innerHTML = detayHtml;
 
@@ -827,7 +831,6 @@ function progresifOnerisineGit() {
   }
 
   var v = mevcutRecete;
-  var params = new URLSearchParams();
 
   // Isaret ile birlestirilmis SPH degerleri
   // Uzak SPH (isareti dahil)
@@ -846,24 +849,49 @@ function progresifOnerisineGit() {
   var odAdd = +(yakinSagSph - odSph).toFixed(2);
   var osAdd = +(yakinSolSph - osSph).toFixed(2);
 
-  // Minimum ADD kontrolu
-  if (odAdd < 0.50) odAdd = 0.50;
-  if (osAdd < 0.50) osAdd = 0.50;
+  // ADD validasyonu: yakin uzaktan dusukse sessiz clamp degil modal uyari
+  // Muzaffer Bey karari (2026-04-20): PIN'siz, modal yeterli
+  if (odAdd < 0.50 || osAdd < 0.50) {
+    var mesaj = '<div style="background:#fef2f2;border-left:4px solid #ef4444;padding:12px;margin-bottom:12px;border-radius:6px;">' +
+      '<strong style="color:#991b1b;">Recete uyarisi</strong><br>' +
+      'Yakin gorus recetesi uzak recetesinden dusuk. Normalde yakin recete uzaktan yuksek olur (ADD pozitiftir).' +
+      '</div>' +
+      '<div style="font-family:monospace;background:#f3f4f6;padding:10px;border-radius:6px;margin-bottom:12px;">' +
+      'Sag ADD: <strong>' + odAdd.toFixed(2) + '</strong><br>' +
+      'Sol ADD: <strong>' + osAdd.toFixed(2) + '</strong>' +
+      '</div>' +
+      '<p>Luften receteyi kontrol edin. Hatali recete yanlis cam siparisine yol acar.</p>' +
+      '<p style="font-size:13px;color:#6b7280;">Devam ederseniz ADD minimum +0.50\'ye yuvarlanacak.</p>';
 
-  // URL parametrelerini ayarla
+    modalAc("Recete Hatasi Olabilir", mesaj, [
+      { text: "Receteyi duzelt", tip: "ghost", onClick: null },
+      {
+        text: "Yine de devam et",
+        tip: "danger",
+        onClick: function () {
+          var clampedOdAdd = odAdd < 0.50 ? 0.50 : odAdd;
+          var clampedOsAdd = osAdd < 0.50 ? 0.50 : osAdd;
+          _progresifOnerisineGit_Devam(odSph, osSph, odCyl, osCyl, clampedOdAdd, clampedOsAdd, v);
+        }
+      }
+    ]);
+    return;
+  }
+
+  _progresifOnerisineGit_Devam(odSph, osSph, odCyl, osCyl, odAdd, osAdd, v);
+}
+
+function _progresifOnerisineGit_Devam(odSph, osSph, odCyl, osCyl, odAdd, osAdd, v) {
+  var params = new URLSearchParams();
   params.set("od_sph", odSph.toFixed(2));
   params.set("od_cyl", odCyl.toFixed(2));
   params.set("od_ax", v.uzak.sag.aks || 0);
   params.set("od_add", odAdd.toFixed(2));
-
   params.set("os_sph", osSph.toFixed(2));
   params.set("os_cyl", osCyl.toFixed(2));
   params.set("os_ax", v.uzak.sol.aks || 0);
   params.set("os_add", osAdd.toFixed(2));
-
   params.set("kaynak", "recete");
-
-  // index.html'e yonlendir
   window.location.href = "index.html?" + params.toString();
 }
 
@@ -983,7 +1011,7 @@ function qrTarayiciBaslat() {
       // Tarama devam ediyor, bos birak
     }
   ).catch(function(err) {
-    durumEl.innerHTML = '<p style="color:var(--danger);">Kamera acilamadi: ' + err + '</p>' +
+    durumEl.innerHTML = '<p style="color:var(--danger);">Kamera acilamadi: ' + escapeHtml(String(err)) + '</p>' +
       '<p style="font-size:0.85rem; margin-top:8px;">Manuel giris sekmesini kullanabilirsiniz.</p>';
     document.getElementById("btn-qr-baslat").style.display = "inline-flex";
     document.getElementById("btn-qr-durdur").style.display = "none";
