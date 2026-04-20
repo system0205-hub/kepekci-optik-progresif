@@ -421,7 +421,7 @@ window.LENS_DATABASE = {
           ad: "Astina",
           seviye: "orta",
           tasarim: "dijital",
-          koridorlar: [17],
+          koridorlar: [15, 17],
           minFittingHeight: 17,
           teknolojiler: ["Dijital Yuzey Isleme", "Dinamik Gorus"],
           ozellikler: {
@@ -435,7 +435,7 @@ window.LENS_DATABASE = {
           indeksler: ["1.50", "1.56", "1.57", "1.60", "1.67"],
           fiyatAraligi: { min: 5850, max: 16600 },
           hedefKitle: "Acik hava, genel kullanim",
-          aciklama: "Dengeli gorus, dis mekan odakli. Uygun fiyat."
+          aciklama: "Dengeli gorus, dis mekan odakli. Uygun fiyat. Short versiyonu (15mm) kucuk cerceveler icin mevcut."
         },
         {
           id: "tora-samira",
@@ -454,10 +454,61 @@ window.LENS_DATABASE = {
             surusOptimize: false
           },
           indeksler: ["1.50", "1.56", "1.57", "1.60", "1.67", "1.74"],
-          fiyatAraligi: { min: 4800, max: 22000 },
+          fiyatAraligi: { min: 4500, max: 20100 },
           hedefKitle: "Genel kullanim, uygun fiyat",
-          aciklama: "Baslangic seviyesi. Genis indeks yelpazesi. En uygun fiyat."
+          aciklama: "Baslangic seviyesi. Genis indeks yelpazesi (1.50-1.74). En uygun fiyat."
         }
+      ],
+      // Tora kaplamalari (Subat 2026 katalogu)
+      kaplamalar: [
+        {
+          id: "tora-kappa-plus-shmc",
+          ad: "Kappa Plus SHMC",
+          tip: "anti-refle",
+          ucret: 350,
+          ozellikler: {
+            uvFiltresi: "UV400",
+            antiRefle: true,
+            tozTutmaz: true,
+            kirTutmaz: true,
+            suTutmaz: true,
+            cizilmeyeDayanikli: true
+          },
+          aciklama: "UV koruma, toz/kir/su tutmazlik, yansima onleme, cizilme direnci. Standart premium AR kaplama."
+        },
+        {
+          id: "tora-kappa-blue-shmc",
+          ad: "Kappa Blue SHMC",
+          tip: "anti-refle-mavi-isik",
+          ucret: 450,
+          ozellikler: {
+            uvFiltresi: "UV400",
+            maviIsikFiltresi: true,
+            antiRefle: true,
+            tozTutmaz: true,
+            suTutmaz: true,
+            cizilmeyeDayanikli: true
+          },
+          hedefKitle: "Uzun saat ekran karsisinda calisanlar",
+          aciklama: "Kappa Plus ozelliklerine ek olarak mavi-mor isigi filtreler. Dijital ekran konforu."
+        }
+      ],
+      // Tora ozel islemler (Subat 2026 katalogu)
+      ozelIslemler: [
+        { id: "ozel-baz", ad: "Ozel Baz", ucret: 550 },
+        { id: "prizmatik", ad: "Prizmatik", ucret: 220 },
+        { id: "kal", ad: "KAL (Ozel Kalinlik)", ucret: 500 },
+        { id: "buyuk-kucuk-oval", ad: "Buyuk/Kucuk Oval", ucret: 330 },
+        { id: "balance", ad: "Balance (Kalinlik Dengeleme)", ucret: 330 },
+        { id: "nil", ad: "Nil (Nilor Kalinligi)", ucret: 330 },
+        { id: "acil-siparis", ad: "Acil Siparis", ucret: 880 },
+        { id: "dec-tek-odakli", ad: "DEC (Odak Kaydirma) Tek Odakli", ucret: 330 },
+        { id: "ozel-isaret", ad: "Ozel Isaretleme", ucret: 280 },
+        { id: "boyama-duz", ad: "Duz Boyama", ucret: 500 },
+        { id: "boyama-degrade", ad: "Degrade Boyama", ucret: 600 },
+        { id: "boyama-numune", ad: "Numuneye Gore Boyama", ucret: 500 },
+        { id: "boyama-uv400", ad: "UV 400 Boyama", ucret: 700 },
+        { id: "boyama-renk-suzer", ad: "Renk Suzer Ozel Filtre", ucret: 1300 }
       ]
     },
 
@@ -667,7 +718,8 @@ window.LENS_DATABASE = {
           tasarim: "freeform",
           koridorlar: [],
           minFittingHeight: 14,
-          teknolojiler: ["Cerceve Parametreleri ile Uretim"],
+          uyumGarantisi: true,
+          teknolojiler: ["Cerceve Parametreleri ile Uretim", "Kisisellestirilmis Tasarim"],
           ozellikler: {
             genisMesafe: true,
             genisYakin: true,
@@ -678,17 +730,19 @@ window.LENS_DATABASE = {
           },
           indeksler: ["1.50", "1.60", "1.67", "1.74"],
           fiyatAraligi: { min: 19000, max: 34300 },
+          uretilebilirlik: { cylMax: 4.00, addMax_max: 4.00, addMax_mio: 3.00 },
           hedefKitle: "Tum meslek gruplari",
-          aciklama: "En ust seviye. Cerceve parametreleri ile uretim. MAX (ADD 4.00) ve MIO (ADD 3.00) secenekleri."
+          aciklama: "En ust seviye. Cerceve parametreleri ile uretim. MAX (ADD 4.00) ve MIO (ADD 3.00) secenekleri. Mini versiyonu da mevcut."
         },
         {
           id: "va-anateo",
           ad: "Anateo Max / Mio",
-          seviye: "orta",
+          seviye: "premium",
           tasarim: "freeform",
           koridorlar: [],
           minFittingHeight: 14,
-          teknolojiler: [],
+          uyumGarantisi: true,
+          teknolojiler: ["Kisisellestirilmis Tasarim"],
           ozellikler: {
             genisMesafe: true,
             genisYakin: true,
@@ -698,9 +752,10 @@ window.LENS_DATABASE = {
             surusOptimize: false
           },
           indeksler: ["1.50", "1.60", "1.67"],
-          fiyatAraligi: { min: 13000, max: 26300 },
+          fiyatAraligi: { min: 13500, max: 26300 },
+          uretilebilirlik: { cylMax: 4.00, addMax_max: 4.00, addMax_mio: 3.00 },
           hedefKitle: "Genel kullanim",
-          aciklama: "Orta seviye. MAX ve MIO secenekleri. Uyum garantili."
+          aciklama: "Premium seviye. MAX ve MIO secenekleri. Uyum garantili. Mini versiyonu mevcut."
         },
         {
           id: "va-sirus",
@@ -709,6 +764,7 @@ window.LENS_DATABASE = {
           tasarim: "freeform",
           koridorlar: [],
           minFittingHeight: 14,
+          uyumGarantisi: true,
           teknolojiler: [],
           ozellikler: {
             genisMesafe: true,
@@ -719,9 +775,10 @@ window.LENS_DATABASE = {
             surusOptimize: false
           },
           indeksler: ["1.50", "1.56", "1.60", "1.67", "1.74"],
-          fiyatAraligi: { min: 9500, max: 24000 },
+          fiyatAraligi: { min: 9500, max: 29300 },
+          uretilebilirlik: { cylMax: 4.00, addMax_max: 4.00, addMax_mio: 3.00 },
           hedefKitle: "Genel kullanim, genis indeks yelpazesi",
-          aciklama: "Genis malzeme secenekleri. Uyum garantili."
+          aciklama: "Genis malzeme secenekleri (1.50-1.74, Polart, SafeBlue). Uyum garantili. Mini versiyonu mevcut."
         },
         {
           id: "va-quadro",
@@ -730,6 +787,7 @@ window.LENS_DATABASE = {
           tasarim: "standart",
           koridorlar: [],
           minFittingHeight: 16,
+          uyumGarantisi: false,
           teknolojiler: [],
           ozellikler: {
             genisMesafe: true,
@@ -740,10 +798,115 @@ window.LENS_DATABASE = {
             surusOptimize: false
           },
           indeksler: ["1.50", "1.56", "1.60", "1.67"],
-          fiyatAraligi: { min: 6500, max: 16000 },
+          fiyatAraligi: { min: 6500, max: 18600 },
+          uretilebilirlik: { cylMax: 4.00, addMax: 1.00 },
           hedefKitle: "Genel kullanim, giris seviye",
-          aciklama: "Standart progresif, uygun fiyat."
+          aciklama: "Standart progresif, uygun fiyat. UYUM GARANTISI YOK."
+        },
+        {
+          id: "va-extenso",
+          ad: "Extenso Dijital",
+          seviye: "orta",
+          tasarim: "dijital",
+          ozelAmac: "ofis",
+          koridorlar: [],
+          minFittingHeight: 14,
+          uyumGarantisi: false,
+          teknolojiler: ["Dijital Yuzey Isleme", "Ofis Optimizasyonu"],
+          ozellikler: {
+            genisMesafe: false,
+            genisYakin: true,
+            genisOrta: true,
+            yuzmeEtkisiAzaltma: false,
+            dijitalCihazOptimize: true,
+            surusOptimize: false
+          },
+          indeksler: ["1.50", "1.60"],
+          fiyatAraligi: { min: 5650, max: 12350 },
+          uretilebilirlik: { cylMax: 4.00 },
+          hedefKitle: "Ofis calisanlari, dijital ekran kullanicilari",
+          aciklama: "Ofis / dijital calisma camı. Yakin-orta alan optimize. UZAK SURUS ICIN UYGUN DEGIL."
         }
+      ],
+      // Visionart kaplamalari (Subat 2026 katalogu)
+      kaplamalar: [
+        {
+          id: "va-neva-uv",
+          ad: "NEVA + UV",
+          tip: "anti-refle",
+          ucret: 4100,
+          ozellikler: { uvFiltresi: "UV400", antiRefle: true },
+          aciklama: "Temel UV korumali AR kaplama."
+        },
+        {
+          id: "va-neva-resist-uv",
+          ad: "NEVA RESIST + UV",
+          tip: "anti-refle-dayanikli",
+          ucret: 1200,
+          ozellikler: { uvFiltresi: "UV400", antiRefle: true, kirTutmaz: true, cizilmeyeDayanikli: true, kolayTemizlik: true },
+          aciklama: "UV koruma, yansima onleme, cizilme direnci, kir tutmaz."
+        },
+        {
+          id: "va-neva-max-blue-uv",
+          ad: "NEVA MAX BLUE UV",
+          tip: "anti-refle-mavi-isik",
+          ucret: 1750,
+          ozellikler: { uvFiltresi: "UV400", maviIsikFiltresi: true, antiRefle: true, kirTutmaz: true, cizilmeyeDayanikli: true },
+          hedefKitle: "Uzun saat ekran karsisinda calisanlar",
+          aciklama: "Mavi-mor isigi filtreler. Goz yorgunlugunu azaltir. En ust dayaniklilik."
+        },
+        {
+          id: "va-muv",
+          ad: "MUV (Super Premium)",
+          tip: "anti-refle-premium",
+          ucret: 2300,
+          ozellikler: { uvFiltresi: "UV400", antiRefle: true, "2KatDayanikli": true, kirTutmaz: true, cizilmeyeDayanikli: true },
+          aciklama: "2 kat daha dayanikli ve uzun omurlu. En ust seviye AR kaplama."
+        },
+        {
+          id: "va-zerofog",
+          ad: "ZeroFog (Bugu Onleyici)",
+          tip: "bugu-onleyici",
+          ozellikler: { buguOnleyici: true },
+          aciklama: "Bugu olusumunu engeller. Ozel mendil ile temizlenmeli."
+        },
+        {
+          id: "va-siloxan-slx",
+          ad: "Siloxan (SLX)",
+          tip: "ozel-yuzey",
+          ucret: 2500,
+          ozellikler: { suTutmaz: true, kirTutmaz: true, tozTutmaz: true },
+          aciklama: "Siloxan tabanli ozel yuzey kaplamasi."
+        },
+        {
+          id: "va-ayna-kaplama",
+          ad: "Ayna Kaplama",
+          tip: "ayna",
+          ucret: 2750,
+          ozellikler: { aynaEfekti: true, renkSecenekleri: ["Forest Green", "Gold", "Pink", "New Blue", "Silver"] },
+          gerektirir: "Beyaz cam + Boyama (Grey 3 / Brown 3 / Green 3)",
+          aciklama: "Ayna efektli kaplama. 5 renk secenegi. Boyama on isleme gerekir."
+        }
+      ],
+      // Visionart ozel islemler (Subat 2026 katalogu)
+      ozelIslemler: [
+        { id: "ozel-baz", ad: "Ozel Baz", ucret: 990 },
+        { id: "prizmatik", ad: "Prizmatik", ucret: 610 },
+        { id: "kal", ad: "KAL (Ozel Kalinlik)", ucret: 990 },
+        { id: "mos", ad: "MOS (Model Secimli RX)", ucret: 990 },
+        { id: "orx", ad: "ORX (Olcekli RX)", ucret: 990 },
+        { id: "bls", ad: "BLS (Kalinlik Dengeleme)", ucret: 990 },
+        { id: "nil", ad: "Nil (Nilor Kalinligi)", ucret: 990 },
+        { id: "dec-tek-odakli", ad: "DEC (Odak Kaydirma) Tek Odakli", ucret: 1060 },
+        { id: "ozel-isaret-rx", ad: "Ozel Isaretleme RX", ucret: 1060 },
+        { id: "acil-siparis", ad: "Acil Siparis", ucret: 1100 },
+        { id: "sisart", ad: "SisArt", ucret: 990 },
+        { id: "buyuk-kucuk-oval", ad: "Buyuk/Kucuk Oval", ucret: 1060 },
+        { id: "boyama-duz", ad: "Boyama Duz (0-4)", ucret: 1400 },
+        { id: "boyama-degrade", ad: "Boyama Degrade (0-4)", ucret: 1900 },
+        { id: "boyama-numune", ad: "Boyama Numuneye Gore", ucret: 1400 },
+        { id: "boyama-uv400", ad: "UV 400 Boyama", ucret: 1300 },
+        { id: "boyama-renk-suzer", ad: "Renk Suzer Boyama", ucret: 2400 }
       ]
     }
   },
