@@ -1599,6 +1599,55 @@
   <!-- JS -->
   <script src="js/recete.js"></script>
   <script src="js/ocr.js"></script>
+  <script src="js/sesli.js"></script>
+
+  <!-- Faz 9: Sesli giris CSS -->
+  <style>
+    .mikrofon-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px; height: 40px;
+      min-width: 40px;
+      margin-left: 4px;
+      padding: 0;
+      background: var(--yuzey-bg, white);
+      border: 1px solid var(--yuzey-sinir, #e2e8f0);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+      vertical-align: middle;
+      transition: all 150ms ease;
+    }
+    .mikrofon-btn:hover {
+      background: var(--color-primary-bg, #eff6ff);
+      border-color: var(--color-primary, #3b82f6);
+    }
+    .mikrofon-btn:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.4);
+    }
+    .mikrofon-btn[data-kayit="1"] {
+      background: #ef4444 !important;
+      border-color: #ef4444 !important;
+      color: white;
+      animation: kp-mikrofon-nabiz 1.2s ease-in-out infinite;
+    }
+    .mikrofon-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    @keyframes kp-mikrofon-nabiz {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+      50%      { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+    }
+    .mikrofon-sarmal {
+      display: inline-flex;
+      align-items: center;
+      gap: 0;
+    }
+  </style>
 
   <!-- Faz 8: OCR Modal (Recete Fotograf Tanima) -->
   <div class="kp-modal-ortu" id="ocr-modal" hidden role="dialog" aria-modal="true" aria-labelledby="ocr-modal-baslik">
@@ -1775,6 +1824,69 @@
       asamaGoster('sec');
       dosyaInput.value = '';
     });
+  })();
+  </script>
+
+  <!-- Faz 9: Sesli giris - SPH/CYL/AKS input'larina mikrofon buttonu ekle -->
+  <script>
+  (function() {
+    'use strict';
+    if (!window.KepekciSes) return;
+    var destekli = window.KepekciSes.desteklenenMi();
+
+    // Sayisal alanlar + isaret select eslesme
+    var sesliAlanlar = [
+      { inputId: 'm_uzak_sag_sph',  isaretId: 'm_uzak_sag_sph_isaret' },
+      { inputId: 'm_uzak_sag_cyl',  isaretId: 'm_uzak_sag_cyl_isaret' },
+      { inputId: 'm_uzak_sag_aks',  isaretId: null },
+      { inputId: 'm_uzak_sol_sph',  isaretId: 'm_uzak_sol_sph_isaret' },
+      { inputId: 'm_uzak_sol_cyl',  isaretId: 'm_uzak_sol_cyl_isaret' },
+      { inputId: 'm_uzak_sol_aks',  isaretId: null },
+      { inputId: 'm_yakin_sag_sph', isaretId: 'm_yakin_sag_sph_isaret' },
+      { inputId: 'm_yakin_sag_cyl', isaretId: 'm_yakin_sag_cyl_isaret' },
+      { inputId: 'm_yakin_sag_aks', isaretId: null },
+      { inputId: 'm_yakin_sol_sph', isaretId: 'm_yakin_sol_sph_isaret' },
+      { inputId: 'm_yakin_sol_cyl', isaretId: 'm_yakin_sol_cyl_isaret' },
+      { inputId: 'm_yakin_sol_aks', isaretId: null }
+    ];
+
+    sesliAlanlar.forEach(function(cfg) {
+      var input = document.getElementById(cfg.inputId);
+      if (!input) return;
+      if (cfg.isaretId) input.dataset.isaretSelect = cfg.isaretId;
+
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'mikrofon-btn';
+      btn.innerHTML = '🎤';
+      btn.setAttribute('aria-label', 'Sesli giris: ' + cfg.inputId);
+      btn.setAttribute('aria-pressed', 'false');
+      btn.title = destekli ? 'Sesli giris' : 'Sesli giris desteklenmiyor';
+      if (!destekli) btn.disabled = true;
+
+      // Input'un parent'ina veya yanina ekle
+      if (input.parentNode) {
+        input.parentNode.insertBefore(btn, input.nextSibling);
+      }
+
+      if (destekli) {
+        window.KepekciSes.inputaSesBagla(input, btn, 'sayi');
+      }
+    });
+
+    // Hasta ad alanina da ses ekle (metin)
+    var adInput = document.getElementById('m_hasta_ad');
+    if (adInput && destekli) {
+      var btnAd = document.createElement('button');
+      btnAd.type = 'button';
+      btnAd.className = 'mikrofon-btn';
+      btnAd.innerHTML = '🎤';
+      btnAd.setAttribute('aria-label', 'Sesli giris: hasta adi');
+      btnAd.setAttribute('aria-pressed', 'false');
+      btnAd.title = 'Sesli ad soyad girisi';
+      if (adInput.parentNode) adInput.parentNode.insertBefore(btnAd, adInput.nextSibling);
+      window.KepekciSes.inputaSesBagla(adInput, btnAd, 'metin');
+    }
   })();
   </script>
 
