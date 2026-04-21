@@ -1693,3 +1693,307 @@ function olusturBilgiNotlari(recete, koridorSonuc, riskSonuc) {
 
   return notlar;
 }
+
+// ============================================================================
+// FAZ 2 — MOTOR GENISLETME (CHUNK 1): Yardimci Fonksiyonlar
+// Mevcut akis BOZULMAZ. Bu fonksiyonlar bagimsiz yardimci olarak eklendi.
+// onerMarkalar / kontrolEt entegrasyonu Chunk 2'de yapilacak.
+// ============================================================================
+
+/**
+ * Verteks Kompanzasyonu — |SPH| >= 4.00D durumunda zorunlu.
+ * Formul: Fc = F / (1 - d * F), d metre cinsinden (yeniV - mevcutV) / 1000.
+ * @param {number} sph - Olculen reçete SPH (diyoptri)
+ * @param {number} mevcutVerteks - Olcum sirasinda verteks (mm, default 13)
+ * @param {number} yeniVerteks - Cerçeveyle gerçek verteks (mm)
+ * @returns {{efektifGuc: number, farkD: number, kompanzasyonGerekli: boolean, uyari: string|null}}
+ */
+function hesaplaVerteksKompanzasyon(sph, mevcutVerteks, yeniVerteks) {
+  if (sph === null || sph === undefined || isNaN(sph)) {
+    return { efektifGuc: null, farkD: 0, kompanzasyonGerekli: false, uyari: null };
+  }
+  var mv = (mevcutVerteks !== null && !isNaN(mevcutVerteks)) ? mevcutVerteks : 13;
+  var yv = (yeniVerteks !== null && !isNaN(yeniVerteks)) ? yeniVerteks : 13;
+  var d = (yv - mv) / 1000; // metre
+  var F = sph;
+  var denom = 1 - d * F;
+  var efektif = (Math.abs(denom) < 1e-6) ? F : F / denom;
+  var fark = efektif - F;
+  var absSph = Math.abs(sph);
+  var gerekli = absSph >= 4.0;
+  var uyari = null;
+  if (gerekli && Math.abs(fark) >= 0.12) {
+    uyari = "Verteks kompanzasyonu: SPH " + F.toFixed(2) + "D icin " + yv + "mm verteksde efektif guc " +
+            efektif.toFixed(2) + "D olur (fark " + (fark >= 0 ? "+" : "") + fark.toFixed(2) + "D). " +
+            "Siparis iletiminde kompanze edilmis guc kullanilmali.";
+  } else if (gerekli) {
+    uyari = "Verteks " + yv + "mm (mevcut " + mv + "mm) — |SPH| >= 4D ama fark ihmal edilebilir.";
+  }
+  return { efektifGuc: efektif, farkD: fark, kompanzasyonGerekli: gerekli, uyari: uyari };
+}
+
+/**
+ * Yasam tarzina gore ozel amac camini belirler (specialty routing).
+ * Oncelik sirasi: drive (gece veya >=40% sürüs) > pilot (yakinYogunMeslek) > sport (bombeli çerçeve) >
+ * ofis (>=4h ekran) > antifatigue (<45 yas + dijital + goz yorgunlugu) > null.
+ * @param {object} yasam - { surusYoneri, geceSurus, ofisSaat, dijitalSaat, sporYogunluk, bombeliCerceve, yakinYogunMeslek, yas, gozYorgunlugu }
+ * @returns {{ozelAmac: string|null, gerekce: string}}
+ */
+function secOzelAmac(yasam) {
+  if (!yasam || typeof yasam !== "object") {
+    return { ozelAmac: null, gerekce: "Yasam tarzi bilgisi yok." };
+  }
+  var surusYuzde = yasam.surusYuzdesi || 0;
+  var geceSurus = !!yasam.geceSurus;
+  var ofisSaat = yasam.ofisSaat || 0;
+  var dijitalSaat = yasam.dijitalSaat || 0;
+  var spor = yasam.sporYogunluk || 0; // 0-100
+  var bombeli = !!yasam.bombeliCerceve;
+  var pilot = !!yasam.yakinYogunMeslek; // pilot/tamirci/dis hekimi
+  var yas = yasam.yas || 0;
+  var gozYorgunlugu = !!yasam.gozYorgunlugu;
+
+  if (geceSurus || surusYuzde >= 40) {
+    return { ozelAmac: "drive", gerekce: geceSurus ? "Gece surusu yogun" : ("Surusun %" + surusYuzde + "'i") };
+  }
+  if (pilot) {
+    return { ozelAmac: "pilot", gerekce: "Yukarida yakin gorme gerekli meslek (pilot/tamirci/dis hekimi)" };
+  }
+  if (spor >= 40 && bombeli) {
+    return { ozelAmac: "sport", gerekce: "Bombeli spor cercevesi + yogun spor" };
+  }
+  if (ofisSaat >= 4) {
+    return { ozelAmac: "ofis", gerekce: ofisSaat + "h ofis / ekran mesaisi" };
+  }
+  if (yas > 0 && yas < 45 && (dijitalSaat >= 6 || gozYorgunlugu)) {
+    return { ozelAmac: "antifatigue", gerekce: "Genc presbiyop adayı + dijital yorgunluk" };
+  }
+  return { ozelAmac: null, gerekce: "Genel amac progresif yeterli" };
+}
+
+/**
+ * Yasam tarzi + kullanim bilgilerine gore markanin kaplamalarindan en uygununu secer.
+ * Kurallar:
+ *  - Gece surus sik -> DRIVE/gece-surus kaplamasi
+ *  - Dijital agir -> mavi-isik kaplamasi (BLUV/Blue Premium)
+ *  - Mirror SADECE renklendirme >= 3 ile uyumlu
+ *  - Default -> standart (ucretsiz) kaplama
+ * @param {object} yasam
+ * @param {object} kullanim - { renklendirmeKategori }
+ * @param {Array} markaninKaplamalari - data.js markalar.{marka}.kaplamalar[]
+ * @returns {{secilen: object|null, alternatifler: Array, gerekce: string, uyarilar: string[]}}
+ */
+function secKaplama(yasam, kullanim, markaninKaplamalari) {
+  var bos = { secilen: null, alternatifler: [], gerekce: "Kaplama listesi yok.", uyarilar: [] };
+  if (!Array.isArray(markaninKaplamalari) || markaninKaplamalari.length === 0) return bos;
+  var y = yasam || {};
+  var k = kullanim || {};
+  var uyarilar = [];
+
+  // Aday filtreleme: mirror/ayna sadece kategori >= 3 boyama ile
+  var adaylar = markaninKaplamalari.filter(function (kap) {
+    var tip = (kap.tip || "").toLowerCase();
+    var gerek = (kap.gerektirir || "").toLowerCase();
+    if (tip.indexOf("ayna") >= 0 || tip.indexOf("mirror") >= 0 || gerek.indexOf("renklendirme") >= 0) {
+      var rk = k.renklendirmeKategori || 0;
+      if (rk < 3) {
+        uyarilar.push(kap.ad + ": renklendirme kategori 3+ gerektirir.");
+        return false;
+      }
+    }
+    return true;
+  });
+
+  function bul(kriter) {
+    for (var i = 0; i < adaylar.length; i++) {
+      if (kriter(adaylar[i])) return adaylar[i];
+    }
+    return null;
+  }
+
+  var secilen = null;
+  var gerekce = "";
+
+  if (y.geceSurus || (y.surusYuzdesi || 0) >= 40) {
+    secilen = bul(function (kap) {
+      var t = (kap.tip || "").toLowerCase();
+      var o = kap.ozellikler || {};
+      return t.indexOf("surus") >= 0 || o.geceSurus === true || o.parlamaAzaltmaFiltresi === true;
+    });
+    if (secilen) gerekce = "Gece surus yogun -> parlama azaltma";
+  }
+
+  if (!secilen && (y.dijitalSaat || 0) >= 4) {
+    secilen = bul(function (kap) {
+      var t = (kap.tip || "").toLowerCase();
+      var o = kap.ozellikler || {};
+      return t.indexOf("mavi") >= 0 || o.maviIsikFiltresi;
+    });
+    if (secilen) gerekce = "Dijital " + y.dijitalSaat + "h/gun -> mavi isik filtreli";
+  }
+
+  if (!secilen) {
+    // Standart / ucretsiz kaplama
+    secilen = bul(function (kap) { return kap.standart === true || kap.ucret === 0; });
+    if (secilen) gerekce = "Varsayilan standart kaplama (ucretsiz)";
+  }
+
+  if (!secilen && adaylar.length > 0) {
+    secilen = adaylar[0];
+    gerekce = "Ilk uygun kaplama";
+  }
+
+  var alt = adaylar.filter(function (kap) { return kap !== secilen; }).slice(0, 3);
+  return { secilen: secilen, alternatifler: alt, gerekce: gerekce, uyarilar: uyarilar };
+}
+
+/**
+ * Yasam + recete + markanin materyallerine gore materyal secer.
+ * Kurallar:
+ *  - Surucu + fotokromik TEK COZUM -> REDDET, uyari
+ *  - Surucu + polarize + modern LCD pano -> UYARI
+ *  - Sicak iklim + fotokromik -> uyari "30C+ koyulasma yavaslar"
+ *  - Balikçi/kayakci/gunduz yogun surus (LCD yok) -> NPolar
+ *  - Cocuk/spor + yuksek darbe riski -> Q-vex / polikarbonat
+ * @returns {{secilen: object|null, uyarilar: string[], gerekce: string}}
+ */
+function secMateryal(yasam, recete, markaninMateryalleri) {
+  var bos = { secilen: null, uyarilar: [], gerekce: "Materyal listesi yok." };
+  if (!Array.isArray(markaninMateryalleri) || markaninMateryalleri.length === 0) return bos;
+  var y = yasam || {};
+  var uyarilar = [];
+
+  var isSurucu = !!y.geceSurus || (y.surusYuzdesi || 0) >= 20;
+  var modernLCD = !!y.modernLCDPano;
+  var sicakIklim = !!y.sicakIklim;
+  var balikciKayakci = !!y.balikciKayakci;
+  var cocukSpor = !!y.cocukSpor;
+
+  function bulTip(aranan) {
+    for (var i = 0; i < markaninMateryalleri.length; i++) {
+      var m = markaninMateryalleri[i];
+      var t = (m.tip || m.id || "").toLowerCase();
+      var o = m.ozellik || m.ozellikler || {};
+      if (t.indexOf(aranan) >= 0) return m;
+      if (typeof o === "string" && o.indexOf(aranan) >= 0) return m;
+      if (typeof o === "object" && o.tip && (o.tip + "").toLowerCase().indexOf(aranan) >= 0) return m;
+    }
+    return null;
+  }
+
+  // Uyari bloklari
+  if (isSurucu) {
+    var fotokromik = bulTip("fotokromik") || bulTip("transitions");
+    if (fotokromik) {
+      uyarilar.push("Fotokromik ARABADA calismaz (on cam UV bloke). Surucuye tek cozum olarak ONERILMEZ.");
+    }
+    if (modernLCD) {
+      uyarilar.push("Polarize + modern LCD pano: gosterge paneli/HUD kararabilir. Hasta bilgilendirilmeli.");
+    }
+  }
+  if (sicakIklim) {
+    var fk = bulTip("fotokromik");
+    if (fk) uyarilar.push("Sicak iklim: fotokromik 30C+ koyulasma yavaslar (Novax/Transitions verisi: 30C=%72.3).");
+  }
+
+  var secilen = null;
+  var gerekce = "";
+
+  if (balikciKayakci && !modernLCD) {
+    secilen = bulTip("polarize") || bulTip("npolar");
+    if (secilen) gerekce = "Balikci/kayakci -> polarize";
+  }
+  if (!secilen && cocukSpor) {
+    secilen = bulTip("q-vex") || bulTip("polikarbonat") || bulTip("kirilmaya");
+    if (secilen) gerekce = "Cocuk/spor -> kirilmaya dirençli";
+  }
+  if (!secilen) {
+    // Varsayilan beyaz
+    secilen = bulTip("beyaz") || markaninMateryalleri[0];
+    gerekce = "Varsayilan beyaz materyal";
+  }
+
+  return { secilen: secilen, uyarilar: uyarilar, gerekce: gerekce };
+}
+
+/**
+ * Urun bileşenleri toplam fiyati.
+ * @param {object} model - { fiyatMatrisi?: {indeks: {materyal: fiyat}}, fiyatAraligi?: {min,max} }
+ * @param {string} indeks - "1.50" | "1.60" | ...
+ * @param {object|null} materyal - { id } — fiyatMatrisi icin
+ * @param {object|null} kaplama - { ucret }
+ * @param {Array} islemler - [{ucret}, ...]
+ * @param {number} magazaIndirimi - 0-1 arasi
+ * @returns {{toplam: number, detay: object}}
+ */
+function toplamFiyat(model, indeks, materyal, kaplama, islemler, magazaIndirimi) {
+  var camFiyati = 0;
+  if (model && model.fiyatMatrisi && indeks && model.fiyatMatrisi[indeks]) {
+    var satir = model.fiyatMatrisi[indeks];
+    var mid = materyal && materyal.id ? materyal.id : "beyaz";
+    camFiyati = satir[mid] || satir.beyaz || satir[Object.keys(satir)[0]] || 0;
+  } else if (model && model.fiyatAraligi) {
+    camFiyati = model.fiyatAraligi.min || 0;
+  }
+  var kaplamaFiyati = kaplama && typeof kaplama.ucret === "number" ? kaplama.ucret : 0;
+  var islemFiyati = 0;
+  if (Array.isArray(islemler)) {
+    for (var i = 0; i < islemler.length; i++) {
+      if (islemler[i] && typeof islemler[i].ucret === "number") islemFiyati += islemler[i].ucret;
+    }
+  }
+  var araToplam = camFiyati + kaplamaFiyati + islemFiyati;
+  var indirim = magazaIndirimi && magazaIndirimi > 0 && magazaIndirimi < 1 ? araToplam * magazaIndirimi : 0;
+  var toplam = araToplam - indirim;
+  return {
+    toplam: toplam,
+    detay: { cam: camFiyati, kaplama: kaplamaFiyati, islemler: islemFiyati, araToplam: araToplam, indirim: indirim }
+  };
+}
+
+/**
+ * Uretilebilirlik filtresi — recete SPH/CYL model x indeks x cap sinirlarinda mi?
+ * Model'de uretilebilirlik tablosu yoksa true doner (permissive).
+ * @param {object} recete - { sagSph, solSph, sagCyl, solCyl }
+ * @param {object} model - { uretilebilirlik?: {indeks: {cap: {sphMin, sphMax, cylMax}}} }
+ * @param {string} indeks
+ * @param {number|string} cap - 65 | 70 | 75 vb.
+ * @returns {{uretilebilir: boolean, sebep: string}}
+ */
+function filtreleUretilebilir(recete, model, indeks, cap) {
+  if (!model || !model.uretilebilirlik) {
+    return { uretilebilir: true, sebep: "Uretilebilirlik tablosu tanimli degil (permissive)." };
+  }
+  var tablo = model.uretilebilirlik[indeks];
+  if (!tablo) return { uretilebilir: true, sebep: "Bu indeks icin uretilebilirlik tanimi yok." };
+  var capKey = cap + "";
+  var sinir = tablo[capKey];
+  if (!sinir) {
+    var anahtarlar = Object.keys(tablo);
+    if (anahtarlar.length > 0) sinir = tablo[anahtarlar[0]];
+    else return { uretilebilir: true, sebep: "Cap sinirlari yok." };
+  }
+  var sphler = [recete.sagSph, recete.solSph].filter(function (v) { return v !== null && v !== undefined && !isNaN(v); });
+  var cyller = [recete.sagCyl, recete.solCyl].filter(function (v) { return v !== null && v !== undefined && !isNaN(v); });
+  for (var i = 0; i < sphler.length; i++) {
+    if (sphler[i] < sinir.sphMin || sphler[i] > sinir.sphMax) {
+      return { uretilebilir: false, sebep: "SPH " + sphler[i] + " sinir disi (" + sinir.sphMin + ".." + sinir.sphMax + ")." };
+    }
+  }
+  for (var j = 0; j < cyller.length; j++) {
+    if (Math.abs(cyller[j]) > Math.abs(sinir.cylMax)) {
+      return { uretilebilir: false, sebep: "|CYL| " + Math.abs(cyller[j]) + " > " + Math.abs(sinir.cylMax) + "." };
+    }
+  }
+  return { uretilebilir: true, sebep: "Sinirlarin icinde." };
+}
+
+// Global export (window ortamında)
+if (typeof window !== "undefined") {
+  window.hesaplaVerteksKompanzasyon = hesaplaVerteksKompanzasyon;
+  window.secOzelAmac = secOzelAmac;
+  window.secKaplama = secKaplama;
+  window.secMateryal = secMateryal;
+  window.toplamFiyat = toplamFiyat;
+  window.filtreleUretilebilir = filtreleUretilebilir;
+}
