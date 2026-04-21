@@ -1073,39 +1073,68 @@ window.LENS_DATABASE = {
     nikon: {
       ad: "Nikon",
       kisaAd: "Nikon",
-      distrib: "EssilorLuxottica",
+      distrib: "Isbir Optik",
       oncelik: 5,
       uyumGarantisi: false,
+      // Nikon katalog: Eylul 2025 (Z Serisi progresifler)
       modeller: [
         {
-          id: "nikon-seemax-ultimate",
+          id: "nikon-seemax-ultimate-z",
           ad: "Seemax Ultimate Z",
           seviye: "premium",
           tasarim: "freeform",
-          koridorlar: [10, 12, 14, 16],
+          koridorlar: [10, 12, 14],
+          koridorMm: null,
           minFittingHeight: 14,
-          teknolojiler: ["Z-Contrast", "Seemax", "Cift Yuzey Asferik"],
+          teknolojiler: ["Z-Contrast", "Seemax Infinite", "Kisisel Kontrast Algi Testi", "Cift Yuzey Asferik", "Baz Optimizasyonu (8 baz)", "Verteks/Pantoskopik/Bombe Kompanzasyonu"],
           ozellikler: {
             genisMesafe: true,
             genisYakin: true,
             genisOrta: true,
             yuzmeEtkisiAzaltma: true,
             dijitalCihazOptimize: true,
-            surusOptimize: true
+            surusOptimize: true,
+            kisiselVR: false,
+            kisiselKontrastAlgi: true
           },
+          ozelAmac: null,
           indeksler: ["1.50", "1.60", "1.67", "1.74"],
-          fiyatAraligi: { min: 50000, max: 92000 },
-          hedefKitle: "En yuksek gorsel performans arayanlar",
-          aciklama: "En ust seviye. Kisisel kontrast algisi testi ile optimize edilir. 4 gecis bolgesi."
+          fiyatAraligi: { min: 53000, max: 102790 },
+          hedefKitle: "En yuksek gorsel performans arayanlar, kisisel tasarim isteyenler",
+          aciklama: "En ust seviye. Kisisel Kontrast Algisi Testi ile %52 daha iyi los isik kontrasti. Seemax Infinite baz optimizasyonu ile cercevenin bombe acisina gore cam yuzeyi optimize edilir. 4 milyar+ benzersiz tasarim olasiligi."
         },
         {
-          id: "nikon-presio-power",
+          id: "nikon-digilife",
+          ad: "Digilife",
+          seviye: "premium",
+          tasarim: "freeform",
+          koridorlar: [10, 12, 14],
+          koridorMm: null,
+          minFittingHeight: 14,
+          teknolojiler: ["Genisletilmis Orta Alan", "Dijital Mesafe Optimizasyonu"],
+          ozellikler: {
+            genisMesafe: true,
+            genisYakin: true,
+            genisOrta: true,
+            yuzmeEtkisiAzaltma: false,
+            dijitalCihazOptimize: true,
+            surusOptimize: false
+          },
+          ozelAmac: null,
+          indeksler: ["1.50", "1.60", "1.67", "1.74"],
+          fiyatAraligi: { min: 28500, max: 60990 },
+          hedefKitle: "Dijital cihaz yogun kullanicilar (bilgisayar + telefon)",
+          aciklama: "Dijital mesafeyi tasarim merkezine koyar. Bilgisayar ve telefon gecisinde genisletilmis orta bolge. Yakin ve uzak nesnelerde kesintisiz gecis."
+        },
+        {
+          id: "nikon-presio-power-z",
           ad: "Presio Power Z",
           seviye: "premium",
           tasarim: "freeform",
-          koridorlar: [10, 12, 14, 16],
+          koridorlar: [10, 12, 14],
+          koridorMm: null,
           minFittingHeight: 14,
-          teknolojiler: ["Z-Contrast", "Cift Yuzey", "Bozulma Onleyici Filtre"],
+          teknolojiler: ["Z-Contrast", "Cift Yuzey (Ters Cevrilmis Arka)", "Progresif Bozulma Onleyici Filtre"],
           ozellikler: {
             genisMesafe: true,
             genisYakin: true,
@@ -1114,19 +1143,21 @@ window.LENS_DATABASE = {
             dijitalCihazOptimize: true,
             surusOptimize: true
           },
+          ozelAmac: null,
           indeksler: ["1.50", "1.60", "1.67", "1.74"],
-          fiyatAraligi: { min: 31920, max: 63000 },
-          hedefKitle: "Yuksek performans, zor receteler",
-          aciklama: "Stressiz gorus. Yuksek odaklanma ve netlik gerektiren isler icin ideal."
+          fiyatAraligi: { min: 20500, max: 48090 },
+          hedefKitle: "Yuksek diyoptri, zor receteler, stressiz netlik",
+          aciklama: "Yuksek diyoptri degerinde yumusak adaptasyon. Yanal astigmatizma kontrolu ile cam alt cevresi daha rahat. Yuksek odaklanma gerektiren isler icin."
         },
         {
-          id: "nikon-presio-balance",
+          id: "nikon-presio-balance-z",
           ad: "Presio Balance Z",
           seviye: "orta",
           tasarim: "freeform",
-          koridorlar: [10, 12, 14, 16],
+          koridorlar: [10, 12, 14],
+          koridorMm: null,
           minFittingHeight: 14,
-          teknolojiler: ["Z-Contrast", "Cift Yuzey"],
+          teknolojiler: ["Z-Contrast", "Yatay Guc Dagilimi", "Cift Yuzey"],
           ozellikler: {
             genisMesafe: true,
             genisYakin: true,
@@ -1135,31 +1166,35 @@ window.LENS_DATABASE = {
             dijitalCihazOptimize: false,
             surusOptimize: true
           },
+          ozelAmac: null,
           indeksler: ["1.50", "1.60", "1.67", "1.74"],
-          fiyatAraligi: { min: 21100, max: 46000 },
-          hedefKitle: "Dengeli gorus, surus",
-          aciklama: "Dengeli gorus bolgeleri. Uzak mesafe aktiviteleri icin ideal."
+          fiyatAraligi: { min: 15400, max: 38090 },
+          hedefKitle: "Yeni baslayan presbiyop, dengeli gorus, uzun mesafe aktiviteleri",
+          aciklama: "Yeni presbiyop belirtileri yasayanlar icin dengeli gorus. Guc yatay optimize dagilir - surus ve yuruyusta rahat periferi. Kullanim pozisyonuna optimize."
         },
         {
-          id: "nikon-digilife",
-          ad: "Digilife",
+          id: "nikon-relaxsee-neo",
+          ad: "RelaxSee Neo",
           seviye: "orta",
           tasarim: "freeform",
           koridorlar: [10, 12, 14],
+          koridorMm: null,
           minFittingHeight: 14,
-          teknolojiler: ["Dijital Mesafe Optimizasyonu"],
+          teknolojiler: ["Ikiz Teknoloji (Net + Rahat Bolge)", "Dijital Gorme Destegi", "Yuksek Baz Uyum"],
           ozellikler: {
-            genisMesafe: false,
+            genisMesafe: true,
             genisYakin: true,
             genisOrta: true,
             yuzmeEtkisiAzaltma: false,
             dijitalCihazOptimize: true,
-            surusOptimize: false
+            surusOptimize: false,
+            gozYorgunluguAzaltma: true
           },
-          indeksler: ["1.50", "1.60", "1.67"],
-          fiyatAraligi: { min: 18200, max: 36000 },
-          hedefKitle: "Dijital cihaz yogun kullanicilar",
-          aciklama: "Bilgisayar ve telefon gecisinde genisletilmis ara bolge."
+          ozelAmac: "antifatigue",
+          indeksler: ["1.50", "1.60", "1.67", "1.74"],
+          fiyatAraligi: { min: 9100, max: 29890 },
+          hedefKitle: "Goz yorgunlugu yasayan tum yas gruplari (Air/Lite/Neo/Super 4 tip)",
+          aciklama: "Goz yorgunlugu gideren anti-fatigue cam. Ust Net Bolge + alt Rahat Bolge. Yas/goruntunlugu/yasam tarzina gore 4 tip: Neo Air (hafif), Neo Lite, Neo (orta), Neo Super (en destek). Bombeli cerceve uyumu icin yuksek baz destegi."
         },
         {
           id: "nikon-presio-first",
@@ -1167,6 +1202,7 @@ window.LENS_DATABASE = {
           seviye: "baslangic",
           tasarim: "dijital",
           koridorlar: [10, 12, 14],
+          koridorMm: null,
           minFittingHeight: 14,
           teknolojiler: ["Dijital Yuzey Isleme"],
           ozellikler: {
@@ -1177,11 +1213,169 @@ window.LENS_DATABASE = {
             dijitalCihazOptimize: false,
             surusOptimize: false
           },
+          ozelAmac: null,
           indeksler: ["1.50", "1.60", "1.67"],
-          fiyatAraligi: { min: 11000, max: 24000 },
+          fiyatAraligi: { min: 9900, max: 24690 },
           hedefKitle: "Ilk kez progresif cam kullanacaklar",
-          aciklama: "Ilk kullaniciya kolay alisma. Standart camlara gore %30 daha genis yakin alan."
+          aciklama: "Ilk defa progresif kullanacaklar icin kusursuz adaptasyon garantisi. Standart camlara gore uzakta +%12, orta +%13, yakin +%30 daha genis gorus. Yanal bozulma %11 azaltilmis."
         }
+      ],
+      // Nikon kaplamalar (Eylul 2025 katalogu) - SeeCoat Next tum premium camlarda standart
+      kaplamalar: [
+        {
+          id: "nikon-seecoat-next",
+          ad: "SeeCoat Next",
+          tip: "anti-refle-premium",
+          ucret: 0,
+          standart: true,
+          ozellikler: {
+            uvFiltresi: "E-SPF 25",
+            antiRefle: true,
+            cizilmeyeDayanikli: "3x",
+            kolayTemizlik: "5x",
+            tozOnleyici: true,
+            lekeyeDayanikli: true,
+            suItici: true,
+            antiStatik: true,
+            diamondBooster: true
+          },
+          aciklama: "Nikon'un en dayanikli kaplamasi. Standart camlara gore 3x daha az cizilir, 5x daha kolay temizlenir. Diamond Booster teknolojisi."
+        },
+        {
+          id: "nikon-seecoat-blue-premium",
+          ad: "SeeCoat Blue Premium",
+          tip: "anti-refle-mavi-isik",
+          ucret: 4400,
+          ozellikler: {
+            uvFiltresi: "UV400",
+            antiRefle: true,
+            maviIsikFiltresi: "%35 (380-500nm)",
+            maviEmilim: true,
+            parlamaAzaltma: "%20 on / %30 arka"
+          },
+          hedefKitle: "Ekran yogun kullanicilar, teknoloji tutkunlari, kapali mekan cogunluk",
+          aciklama: "Mavi-mor isigi emerek %35 filtreler. Diger kaplamalar yansitarak calisirken bu emer - daha dogal gorunum. UV korumasi + parlama azaltma kombine."
+        },
+        {
+          id: "nikon-seecoat-bright",
+          ad: "SeeCoat Bright",
+          tip: "anti-refle-parlaklik",
+          ucret: 3960,
+          ozellikler: {
+            uvFiltresi: "UV400",
+            antiRefle: true,
+            parlaklikKatmani: true,
+            kontrastArtirimi: true,
+            losIsikDestegi: true
+          },
+          hedefKitle: "Gece calisanlari, los mekan mesaisi, 40+ yas isik hassasiyeti, los ortamda rahatsiz olanlar",
+          aciklama: "Los isikta daha parlak gorus. Kirmizi spektrum isik gecisini tamamlayan aydinlatici katman. Renk gecisini artirarak kontrast iyilestirir."
+        },
+        {
+          id: "nikon-seecoat-drive",
+          ad: "SeeCoat Drive",
+          tip: "anti-refle-surus",
+          ucret: 2530,
+          ozellikler: {
+            uvFiltresi: "UV400",
+            antiRefle: true,
+            parlamaAzaltmaFiltresi: true,
+            yesilIsikYansitmaAzaltma: true,
+            geceSurus: true
+          },
+          hedefKitle: "Sik gece surusu, gece gezginleri, gece gorusu azalan kullanicilar",
+          aciklama: "Gece surusu icin optimize. Gozlerin en hassas oldugu yesil isik yansimasini azaltir. Far, sokak lambasi kamasmasi kontrol altinda. Gunduz sezilmez."
+        },
+        {
+          id: "nikon-seecoat-blue-uv",
+          ad: "SeeCoat Blue UV",
+          tip: "anti-refle-mavi-isik",
+          ucret: 2810,
+          ozellikler: {
+            uvFiltresi: "UV400",
+            antiRefle: true,
+            maviIsikFiltresi: true
+          },
+          aciklama: "Ekonomik mavi isik filtreli AR. Blue Premium'un alt segmenti. Gunluk ekran kullanimi icin yeterli."
+        },
+        {
+          id: "nikon-seesun-blue-uv",
+          ad: "SeeSun Blue UV",
+          tip: "gunes-mavi-isik",
+          ucret: 2810,
+          gerektirir: "renklendirme",
+          ozellikler: {
+            uvFiltresi: "UV400",
+            antiRefle: true,
+            maviIsikFiltresi: true,
+            gunesCami: true
+          },
+          aciklama: "Gunes cami icin mavi isik + UV korumasi. Renklendirme ile birlikte uygulanir."
+        },
+        {
+          id: "nikon-seecoat-uv",
+          ad: "SeeCoat + UV",
+          tip: "anti-refle",
+          ucret: 2310,
+          ozellikler: {
+            uvFiltresi: "UV400",
+            antiRefle: true
+          },
+          aciklama: "Standart SeeCoat kaplama + UV. Temel AR seviyesinde koruma."
+        },
+        {
+          id: "nikon-seesun-uv",
+          ad: "SeeSun + UV",
+          tip: "gunes-anti-refle",
+          ucret: 2310,
+          gerektirir: "renklendirme",
+          ozellikler: {
+            uvFiltresi: "UV400",
+            antiRefle: true,
+            gunesCami: true
+          },
+          aciklama: "Gunes cami icin standart SeeCoat + UV. Renklendirme ile birlikte."
+        },
+        {
+          id: "nikon-ayna-kaplama",
+          ad: "Ayna Kaplama",
+          tip: "dekoratif-kaplama",
+          ucret: 5500,
+          gerektirir: "boyama>=kategori-3",
+          ozellikler: {
+            aynaKaplama: true,
+            renkler: ["Forest Green", "Gold Pink", "New Blue", "Silver"]
+          },
+          aciklama: "Dekoratif ayna kaplama. Beyaz cama uygulanmadan once Grey/Brown/Green kategori 3 boyama yapilir. 4 ayna rengi."
+        },
+        {
+          id: "nikon-zerofog",
+          ad: "ZeroFog",
+          tip: "bugu-onleyici",
+          ucret: 3630,
+          teslimEkSure: 2,
+          ozellikler: { buguOnleyici: true },
+          aciklama: "Bugu onleyici kaplama. Maske kullanimi / soguk-sicak gecisi icin. Teslim suresi +2 gun."
+        }
+      ],
+      // Nikon ozel islemler (Eylul 2025 katalogu - sayfa 38)
+      ozelIslemler: [
+        { id: "boyama-duz", ad: "Boyama Duz", ucret: 1320 },
+        { id: "boyama-degrade", ad: "Boyama Degrade", ucret: 1980 },
+        { id: "boyama-numune", ad: "Boyama Numuneye Gore", ucret: 2200 },
+        { id: "boyama-uv400", ad: "UV 400 Boyama", ucret: 1280 },
+        { id: "boyama-renk-suzer", ad: "Renk Suzer Boyama", ucret: 2750 },
+        { id: "curve", ad: "Curve (Ozel Baz)", ucret: 990 },
+        { id: "prizmatik", ad: "Prizmatik", ucret: 610 },
+        { id: "ozel-kalinlik", ad: "Ozel Kalinlik", ucret: 990 },
+        { id: "mos", ad: "MOS (Model Secimli Rx)", ucret: 990 },
+        { id: "oval-kesim", ad: "Oval Kesim", ucret: 660 },
+        { id: "optislim", ad: "Optislim (Olcekli Uretim)", ucret: 990 },
+        { id: "bls-kalinlik-dengeleme", ad: "Kalinlik Dengeleme (BLS)", ucret: 1060 },
+        { id: "nil", ad: "Nil (Nilor Kalinligi)", ucret: 1060 },
+        { id: "acil-siparis", ad: "Acil Siparis", ucret: 1100 },
+        { id: "lazer-isaret", ad: "Lazer Ozel Isaretleme", ucret: 1060 },
+        { id: "sismark", ad: "SisMark", ucret: 1060 }
       ]
     },
 
