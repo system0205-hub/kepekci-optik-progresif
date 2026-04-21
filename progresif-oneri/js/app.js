@@ -265,6 +265,35 @@ function analizBaslat() {
     sonuc.siparisBilgileri = siparisBilgileriOlustur(recete, cerceve, sonuc, powParams);
     sonuc.montajKontrolListesi = montajKontrolListesiOlustur(recete, cerceve, sonuc, ilkKullanim);
 
+    // FAZ 4: Her model icin yorum uret (yorum.js)
+    if (typeof uretYorum === "function" && sonuc.oneriler && sonuc.oneriler.length > 0) {
+      sonuc.yorumlar = [];
+      var receteYorumFormat = {
+        sag: {
+          sph: recete.sag.sph,
+          cyl: recete.sag.cyl,
+          add: recete.sag.add || (recete.yakin && recete.yakin.sag && recete.yakin.sag.sph ? recete.yakin.sag.sph - (recete.sag.sph || 0) : 0)
+        },
+        sol: {
+          sph: recete.sol.sph,
+          cyl: recete.sol.cyl,
+          add: recete.sol.add || (recete.yakin && recete.yakin.sol && recete.yakin.sol.sph ? recete.yakin.sol.sph - (recete.sol.sph || 0) : 0)
+        }
+      };
+      sonuc.oneriler.forEach(function (oneri, idx) {
+        var altModel = (idx + 1 < sonuc.oneriler.length) ? sonuc.oneriler[idx + 1].model : null;
+        var yorum = uretYorum(oneri.model, receteYorumFormat, yasamProfil, {
+          siralama: idx,
+          skor: oneri.skor || 0,
+          ilkKullanim: ilkKullanim,
+          altModel: altModel,
+          siparisEdilebilir: sonuc.siparisEdilebilir !== false,
+          secim: null // kaplama/materyal secimi UI'dan sonra doldurulur
+        });
+        sonuc.yorumlar.push({ modelId: oneri.model.id, yorum: yorum });
+      });
+    }
+
     // Son analiz sonucunu global'de tut (kopyalama ve talimati icin)
     window._sonAnaliz = sonuc;
     window._sonRecete = recete;
