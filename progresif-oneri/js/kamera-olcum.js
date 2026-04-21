@@ -297,10 +297,44 @@
       })
       .catch(function(hata) {
         console.error("Kamera hatasi:", hata);
-        if (hata.name === "NotAllowedError") {
-          bildirimGoster("Kamera izni reddedildi. Tarayici ayarlarindan kamera iznini verin.", "hata");
-        } else if (hata.name === "NotFoundError") {
-          bildirimGoster("Kamera bulunamadi. Fotograftan olcum almak icin foto olcum sayfasini kullanin.", "hata");
+        if (hata.name === "NotAllowedError" || hata.name === "PermissionDeniedError") {
+          var icerik = "<p><strong>Kamera izni reddedildi.</strong></p>" +
+            "<p style='margin-top:12px;'>Olcum yapabilmek icin tarayicinin kamerayi kullanmasina izin vermeniz gerekir.</p>" +
+            "<p style='margin-top:12px;font-weight:600;'>Izin vermek icin:</p>" +
+            "<ol style='margin:8px 0 0 20px;line-height:1.8;'>" +
+            "<li>Adres cubugunun solundaki kilit/kamera ikonuna tiklayin</li>" +
+            "<li>Kamera iznini <strong>\"Izin ver\"</strong> olarak ayarlayin</li>" +
+            "<li>Sayfayi yenileyin</li>" +
+            "</ol>" +
+            "<p style='margin-top:12px;font-size:0.85rem;color:#6b7280;'>Alternatif: Fotograftan olcum sayfasini kullanabilirsiniz.</p>";
+          if (typeof modalAc === "function") {
+            modalAc("Kamera Izni Gerekli", icerik, [
+              { text: "Sayfayi Yenile", onClick: function() { location.reload(); }, tip: "primary" },
+              { text: "Kapat", onClick: null, tip: "ghost" }
+            ]);
+          } else {
+            bildirimGoster("Kamera izni reddedildi. Tarayici ayarlarindan kamera iznini verin.", "hata");
+          }
+        } else if (hata.name === "NotFoundError" || hata.name === "DevicesNotFoundError") {
+          if (typeof modalAc === "function") {
+            modalAc("Kamera Bulunamadi",
+              "<p>Bu cihazda kamera tespit edilemedi.</p>" +
+              "<p style='margin-top:12px;'>Fotograftan olcum almak icin <strong>Foto Olcum</strong> sayfasini kullanabilirsiniz.</p>",
+              [{ text: "Tamam", onClick: null, tip: "primary" }]);
+          } else {
+            bildirimGoster("Kamera bulunamadi. Fotograftan olcum almak icin foto olcum sayfasini kullanin.", "hata");
+          }
+        } else if (hata.name === "NotReadableError" || hata.name === "TrackStartError") {
+          if (typeof modalAc === "function") {
+            modalAc("Kamera Kullanimda",
+              "<p>Kamera baska bir uygulama tarafindan kullaniliyor olabilir.</p>" +
+              "<p style='margin-top:12px;'>Kamera kullanan diger uygulamalari kapatip tekrar deneyin.</p>",
+              [{ text: "Tamam", onClick: null, tip: "primary" }]);
+          } else {
+            bildirimGoster("Kamera baska bir uygulama tarafindan kullaniliyor.", "hata");
+          }
+        } else if (hata.name === "OverconstrainedError") {
+          bildirimGoster("Kamera bu olcum cozunurlugunu desteklemiyor.", "hata");
         } else {
           bildirimGoster("Kamera acilamadi: " + hata.message, "hata");
         }

@@ -916,17 +916,19 @@
     }
     .cam-karsilastirma-grid {
       display: grid;
-      grid-template-columns: repeat(5, minmax(120px, 1fr));
+      grid-template-columns: repeat(5, minmax(140px, 1fr));
       gap: 0;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
+      scroll-snap-type: x mandatory;
     }
     .cam-sutun {
-      padding: 14px 8px;
+      padding: 14px 10px;
       text-align: center;
       border-right: 1px solid #f1f5f9;
       transition: background 0.2s ease;
-      min-width: 120px;
+      min-width: 140px;
+      scroll-snap-align: start;
     }
     .cam-sutun:last-child { border-right: none; }
     .cam-sutun.onerilen {
@@ -1017,14 +1019,33 @@
       margin-top: 2px;
     }
 
+    /* Tablet portre/yatay - 3 sutun goster + yatay kaydirma ile digerlerine erisim */
+    @media (max-width: 1024px) {
+      .cam-karsilastirma-grid {
+        grid-template-columns: none;
+        grid-auto-flow: column;
+        grid-auto-columns: minmax(calc(33.33% - 1px), 1fr);
+        overflow-x: auto;
+      }
+      .cam-sutun { min-width: 0; }
+    }
+
+    @media (max-width: 768px) {
+      .cam-karsilastirma-grid {
+        grid-auto-columns: minmax(50%, 1fr);
+      }
+      .cam-sutun { padding: 12px 6px; }
+      .cam-sutun-indeks { font-size: 1.15rem; }
+    }
+
     @media (max-width: 480px) {
       .cam-oneri-kart { padding: 18px 16px; }
       .cam-oneri-indeks { font-size: 1.2rem; }
       .cam-oneri-mesaj { padding-left: 0; font-size: 0.82rem; }
       .cam-oneri-ikon { width: 40px; height: 40px; font-size: 1.1rem; }
-      .cam-karsilastirma-grid { grid-template-columns: repeat(2, 1fr); }
-      .cam-sutun { border-bottom: 1px solid #f1f5f9; }
-      .cam-sutun-indeks { font-size: 1.1rem; }
+      .cam-karsilastirma-grid { grid-auto-columns: minmax(80%, 1fr); }
+      .cam-sutun { padding: 10px 4px; border-bottom: 1px solid #f1f5f9; }
+      .cam-sutun-indeks { font-size: 1.05rem; }
       .btn-karsilastir { margin-left: 0; }
     }
 
