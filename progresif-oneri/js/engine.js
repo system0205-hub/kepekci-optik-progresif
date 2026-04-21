@@ -4,13 +4,73 @@
 /**
  * ANA FONKSIYON: Tum analizi yapar ve sonuc dondurur
  */
-function analizEt(recete, cerceve, yasamTarziId, ilkKullanim) {
+function analizEt(recete, cerceve, yasamTarziId, ilkKullanim, opts) {
   const riskSonuc = hesaplaRiskSkoru(recete, cerceve, ilkKullanim);
   const koridorSonuc = belirleKoridorTipi(cerceve, riskSonuc.skor, recete, ilkKullanim);
   const markaOnerileri = onerMarkalar(riskSonuc.skor, koridorSonuc, yasamTarziId, ilkKullanim, recete, cerceve);
   const uyarilar = kontrolEt(recete, cerceve, koridorSonuc);
   const hastaNotlari = olusturHastaBilgilendirme(riskSonuc.skor, ilkKullanim, recete, yasamTarziId);
   const bilgiNotlari = olusturBilgiNotlari(recete, koridorSonuc, riskSonuc);
+
+  // FAZ 2: Yeni 17 Sifir Hata + 17 Edge Case kurallarinin entegrasyonu
+  // recete formatini flat yapiya cevir
+  const ctxOpts = opts || {};
+  const flatR = {
+    sagSph: parseFloat(recete.sag.sph),
+    solSph: parseFloat(recete.sol.sph),
+    sagCyl: parseFloat(recete.sag.cyl) || 0,
+    solCyl: parseFloat(recete.sol.cyl) || 0,
+    sagAks: parseFloat(recete.sag.aks),
+    solAks: parseFloat(recete.sol.aks),
+    sagAdd: parseFloat(recete.sag.add) || 0,
+    solAdd: parseFloat(recete.sol.add) || 0,
+    monokPdSag: parseFloat(recete.sag.monokPd || recete.monokPdSag),
+    monokPdSol: parseFloat(recete.sol.monokPd || recete.monokPdSol)
+  };
+  // NaN -> null (kontrol fonksiyonlari null'i tolerans olarak yorumlar)
+  Object.keys(flatR).forEach(function (k) { if (isNaN(flatR[k])) flatR[k] = null; });
+
+  const flatC = {
+    b: parseFloat(cerceve.b) || null,
+    koridorMm: koridorSonuc && koridorSonuc.koridor ? koridorSonuc.koridor : (parseFloat(cerceve.koridorMm) || null),
+    fhSag: parseFloat(cerceve.fhSag) || null,
+    fhSol: parseFloat(cerceve.fhSol) || null,
+    pantoskopikAci: parseFloat(cerceve.pantoskopikAci) || null,
+    bombeAcisi: parseFloat(cerceve.bombeAcisi) || null,
+    verteksMm: parseFloat(cerceve.verteksMm) || null,
+    a: parseFloat(cerceve.a) || null,
+    dbl: parseFloat(cerceve.dbl) || null
+  };
+
+  const fittingIhlaller = kontrolFittingGeometri(flatR, flatC, {
+    ilkKullanim: ilkKullanim,
+    premiumFreeForm: !!ctxOpts.premiumFreeForm,
+    model: ctxOpts.model || null
+  });
+  const kaplamaIhlaller = kontrolKaplamaUyumu(
+    ctxOpts.yasam || {},
+    ctxOpts.secilenMateryal || null,
+    ctxOpts.secilenKaplama || null
+  );
+  const kenarUyarilar = kontrolKenarDurumlari(flatR, flatC, {
+    yas: ctxOpts.yas || 0,
+    ilkKullanim: ilkKullanim
+  });
+
+  // Yeni uyarilari mevcut uyarilar dizisine ekle (UI uyumlu format)
+  function _seviyeToTip(s) { return s === "zorunlu" ? "kritik" : (s === "uyari" ? "uyari" : "bilgi"); }
+  fittingIhlaller.forEach(function (i) {
+    uyarilar.push({ tip: _seviyeToTip(i.seviye), kural: i.kural, mesaj: i.mesaj, oneri: i.duzelt, kaynak: "T1-fitting" });
+  });
+  kaplamaIhlaller.forEach(function (i) {
+    uyarilar.push({ tip: _seviyeToTip(i.seviye), kural: i.kural, mesaj: i.mesaj, oneri: i.duzelt, kaynak: "T3-kaplama" });
+  });
+  kenarUyarilar.forEach(function (u) {
+    uyarilar.push({
+      tip: _seviyeToTip(u.seviye), kural: u.kural, mesaj: u.mesaj,
+      oneri: u.duzelt, onerilenModeller: u.onerilenModeller, kaynak: "T2-edge"
+    });
+  });
 
   // 1D: Birlesik risk "DUR" esigi — cok yuksek risk skorlarinda kesin uyari
   if (riskSonuc.skor >= 8) {
@@ -30,6 +90,9 @@ function analizEt(recete, cerceve, yasamTarziId, ilkKullanim) {
 
   const markaOneri = markaBasliOner(riskSonuc.skor, koridorSonuc, yasamTarziId, ilkKullanim, recete, cerceve);
 
+  // siparis edilebilir mi? "kritik/zorunlu" varsa pasif
+  const siparisEdilebilir = !uyarilar.some(function (u) { return u.tip === "kritik"; });
+
   return {
     risk: riskSonuc,
     koridor: koridorSonuc,
@@ -37,7 +100,12 @@ function analizEt(recete, cerceve, yasamTarziId, ilkKullanim) {
     markaOneri: markaOneri,
     uyarilar: uyarilar,
     hastaNotlari: hastaNotlari,
-    bilgiNotlari: bilgiNotlari
+    bilgiNotlari: bilgiNotlari,
+    // FAZ 2 yeni alanlar (UI Faz 3'te tuketecek)
+    fittingIhlaller: fittingIhlaller,
+    kaplamaIhlaller: kaplamaIhlaller,
+    kenarUyarilar: kenarUyarilar,
+    siparisEdilebilir: siparisEdilebilir
   };
 }
 
@@ -917,26 +985,46 @@ function markaBasliOner(riskSkoru, koridorSonuc, yasamTarziId, ilkKullanim, rece
  * Indeks onerisi hesapla (SPH ve CYL'ye gore)
  */
 function hesaplaIndeksOnerisi(recete) {
-  var sphMax = Math.max(Math.abs(parseFloat(recete.sag.sph) || 0), Math.abs(parseFloat(recete.sol.sph) || 0));
-  var cylMax = Math.max(Math.abs(parseFloat(recete.sag.cyl) || 0), Math.abs(parseFloat(recete.sol.cyl) || 0));
+  // ES (Spherical Equivalent) = SPH + CYL/2 — indeks secimi icin ana metrik (T2)
+  var sphSag = parseFloat(recete.sag.sph) || 0;
+  var sphSol = parseFloat(recete.sol.sph) || 0;
+  var cylSag = parseFloat(recete.sag.cyl) || 0;
+  var cylSol = parseFloat(recete.sol.cyl) || 0;
+  var esSag = Math.abs(sphSag + cylSag / 2);
+  var esSol = Math.abs(sphSol + cylSol / 2);
+  var maxES = Math.max(esSag, esSol);
+  // Yuksek CYL'de ek upgrade (oblik aks bagimsiz):
+  var cylMax = Math.max(Math.abs(cylSag), Math.abs(cylSol));
 
-  if (sphMax >= 6.00) return "1.74";
-  if (sphMax >= 4.00 || cylMax >= 2.50) return "1.67";
-  if (sphMax >= 2.00 || cylMax >= 1.50) return "1.60";
-  return "1.56";
+  if (maxES >= 8.0) return "1.74";       // Plan T2: ±8+ -> 1.74 zorunlu
+  if (maxES >= 6.0) return "1.67";       // Plan T2: ±6-8 -> 1.67 zorunlu
+  if (maxES >= 4.0) return "1.67";       // Plan T2: ±4-6 -> 1.60 veya 1.67 (kozmetik); 1.67 oneri
+  if (maxES >= 3.0) return "1.60";       // Plan T2: ±3-4 -> 1.60
+  if (cylMax >= 2.50) return "1.67";     // Yuksek CYL ekstra incelik
+  if (cylMax >= 1.50) return "1.60";
+  return "1.50";                          // Plan T2: ±0-3 -> 1.50/1.56 (en yuksek Abbe)
 }
 
 /**
- * Indeks onerisi aciklamasi
+ * Indeks onerisi aciklamasi (ES merdiveni bazli)
  */
 function indeksOneriAciklama(recete) {
-  var sphMax = Math.max(Math.abs(parseFloat(recete.sag.sph) || 0), Math.abs(parseFloat(recete.sol.sph) || 0));
-  var cylMax = Math.max(Math.abs(parseFloat(recete.sag.cyl) || 0), Math.abs(parseFloat(recete.sol.cyl) || 0));
+  var sphSag = parseFloat(recete.sag.sph) || 0;
+  var sphSol = parseFloat(recete.sol.sph) || 0;
+  var cylSag = parseFloat(recete.sag.cyl) || 0;
+  var cylSol = parseFloat(recete.sol.cyl) || 0;
+  var esSag = Math.abs(sphSag + cylSag / 2);
+  var esSol = Math.abs(sphSol + cylSol / 2);
+  var maxES = Math.max(esSag, esSol);
+  var cylMax = Math.max(Math.abs(cylSag), Math.abs(cylSol));
 
-  if (sphMax >= 6.00) return "Yuksek numara nedeniyle en ince cam sart";
-  if (sphMax >= 4.00 || cylMax >= 2.50) return "Incelik ve estetik icin onerilir";
-  if (sphMax >= 2.00 || cylMax >= 1.50) return "Orta numara icin uygun";
-  return "Dusuk numara, standart kalinlik yeterli";
+  if (maxES >= 8.0) return "ES " + maxES.toFixed(2) + "D - en ince cam zorunlu (1.74)";
+  if (maxES >= 6.0) return "ES " + maxES.toFixed(2) + "D - 1.67 zorunlu";
+  if (maxES >= 4.0) return "ES " + maxES.toFixed(2) + "D - 1.67 onerilir, kozmetik icin 1.74";
+  if (maxES >= 3.0) return "ES " + maxES.toFixed(2) + "D - 1.60 yeterli";
+  if (cylMax >= 2.50) return "Yuksek CYL nedeniyle 1.67 onerilir";
+  if (cylMax >= 1.50) return "Orta CYL icin 1.60 yeterli";
+  return "Dusuk recete - 1.50 (en yuksek Abbe = en net gorus)";
 }
 
 /**
@@ -2454,4 +2542,8 @@ function kontrolKenarDurumlari(recete, cerceve, context) {
 
 if (typeof window !== "undefined") {
   window.kontrolKenarDurumlari = kontrolKenarDurumlari;
+  // FAZ 2 chunk 4: analizEt + hesaplaIndeksOnerisi'i de export (test ve embed icin)
+  if (typeof analizEt === "function") window.analizEt = analizEt;
+  if (typeof hesaplaIndeksOnerisi === "function") window.hesaplaIndeksOnerisi = hesaplaIndeksOnerisi;
+  if (typeof indeksOneriAciklama === "function") window.indeksOneriAciklama = indeksOneriAciklama;
 }
