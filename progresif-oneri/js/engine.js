@@ -1997,3 +1997,235 @@ if (typeof window !== "undefined") {
   window.toplamFiyat = toplamFiyat;
   window.filtreleUretilebilir = filtreleUretilebilir;
 }
+
+// ============================================================================
+// FAZ 2 — MOTOR GENISLETME (CHUNK 2): 17 SIFIR HATA CHECKLIST
+// Plan satir 158-178. Fitting/olcum geometri (T1) + kaplama uyumu (T3).
+// Edge case T2 kurallari Chunk 3'te kontrolKenarDurumlari() olarak eklenecek.
+//
+// Her kural { seviye, mesaj, kural, duzelt } nesnesi doner:
+//   seviye: "bilgi" | "uyari" | "zorunlu"
+//   zorunlu -> siparis butonu PASIF (red card)
+//   uyari   -> optisyen goruyor, onay gerekir
+//   bilgi   -> bilgilendirme amacli
+// ============================================================================
+
+/**
+ * Fitting / olcum geometri kurallari (T1 + T4).
+ * @param {object} recete - { sagSph, solSph, sagCyl, solCyl, sagAdd, solAdd, monokPdSag, monokPdSol }
+ * @param {object} cerceve - { b, koridorMm, fhSag, fhSol, pantoskopikAci, bombeAcisi, verteksMm, a, dbl }
+ * @param {object} secim - { model, ilkKullanim, premiumFreeForm }
+ * @returns {Array} ihlaller
+ */
+function kontrolFittingGeometri(recete, cerceve, secim) {
+  var ihlaller = [];
+  var r = recete || {};
+  var c = cerceve || {};
+  var s = secim || {};
+
+  // Kural 1: B >= (koridor + 14mm)
+  if (c.b !== undefined && c.b !== null && c.koridorMm !== undefined && c.koridorMm !== null) {
+    var minB = c.koridorMm + 14;
+    if (c.b < minB) {
+      ihlaller.push({
+        kural: "T1-1", seviye: "zorunlu",
+        mesaj: "Cerceve B yuksekligi (" + c.b + "mm) koridor (" + c.koridorMm + "mm) icin yetersiz. Minimum " + minB + "mm olmali. Okuma zonu cerceve disinda kalir.",
+        duzelt: "Ya daha derin cerceve sec, ya da daha kisa koridor (D=5/E=7/F=9) kullan."
+      });
+    }
+  }
+
+  // Kural 2: Monokuler PD sag ve sol AYRI girilmis
+  if (r.monokPdSag === undefined || r.monokPdSag === null || r.monokPdSol === undefined || r.monokPdSol === null) {
+    ihlaller.push({
+      kural: "T1-2", seviye: "zorunlu",
+      mesaj: "Monokuler PD degeri SAG ve SOL icin ayri ayri girilmelidir. Binokuler PD'yi 2'ye bolmek YASAK (yuz asimetrisi).",
+      duzelt: "Monokuler PD olcumu yap (sag/sol AYRI), ANSI Z80.1 +/- 1mm tolerans."
+    });
+  } else if (r.monokPdSag > 0 && r.monokPdSol > 0) {
+    var pdFark = Math.abs(r.monokPdSag - r.monokPdSol);
+    if (pdFark > 3) {
+      ihlaller.push({
+        kural: "T1-2b", seviye: "uyari",
+        mesaj: "Sag/Sol monokuler PD farki " + pdFark.toFixed(1) + "mm (> 3mm). Yuz asimetrisi buyuk - tekrar olc.",
+        duzelt: "Olcumu tekrarla."
+      });
+    }
+  }
+
+  // Kural 3: Sag-sol fitting height farki <= 1mm
+  if (c.fhSag !== undefined && c.fhSol !== undefined && c.fhSag !== null && c.fhSol !== null) {
+    var fhFark = Math.abs(c.fhSag - c.fhSol);
+    if (fhFark > 1) {
+      ihlaller.push({
+        kural: "T1-3", seviye: "uyari",
+        mesaj: "Sag/sol fitting height farki " + fhFark.toFixed(1) + "mm (> 1mm). Kalici prizmatik etki, bas agrisi, sasilik riski.",
+        duzelt: "Olcumu tekrarla veya hasta bilgilendir. Cerceve egik oturuyor olabilir."
+      });
+    }
+  }
+
+  // Kural 4: Fitting height koridor uzunluguna uygun (T1 tablosu: B >= koridor+14)
+  // Bu kural 1 ile ortusuyor — burada ADD yuksekse ek kontrol
+  if (c.b !== undefined && c.b !== null && r.sagAdd) {
+    var maxAdd = Math.max(r.sagAdd || 0, r.solAdd || 0);
+    if (maxAdd >= 1.75 && c.b < 28) {
+      ihlaller.push({
+        kural: "T1-4", seviye: "uyari",
+        mesaj: "ADD " + maxAdd + " + cerceve B " + c.b + "mm: okuma zonu sigmayabilir. B >= 28mm onerilir.",
+        duzelt: "Daha derin cerceve veya kisa koridor (F=9mm)."
+      });
+    }
+  }
+
+  // Kural 5: Pantoskopik aci 5-15°
+  if (c.pantoskopikAci !== undefined && c.pantoskopikAci !== null) {
+    if (c.pantoskopikAci < 5 || c.pantoskopikAci > 15) {
+      ihlaller.push({
+        kural: "T1-5", seviye: s.premiumFreeForm ? "zorunlu" : "uyari",
+        mesaj: "Pantoskopik aci " + c.pantoskopikAci + "° (ideal 8-12°, kabul 5-15°). " +
+               (s.premiumFreeForm ? "Premium FreeForm icin zorunlu ayar." : "Lens potansiyelinin %30-40'i kayip olabilir."),
+        duzelt: "Cerceveyi ayarla veya farkli model."
+      });
+    }
+  } else if (s.premiumFreeForm) {
+    ihlaller.push({
+      kural: "T1-5b", seviye: "zorunlu",
+      mesaj: "Premium FreeForm cam secildi ama pantoskopik aci girilmedi.",
+      duzelt: "Pantoskopik aci olc ve gir."
+    });
+  }
+
+  // Kural 6: |SPH| >= 4D ise verteks mesafesi girilmis
+  var maxSph = Math.max(Math.abs(r.sagSph || 0), Math.abs(r.solSph || 0));
+  if (maxSph >= 4.0) {
+    if (c.verteksMm === undefined || c.verteksMm === null) {
+      ihlaller.push({
+        kural: "T1-6", seviye: "zorunlu",
+        mesaj: "|SPH| " + maxSph.toFixed(2) + "D (>= 4D). Verteks mesafesi GIRILMEDI - kompanzasyon yapilamaz. " +
+               "2mm verteks degisimi -6D'de ~0.70D efektif guc farki yapar.",
+        duzelt: "Verteks mesafesi olc (default 13mm) ve gir."
+      });
+    }
+  }
+
+  // Kural 7: Wrap >= 10° -> sport/wrap uyumlu model
+  if (c.bombeAcisi !== undefined && c.bombeAcisi !== null && c.bombeAcisi >= 15) {
+    var modelTasarim = s.model && (s.model.ozelAmac === "sport" || (s.model.teknolojiler || []).join(" ").toLowerCase().indexOf("sport") >= 0);
+    if (!modelTasarim) {
+      ihlaller.push({
+        kural: "T1-7", seviye: "zorunlu",
+        mesaj: "Cerceve bombe " + c.bombeAcisi + "° (>= 15°). Standart progresif KULLANILAMAZ - wrap uyumlu lens zorunlu.",
+        duzelt: "Sportive / Nucleo Sport / Shamir Attitude veya wrap-uyumlu FreeForm."
+      });
+    }
+  }
+
+  // Kural 8: Ilk kullanici + koridor >= 11mm
+  if (s.ilkKullanim && c.koridorMm !== undefined && c.koridorMm !== null && c.koridorMm < 11) {
+    ihlaller.push({
+      kural: "T1-8", seviye: "uyari",
+      mesaj: "Ilk kez progresif kullanici + kisa koridor (" + c.koridorMm + "mm). Adaptasyon riski.",
+      duzelt: "Koridor >= 11mm (A/G tipi) veya yumusak tasarim (Synthesis/Presio First) sec."
+    });
+  }
+
+  // Kural 9: Anizometropi >= 1D -> monokuler PD +/-0.5mm hassasiyet
+  var sphFark = Math.abs((r.sagSph || 0) - (r.solSph || 0));
+  var cylFark = Math.abs((r.sagCyl || 0) - (r.solCyl || 0));
+  if (sphFark >= 1.0 || cylFark >= 1.0) {
+    ihlaller.push({
+      kural: "T1-9", seviye: "bilgi",
+      mesaj: "Anizometropi (SPH fark " + sphFark.toFixed(2) + "D, CYL fark " + cylFark.toFixed(2) + "D >= 1D). Monokuler PD +/-0.5mm hassasiyet gerekli.",
+      duzelt: "PD olcumunde ekstra dikkat."
+    });
+  }
+
+  // Kural 10: Premium FreeForm -> pantoskopik + wrap + verteks hepsi dolu
+  if (s.premiumFreeForm) {
+    var eksikler = [];
+    if (c.pantoskopikAci === undefined || c.pantoskopikAci === null) eksikler.push("pantoskopik aci");
+    if (c.bombeAcisi === undefined || c.bombeAcisi === null) eksikler.push("cerceve bombe");
+    if (c.verteksMm === undefined || c.verteksMm === null) eksikler.push("verteks mesafesi");
+    if (eksikler.length > 0) {
+      ihlaller.push({
+        kural: "T1-10", seviye: "zorunlu",
+        mesaj: "Premium FreeForm cam icin EKSIK olcum: " + eksikler.join(", ") + ". Camin potansiyelinin %30-40'i kayip.",
+        duzelt: "Tum olcumleri tamamla veya standart FreeForm modele dus."
+      });
+    }
+  }
+
+  return ihlaller;
+}
+
+/**
+ * Kaplama ve materyal uyum kurallari (T3).
+ * Kural 15: Surucu + sik gece surusu -> polarize degil, Drive/AR
+ * Kural 17: Sicak iklim + surucu + fotokromik tek cozum olarak onerilmiyor
+ * @param {object} yasam - { surusYuzdesi, geceSurus, sicakIklim, modernLCDPano }
+ * @param {object|null} secilenMateryal - { ad, tip, ozellik|ozellikler }
+ * @param {object|null} secilenKaplama - { ad, tip }
+ * @returns {Array} ihlaller
+ */
+function kontrolKaplamaUyumu(yasam, secilenMateryal, secilenKaplama) {
+  var ihlaller = [];
+  var y = yasam || {};
+  var m = secilenMateryal || {};
+  var k = secilenKaplama || {};
+
+  function icerir(obj, aranan) {
+    if (!obj) return false;
+    var tip = (obj.tip || "").toLowerCase();
+    var ad = (obj.ad || "").toLowerCase();
+    var oz = obj.ozellik || obj.ozellikler || {};
+    var ozStr = typeof oz === "string" ? oz.toLowerCase() : JSON.stringify(oz).toLowerCase();
+    return tip.indexOf(aranan) >= 0 || ad.indexOf(aranan) >= 0 || ozStr.indexOf(aranan) >= 0;
+  }
+
+  var isSurucu = !!y.geceSurus || (y.surusYuzdesi || 0) >= 20;
+  var sikGeceSurus = !!y.geceSurus;
+
+  // Kural 15: Surucu + sik gece surusu -> polarize/fotokromik YANLIS
+  if (sikGeceSurus || (isSurucu && (y.surusYuzdesi || 0) >= 40)) {
+    if (icerir(m, "polarize") || icerir(m, "npolar")) {
+      ihlaller.push({
+        kural: "T3-15a", seviye: "uyari",
+        mesaj: "Surucu + sik gece/yogun surus + polarize materyal: gece farlari/sokak lambalari ile sorun yaratabilir. Modern LCD pano ile cakisir.",
+        duzelt: "Polarize yerine SeeCoat Drive / PixAR DRIVE gibi parlama azaltan AR kaplama."
+      });
+    }
+    if (icerir(m, "fotokromik") || icerir(m, "transitions") || icerir(m, "wizardeon")) {
+      ihlaller.push({
+        kural: "T3-15b", seviye: "uyari",
+        mesaj: "Surucu + fotokromik: arac on cami UV'yi bloke ettigi icin fotokromik ARACTA KARARMAZ. Gundus arac kullaniminda etkisiz.",
+        duzelt: "Fotokromik ek opsiyon olabilir ama TEK COZUM olarak onerme. Ayrica gunes cami oner."
+      });
+    }
+  }
+
+  // Kural 17: Sicak iklim + surucu + fotokromik
+  if (y.sicakIklim && isSurucu && (icerir(m, "fotokromik") || icerir(m, "transitions"))) {
+    ihlaller.push({
+      kural: "T3-17", seviye: "uyari",
+      mesaj: "Sicak iklim + surucu + fotokromik: 30C+ sicaklikta koyulasma yavaslar (%72.3'e duser). Yaz gun ortasinda yetersiz koruma.",
+      duzelt: "Polarize gunes cami alternatifi veya Transitions Xtractive (sicaklik dirençli) oner."
+    });
+  }
+
+  // Polarize + modern LCD pano
+  if (y.modernLCDPano && icerir(m, "polarize")) {
+    ihlaller.push({
+      kural: "T3-P1", seviye: "uyari",
+      mesaj: "Polarize + modern LCD pano/HUD: gosterge paneli kararabilir. Arac marka/modeline gore test etmeli.",
+      duzelt: "Hasta bilgilendir veya polarize yerine AR kaplama dusun."
+    });
+  }
+
+  return ihlaller;
+}
+
+if (typeof window !== "undefined") {
+  window.kontrolFittingGeometri = kontrolFittingGeometri;
+  window.kontrolKaplamaUyumu = kontrolKaplamaUyumu;
+}
