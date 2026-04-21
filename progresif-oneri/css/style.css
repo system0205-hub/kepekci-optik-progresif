@@ -2564,3 +2564,107 @@ textarea:focus:not(:focus-visible) {
     transform: none;
   }
 }
+
+/* ============================================================
+   FAZ 4.1: YORUM KARTLARI (yorum.js renderYorumHTML ciktisi)
+   ============================================================ */
+
+.yorum-wrapper {
+  margin-bottom: 14px;
+}
+
+.yorum-karti {
+  background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+  border: 1px solid #e5e7eb;
+  border-left: 4px solid #3b82f6;
+  border-radius: 10px;
+  padding: 16px 18px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.yorum-baslik {
+  font-size: 17px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.yorum-etiket {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.yorum-etiket-mukemmel {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.yorum-etiket-uygun {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.yorum-etiket-butce-dostu {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.yorum-etiket-alternatif {
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+.yorum-bolum {
+  margin: 8px 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: #374151;
+}
+
+.yorum-bolum strong {
+  color: #111827;
+  font-weight: 600;
+}
+
+.yorum-uyari {
+  background: #fef3c7;
+  border-left: 3px solid #f59e0b;
+  padding: 8px 12px;
+  border-radius: 6px;
+  color: #78350f;
+  margin-top: 10px;
+}
+
+.yorum-fiyat {
+  background: #f0fdf4;
+  border-left: 3px solid #16a34a;
+  padding: 10px 14px;
+  border-radius: 6px;
+  margin-top: 12px;
+  font-size: 15px;
+}
+
+.yorum-fiyat strong {
+  color: #14532d;
+}
+
+@media (max-width: 640px) {
+  .yorum-karti {
+    padding: 12px 14px;
+  }
+  .yorum-baslik {
+    font-size: 15px;
+  }
+  .yorum-bolum {
+    font-size: 13px;
+  }
+}

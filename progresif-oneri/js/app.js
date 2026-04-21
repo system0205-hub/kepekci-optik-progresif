@@ -316,6 +316,9 @@ function sonuclariGoster(sonuc) {
   var sonucSection = document.getElementById("sonuc-section");
   if (!sonucSection) return;
 
+  // FAZ 4.1: Siparis durumu banner (kritik uyari varsa pasif)
+  gosterSiparisDurumu(sonuc);
+
   // Risk skoru
   gosterRiskSkoru(sonuc.risk);
 
@@ -335,6 +338,9 @@ function sonuclariGoster(sonuc) {
 
   // Uyarilar
   gosterUyarilar(sonuc.uyarilar);
+
+  // FAZ 4.1: Yorum kartlari (satis-hazir Turkce anlati)
+  gosterYorumlar(sonuc.yorumlar);
 
   // Bilgi notlari (Oblik, Minkwitz vb.)
   gosterBilgiNotlari(sonuc.bilgiNotlari);
@@ -918,6 +924,55 @@ function gosterUyarilar(uyarilar) {
         (uyari.oneri ? '<div>' + uyari.oneri + '</div>' : '') +
       '</div>';
     list.appendChild(div);
+  });
+}
+
+// ===== FAZ 4.1: SIPARIS DURUMU BANNER (kritik uyari varsa pasif) =====
+function gosterSiparisDurumu(sonuc) {
+  var section = document.getElementById("siparis-durum-section");
+  if (!section) return;
+  var edilebilir = sonuc.siparisEdilebilir !== false; // undefined ise true kabul et
+  var kritikSayi = (sonuc.uyarilar || []).filter(function (u) { return u.tip === "kritik"; }).length;
+
+  section.style.display = "block";
+  if (!edilebilir || kritikSayi > 0) {
+    section.innerHTML =
+      '<div style="background:#fef2f2;border:2px solid #dc2626;border-radius:10px;padding:16px 20px;margin:12px 0;display:flex;align-items:center;gap:14px;">' +
+        '<span style="font-size:28px;">&#9888;&#65039;</span>' +
+        '<div>' +
+          '<div style="font-weight:700;color:#991b1b;font-size:16px;margin-bottom:4px;">SIPARIS ONAYI ICIN BEKLIYOR</div>' +
+          '<div style="color:#7f1d1d;font-size:14px;">Sistemde ' + kritikSayi + ' kritik uyari var. Uyarilari cozmeden siparis verilmemeli - asagida detaylari okuyun.</div>' +
+        '</div>' +
+      '</div>';
+  } else {
+    section.innerHTML =
+      '<div style="background:#f0fdf4;border:2px solid #16a34a;border-radius:10px;padding:12px 20px;margin:12px 0;display:flex;align-items:center;gap:14px;">' +
+        '<span style="font-size:24px;">&#9989;</span>' +
+        '<div>' +
+          '<div style="font-weight:700;color:#14532d;font-size:15px;">Siparise Hazir</div>' +
+          '<div style="color:#166534;font-size:13px;">Kritik uyari yok. Optisyen onayi ile siparis verilebilir.</div>' +
+        '</div>' +
+      '</div>';
+  }
+}
+
+// ===== FAZ 4.1: YORUM KARTLARI (satis-hazir anlati) =====
+function gosterYorumlar(yorumlar) {
+  var section = document.getElementById("yorum-section");
+  var list = document.getElementById("yorum-list");
+  if (!section || !list) return;
+  if (!yorumlar || yorumlar.length === 0) {
+    section.style.display = "none";
+    return;
+  }
+  section.style.display = "block";
+  list.innerHTML = "";
+  yorumlar.forEach(function (item) {
+    if (!item || !item.yorum) return;
+    var wrapper = document.createElement("div");
+    wrapper.className = "yorum-wrapper";
+    wrapper.innerHTML = (typeof renderYorumHTML === "function") ? renderYorumHTML(item.yorum) : "";
+    list.appendChild(wrapper);
   });
 }
 
