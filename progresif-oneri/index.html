@@ -8,6 +8,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="css/design-tokens.css">
+    <link rel="stylesheet" href="css/components.css">
     <title>Kepekci Optik - Progresif Cam Oneri Sistemi</title>
     <style>
         /* ============================================================
@@ -3313,9 +3315,11 @@
     <script src="js/musteri-ui.js"></script>
 
     <!-- Tema toggle butonu -->
-    <button type="button" class="tema-toggle" id="btn-tema-toggle" title="Karanlik/Aydinlik Mod">&#9790;</button>
+    <button type="button" class="tema-toggle" id="btn-tema-toggle" title="Karanlik/Aydinlik Mod" aria-label="Karanlik/Aydinlik mod degistir" aria-pressed="false">&#9790;</button>
     <!-- Dil toggle butonu -->
-    <button type="button" class="tema-toggle" id="btn-dil-toggle" title="Dil Degistir / Change Language" style="bottom:4rem;">TR</button>
+    <button type="button" class="tema-toggle" id="btn-dil-toggle" title="Dil Degistir / Change Language" aria-label="Dili degistir" style="bottom:4rem;">TR</button>
+    <!-- A+ Font toggle butonu (Faz 7.3) -->
+    <button type="button" class="tema-toggle" id="btn-font-toggle" title="Buyuk yazi tipi (A+)" aria-label="Buyuk yazi tipi degistir" aria-pressed="false" style="bottom:7rem; font-weight:700;">A+</button>
 
     <script>
     // Service Worker kaydi (PWA / offline destek)
@@ -3343,17 +3347,46 @@
       if (kayitliTema === "dark") {
         document.documentElement.setAttribute("data-theme", "dark");
         btn.innerHTML = "&#9788;";
+        btn.setAttribute("aria-pressed", "true");
       }
       btn.addEventListener("click", function() {
         var simdikiTema = document.documentElement.getAttribute("data-theme");
         if (simdikiTema === "dark") {
           document.documentElement.removeAttribute("data-theme");
           this.innerHTML = "&#9790;";
+          this.setAttribute("aria-pressed", "false");
           localStorage.setItem("kepekci_tema", "light");
         } else {
           document.documentElement.setAttribute("data-theme", "dark");
           this.innerHTML = "&#9788;";
+          this.setAttribute("aria-pressed", "true");
           localStorage.setItem("kepekci_tema", "dark");
+        }
+      });
+    })();
+
+    // A+ Buyuk font toggle (Faz 7.3)
+    (function() {
+      var btn = document.getElementById("btn-font-toggle");
+      if (!btn) return;
+      var kayitliFont = localStorage.getItem("kepekci_font");
+      if (kayitliFont === "large") {
+        document.documentElement.setAttribute("data-font", "large");
+        btn.textContent = "A";
+        btn.setAttribute("aria-pressed", "true");
+      }
+      btn.addEventListener("click", function() {
+        var simdi = document.documentElement.getAttribute("data-font");
+        if (simdi === "large") {
+          document.documentElement.removeAttribute("data-font");
+          this.textContent = "A+";
+          this.setAttribute("aria-pressed", "false");
+          localStorage.setItem("kepekci_font", "normal");
+        } else {
+          document.documentElement.setAttribute("data-font", "large");
+          this.textContent = "A";
+          this.setAttribute("aria-pressed", "true");
+          localStorage.setItem("kepekci_font", "large");
         }
       });
     })();
