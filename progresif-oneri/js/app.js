@@ -198,7 +198,15 @@ function analizBaslat() {
   var cerceve = {
     fittingHeight: formDegeriOku("fitting_height"),
     bOlcusu: formDegeriOku("b_measure"),
-    aOlcusu: formDegeriOku("a_measure")
+    aOlcusu: formDegeriOku("a_measure"),
+    // FAZ 3: engine.js Faz 2 kontrol fonksiyonlari icin alias alanlar
+    b: formDegeriOku("b_measure"),
+    a: formDegeriOku("a_measure"),
+    pantoskopikAci: formDegeriOku("pantoskopik_egim"),
+    bombeAcisi: formDegeriOku("yuz_sarma"),
+    verteksMm: formDegeriOku("vertex_mesafe"),
+    fhSag: formDegeriOku("fitting_height"),
+    fhSol: formDegeriOku("fitting_height")
   };
 
   // 1E: Opsiyonel POW parametreleri
@@ -227,9 +235,31 @@ function analizBaslat() {
   // Hata isaretlerini temizle
   hatalariTemizle();
 
+  // FAZ 3: yasamTarzi dropdown'dan flat yasam objesi tureten mapper
+  // Faz 2 kontrol fonksiyonlari (secOzelAmac, secKaplama, secMateryal, kontrolKaplamaUyumu) icin
+  function _yasamTarziProfili(id) {
+    switch (id) {
+      case "ofis": return { ofisSaat: 8, dijitalSaat: 6 };
+      case "sofor": return { surusYuzdesi: 60, geceSurus: true };
+      case "sporcu": return { sporYogunluk: 60, bombeliCerceve: true };
+      case "muhendis": return { ofisSaat: 8, dijitalSaat: 6, yakinYogunMeslek: true };
+      case "ogretmen": return { ofisSaat: 6, dijitalSaat: 4 };
+      case "emekli": return { sporYogunluk: 20 };
+      case "esnaf": return { dijitalSaat: 2 };
+      case "ev_hanimi": return {};
+      default: return {};
+    }
+  }
+  var yasamProfil = _yasamTarziProfili(yasamTarzi);
+  var analizOpts = {
+    yasam: yasamProfil,
+    yas: formDegeriOku("hasta_yasi") || null,
+    premiumFreeForm: false // model seciminde sonradan guncellenecek
+  };
+
   // Analiz yap (try/catch ile sessiz hatalari yakala)
   try {
-    var sonuc = analizEt(recete, cerceve, yasamTarzi, ilkKullanim);
+    var sonuc = analizEt(recete, cerceve, yasamTarzi, ilkKullanim, analizOpts);
 
     // Siparis bilgileri ve montaj kontrol listesi olustur
     sonuc.siparisBilgileri = siparisBilgileriOlustur(recete, cerceve, sonuc, powParams);

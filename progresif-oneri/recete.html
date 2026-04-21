@@ -1338,6 +1338,122 @@
             </div>
           </div>
 
+          <!-- ======================================================== -->
+          <!-- FAZ 3: Gelismis Cerceve Olcumleri + Yasam Tarzi (OPSIYONEL) -->
+          <!-- ======================================================== -->
+          <details class="form-bolum-gelismis" style="margin-top:20px;padding:16px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;">
+            <summary style="cursor:pointer;font-weight:600;color:#111827;font-size:15px;">
+              Gelismis Olcumler ve Yasam Tarzi
+              <span style="font-weight:400;color:#6b7280;font-size:13px;">(opsiyonel - premium FreeForm icin onerilir)</span>
+            </summary>
+
+            <div style="margin-top:14px;">
+              <!-- Cerceve olcumleri -->
+              <h4 style="margin:10px 0 8px 0;font-size:14px;color:#374151;">Cerceve Olcumleri</h4>
+              <div class="form-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;">
+                <div class="form-satir">
+                  <label for="m_cerceve_a" style="font-size:12px;color:#6b7280;">A (sablon eni, mm)</label>
+                  <input type="number" id="m_cerceve_a" step="1" min="30" max="80" placeholder="52" inputmode="numeric" />
+                </div>
+                <div class="form-satir">
+                  <label for="m_cerceve_b" style="font-size:12px;color:#6b7280;">B (yukseklik, mm)</label>
+                  <input type="number" id="m_cerceve_b" step="1" min="20" max="60" placeholder="32" inputmode="numeric" />
+                </div>
+                <div class="form-satir">
+                  <label for="m_cerceve_dbl" style="font-size:12px;color:#6b7280;">DBL (kopru, mm)</label>
+                  <input type="number" id="m_cerceve_dbl" step="1" min="10" max="30" placeholder="18" inputmode="numeric" />
+                </div>
+                <div class="form-satir">
+                  <label for="m_cerceve_fh_sag" style="font-size:12px;color:#6b7280;">Fitting H. Sag (mm)</label>
+                  <input type="number" id="m_cerceve_fh_sag" step="0.5" min="10" max="35" placeholder="18" inputmode="decimal" />
+                </div>
+                <div class="form-satir">
+                  <label for="m_cerceve_fh_sol" style="font-size:12px;color:#6b7280;">Fitting H. Sol (mm)</label>
+                  <input type="number" id="m_cerceve_fh_sol" step="0.5" min="10" max="35" placeholder="18" inputmode="decimal" />
+                </div>
+                <div class="form-satir">
+                  <label for="m_cerceve_pantoskopik" style="font-size:12px;color:#6b7280;">Pantoskopik aci (derece)</label>
+                  <input type="number" id="m_cerceve_pantoskopik" step="1" min="0" max="30" placeholder="10" inputmode="numeric" />
+                </div>
+                <div class="form-satir">
+                  <label for="m_cerceve_bombe" style="font-size:12px;color:#6b7280;">Cerceve bombe (derece)</label>
+                  <input type="number" id="m_cerceve_bombe" step="1" min="0" max="30" placeholder="5" inputmode="numeric" />
+                </div>
+                <div class="form-satir">
+                  <label for="m_cerceve_verteks" style="font-size:12px;color:#6b7280;">Verteks mesafesi (mm)</label>
+                  <input type="number" id="m_cerceve_verteks" step="0.5" min="8" max="20" placeholder="13" inputmode="decimal" />
+                </div>
+                <div class="form-satir">
+                  <label for="m_monok_pd_sag" style="font-size:12px;color:#6b7280;">Monok PD Sag (mm)</label>
+                  <input type="number" id="m_monok_pd_sag" step="0.5" min="20" max="40" placeholder="32" inputmode="decimal" />
+                </div>
+                <div class="form-satir">
+                  <label for="m_monok_pd_sol" style="font-size:12px;color:#6b7280;">Monok PD Sol (mm)</label>
+                  <input type="number" id="m_monok_pd_sol" step="0.5" min="20" max="40" placeholder="32" inputmode="decimal" />
+                </div>
+              </div>
+
+              <!-- Yasam tarzi -->
+              <h4 style="margin:18px 0 8px 0;font-size:14px;color:#374151;">Yasam Tarzi</h4>
+              <div class="yasam-tarzi-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;">
+                <div class="form-satir">
+                  <label for="m_yasam_yas" style="font-size:12px;color:#6b7280;">Yas</label>
+                  <input type="number" id="m_yasam_yas" step="1" min="10" max="100" placeholder="50" inputmode="numeric" />
+                </div>
+                <div class="form-satir">
+                  <label for="m_yasam_surus" style="font-size:12px;color:#6b7280;">Surus yogunlugu</label>
+                  <select id="m_yasam_surus">
+                    <option value="">Sec</option>
+                    <option value="0">Yok / cok az</option>
+                    <option value="20">Haftada 1-2</option>
+                    <option value="50">Hemen her gun</option>
+                    <option value="80">Yogun (saatler)</option>
+                  </select>
+                </div>
+                <div class="form-satir" style="display:flex;align-items:center;gap:6px;">
+                  <input type="checkbox" id="m_yasam_gece_surus" />
+                  <label for="m_yasam_gece_surus" style="font-size:13px;">Sik gece surusu</label>
+                </div>
+                <div class="form-satir">
+                  <label for="m_yasam_ofis" style="font-size:12px;color:#6b7280;">Gunluk ofis/ekran (saat)</label>
+                  <input type="number" id="m_yasam_ofis" step="1" min="0" max="16" placeholder="4" inputmode="numeric" />
+                </div>
+                <div class="form-satir">
+                  <label for="m_yasam_dijital" style="font-size:12px;color:#6b7280;">Telefon/tablet (saat/gun)</label>
+                  <input type="number" id="m_yasam_dijital" step="1" min="0" max="16" placeholder="3" inputmode="numeric" />
+                </div>
+                <div class="form-satir">
+                  <label for="m_yasam_spor" style="font-size:12px;color:#6b7280;">Spor yogunlugu (%)</label>
+                  <input type="number" id="m_yasam_spor" step="5" min="0" max="100" placeholder="0" inputmode="numeric" />
+                </div>
+                <div class="form-satir" style="display:flex;align-items:center;gap:6px;">
+                  <input type="checkbox" id="m_yasam_bombeli_cerceve" />
+                  <label for="m_yasam_bombeli_cerceve" style="font-size:13px;">Bombeli (spor) cerceve</label>
+                </div>
+                <div class="form-satir" style="display:flex;align-items:center;gap:6px;">
+                  <input type="checkbox" id="m_yasam_modern_lcd" />
+                  <label for="m_yasam_modern_lcd" style="font-size:13px;">Modern arac LCD pano</label>
+                </div>
+                <div class="form-satir" style="display:flex;align-items:center;gap:6px;">
+                  <input type="checkbox" id="m_yasam_sicak_iklim" />
+                  <label for="m_yasam_sicak_iklim" style="font-size:13px;">Sicak iklim bolgesi</label>
+                </div>
+                <div class="form-satir" style="display:flex;align-items:center;gap:6px;">
+                  <input type="checkbox" id="m_yasam_yakin_meslek" />
+                  <label for="m_yasam_yakin_meslek" style="font-size:13px;">Pilot/tamirci/dis hek. (yukari yakin)</label>
+                </div>
+                <div class="form-satir" style="display:flex;align-items:center;gap:6px;">
+                  <input type="checkbox" id="m_yasam_goz_yorgun" />
+                  <label for="m_yasam_goz_yorgun" style="font-size:13px;">Goz yorgunlugu sikayeti</label>
+                </div>
+                <div class="form-satir" style="display:flex;align-items:center;gap:6px;">
+                  <input type="checkbox" id="m_yasam_ilk_progresif" />
+                  <label for="m_yasam_ilk_progresif" style="font-size:13px;">Ilk kez progresif kullanacak</label>
+                </div>
+              </div>
+            </div>
+          </details>
+
           <!-- Form butonlari -->
           <div class="form-butonlar">
             <button class="btn btn--primary" onclick="manuelReceteYukle()">

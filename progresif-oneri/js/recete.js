@@ -381,7 +381,7 @@ function gozSatiriOlustur(etiket, gozVeri) {
   html += '<div class="goz-deger-grup">';
   html += '<div class="goz-deger"><div class="goz-deger-baslik">SPH</div><div class="goz-deger-sayi ' + sphSinif + '">' + numaraFormatla(gozVeri.sph, gozVeri.sphIsaret) + '</div></div>';
   html += '<div class="goz-deger"><div class="goz-deger-baslik">CYL</div><div class="goz-deger-sayi ' + cylSinif + '">' + numaraFormatla(gozVeri.cyl, gozVeri.cylIsaret) + '</div></div>';
-  html += '<div class="goz-deger"><div class="goz-deger-baslik">AKS</div><div class="goz-deger-sayi notr">' + (gozVeri.aks || 0) + '&deg;</div></div>';
+  html += '<div class="goz-deger"><div class="goz-deger-baslik">AKS</div><div class="goz-deger-sayi notr">' + escapeHtml(gozVeri.aks || 0) + '&deg;</div></div>';
   html += '</div></div>';
   return html;
 }
