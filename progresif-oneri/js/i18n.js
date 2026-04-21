@@ -59,7 +59,27 @@ _diller.tr = {
   "bildirim.kaydedildi": "Kaydedildi!",
   "bildirim.silindi": "Silindi!",
   "bildirim.hata": "Bir hata olustu.",
-  "bildirim.kopyalandi": "Sonuclar panoya kopyalandi!"
+  "bildirim.kopyalandi": "Sonuclar panoya kopyalandi!",
+
+  // Fiyat karti
+  "fiyat.uzakGozluk": "Uzak Gozluk",
+  "fiyat.yakinGozluk": "Yakin Gozluk",
+  "fiyat.cerceve": "Cerceve",
+  "fiyat.standartCam": "Standart Cam (2 adet)",
+  "fiyat.sgkKatki": "SGK Katkisi",
+  "fiyat.magazaIndirimi": "Magaza Indirimi",
+  "fiyat.ekMagazaIndirimi": "Ek Magaza Indirimi",
+  "fiyat.paketFarki": "Paket Farki",
+  "fiyat.tutari": "Tutari",
+  "fiyat.magazaIndirimiLabel": "Magaza Indirimi:",
+  "fiyat.uygula": "Uygula",
+  "fiyat.temizle": "Temizle",
+  "fiyat.odemeTutari": "VATANDAS ODEYECEGI TUTAR",
+  "fiyat.enDusukTutar": "VATANDASIN ODEYECEGI EN DUSUK TUTAR",
+
+  // SGK / uyari mesajlari
+  "sgk.yakinGerekli": "Progresif cam icin yakin recete gerekli!",
+  "sgk.progresifBtnYok": "Progresif cam icin yakin recete gerekli (ADD hesaplanamaz)"
 };
 
 // Ingilizce
@@ -117,7 +137,27 @@ _diller.en = {
   "bildirim.kaydedildi": "Saved!",
   "bildirim.silindi": "Deleted!",
   "bildirim.hata": "An error occurred.",
-  "bildirim.kopyalandi": "Results copied to clipboard!"
+  "bildirim.kopyalandi": "Results copied to clipboard!",
+
+  // Price card
+  "fiyat.uzakGozluk": "Distance Glasses",
+  "fiyat.yakinGozluk": "Near Glasses",
+  "fiyat.cerceve": "Frame",
+  "fiyat.standartCam": "Standard Lens (2 pcs)",
+  "fiyat.sgkKatki": "SGK Contribution",
+  "fiyat.magazaIndirimi": "Store Discount",
+  "fiyat.ekMagazaIndirimi": "Additional Store Discount",
+  "fiyat.paketFarki": "Package Difference",
+  "fiyat.tutari": "Total",
+  "fiyat.magazaIndirimiLabel": "Store Discount:",
+  "fiyat.uygula": "Apply",
+  "fiyat.temizle": "Clear",
+  "fiyat.odemeTutari": "CUSTOMER PAYMENT",
+  "fiyat.enDusukTutar": "CUSTOMER MINIMUM PAYMENT",
+
+  // SGK / warning messages
+  "sgk.yakinGerekli": "Near prescription required for progressive lens!",
+  "sgk.progresifBtnYok": "Progressive lens requires near prescription (ADD cannot be calculated)"
 };
 
 /**

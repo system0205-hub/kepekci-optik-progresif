@@ -284,11 +284,15 @@ function v2yiV1eCevir(veri) {
     if (veri.u.l) sonuc.uzak.sol = gozCevir(veri.u.l);
   }
 
-  // Yakin
+  // Yakin - bos obje olusturma; sag/sol ikisi de yoksa yakin hic set edilmez
   if (veri.y) {
-    sonuc.yakin = {};
-    if (veri.y.s) sonuc.yakin.sag = gozCevir(veri.y.s);
-    if (veri.y.l) sonuc.yakin.sol = gozCevir(veri.y.l);
+    var yakinSag = veri.y.s ? gozCevir(veri.y.s) : null;
+    var yakinSol = veri.y.l ? gozCevir(veri.y.l) : null;
+    if (yakinSag || yakinSol) {
+      sonuc.yakin = {};
+      if (yakinSag) sonuc.yakin.sag = yakinSag;
+      if (yakinSol) sonuc.yakin.sol = yakinSol;
+    }
   }
 
   return sonuc;
@@ -713,38 +717,39 @@ function fiyatKartiniDoldur(veri) {
 
   var html = "";
 
-  var tipler = ["Uzak Gozluk"];
-  if (yakinVar) tipler.push("Yakin Gozluk");
+  var _t = (typeof t === "function") ? t : function(k){ return k; };
+  var tipler = [_t("fiyat.uzakGozluk")];
+  if (yakinVar) tipler.push(_t("fiyat.yakinGozluk"));
 
   for (var i = 0; i < tipler.length; i++) {
     var grupIkon = i === 0 ? "uzak-ikon" : "yakin-ikon";
     var grupEmoji = i === 0 ? "&#128065;" : "&#128214;";
-    html += '<div class="fiyat-grup-baslik"><span class="grup-ikon ' + grupIkon + '">' + grupEmoji + '</span>' + tipler[i] + '</div>';
-    html += '<div class="fiyat-satir"><span class="etiket"><span class="satir-ikon cerceve-ikon">&#128083;</span>Cerceve</span><span class="tutar">' + FIYATLAR.cerceve + ' TL</span></div>';
-    html += '<div class="fiyat-satir"><span class="etiket"><span class="satir-ikon cam-ikon">&#128308;</span>Standart Cam (2 adet)</span><span class="tutar">' + FIYATLAR.standartCam + ' TL</span></div>';
-    html += '<div class="fiyat-satir"><span class="etiket"><span class="satir-ikon sgk-ikon">&#127975;</span>SGK Katkisi</span><span class="tutar indirim">-' + FIYATLAR.sgkKatki + ' TL</span></div>';
-    html += '<div class="fiyat-satir"><span class="etiket"><span class="satir-ikon indirim-ikon">&#11088;</span>Magaza Indirimi</span><span class="tutar indirim">-' + FIYATLAR.magazaIndirimi + ' TL</span></div>';
-    html += '<div class="fiyat-satir alt-toplam"><span class="etiket">' + tipler[i] + ' Tutari</span><span class="tutar">' + formatParaTL(FIYATLAR.musteriOder) + '</span></div>';
+    html += '<div class="fiyat-grup-baslik"><span class="grup-ikon ' + grupIkon + '">' + grupEmoji + '</span>' + escapeHtml(tipler[i]) + '</div>';
+    html += '<div class="fiyat-satir"><span class="etiket"><span class="satir-ikon cerceve-ikon">&#128083;</span>' + escapeHtml(_t("fiyat.cerceve")) + '</span><span class="tutar">' + FIYATLAR.cerceve + ' TL</span></div>';
+    html += '<div class="fiyat-satir"><span class="etiket"><span class="satir-ikon cam-ikon">&#128308;</span>' + escapeHtml(_t("fiyat.standartCam")) + '</span><span class="tutar">' + FIYATLAR.standartCam + ' TL</span></div>';
+    html += '<div class="fiyat-satir"><span class="etiket"><span class="satir-ikon sgk-ikon">&#127975;</span>' + escapeHtml(_t("fiyat.sgkKatki")) + '</span><span class="tutar indirim">-' + FIYATLAR.sgkKatki + ' TL</span></div>';
+    html += '<div class="fiyat-satir"><span class="etiket"><span class="satir-ikon indirim-ikon">&#11088;</span>' + escapeHtml(_t("fiyat.magazaIndirimi")) + '</span><span class="tutar indirim">-' + FIYATLAR.magazaIndirimi + ' TL</span></div>';
+    html += '<div class="fiyat-satir alt-toplam"><span class="etiket">' + escapeHtml(tipler[i] + " " + _t("fiyat.tutari")) + '</span><span class="tutar">' + formatParaTL(FIYATLAR.musteriOder) + '</span></div>';
   }
 
   // Secilen paket fark satiri
   if (secilenPaketIndeks && paketFarki > 0) {
-    html += '<div class="fiyat-satir ek-cam"><span class="etiket"><span class="satir-ikon ekcam-ikon">&#128142;</span>' + secilenPaketIndeks + ' Paket Farki</span><span class="tutar ek-cam-tutar">+' + formatParaTL(paketFarki) + '</span></div>';
+    html += '<div class="fiyat-satir ek-cam"><span class="etiket"><span class="satir-ikon ekcam-ikon">&#128142;</span>' + escapeHtml(secilenPaketIndeks) + ' ' + escapeHtml(_t("fiyat.paketFarki")) + '</span><span class="tutar ek-cam-tutar">+' + formatParaTL(paketFarki) + '</span></div>';
   }
 
   // Manuel magaza indirimi satiri
   if (manuelMagazaIndirimi > 0) {
-    html += '<div class="fiyat-satir"><span class="etiket"><span class="satir-ikon indirim-ikon">&#11088;</span>Ek Magaza Indirimi</span><span class="tutar indirim">-' + formatParaTL(manuelMagazaIndirimi) + '</span></div>';
+    html += '<div class="fiyat-satir"><span class="etiket"><span class="satir-ikon indirim-ikon">&#11088;</span>' + escapeHtml(_t("fiyat.ekMagazaIndirimi")) + '</span><span class="tutar indirim">-' + formatParaTL(manuelMagazaIndirimi) + '</span></div>';
   }
 
   // Magaza Indirimi giris alani
   html += '<div class="ek-cam-girisi">';
   html += '<span class="ek-cam-ikon">&#11088;</span>';
-  html += '<label for="magaza_indirim_fiyat">Magaza Indirimi:</label>';
+  html += '<label for="magaza_indirim_fiyat">' + escapeHtml(_t("fiyat.magazaIndirimiLabel")) + '</label>';
   html += '<input type="number" id="magaza_indirim_fiyat" placeholder="Tutar" step="50" min="0" inputmode="numeric" value="' + (manuelMagazaIndirimi > 0 ? manuelMagazaIndirimi : '') + '" />';
   html += '<span class="birim">TL</span>';
-  html += '<button class="btn-ek-uygula" onclick="magazaIndirimiUygula()">Uygula</button>';
-  html += '<button class="btn-ek-temizle" onclick="magazaIndirimiTemizle()" style="' + (manuelMagazaIndirimi > 0 ? '' : 'display:none;') + '">Temizle</button>';
+  html += '<button class="btn-ek-uygula" onclick="magazaIndirimiUygula()">' + escapeHtml(_t("fiyat.uygula")) + '</button>';
+  html += '<button class="btn-ek-temizle" onclick="magazaIndirimiTemizle()" style="' + (manuelMagazaIndirimi > 0 ? '' : 'display:none;') + '">' + escapeHtml(_t("fiyat.temizle")) + '</button>';
   html += '</div>';
 
   container.innerHTML = html;
@@ -752,11 +757,12 @@ function fiyatKartiniDoldur(veri) {
   // Footer etiket ve toplam tutarini guncelle
   var etiketEl = document.getElementById("g_toplam_etiket");
   var toplamEl = document.getElementById("g_toplam_tutar");
+  var _t2 = (typeof t === "function") ? t : function(k){ return k; };
   if (manuelMagazaIndirimi > 0 || secilenPaketIndeks) {
-    etiketEl.textContent = "VATANDAS ODEYECEGI TUTAR";
+    etiketEl.textContent = _t2("fiyat.odemeTutari");
     toplamEl.style.color = "#fbbf24";
   } else {
-    etiketEl.textContent = "VATANDASIN ODEYECEGI EN DUSUK TUTAR";
+    etiketEl.textContent = _t2("fiyat.enDusukTutar");
     toplamEl.style.color = "#ffffff";
   }
   toplamEl.textContent = formatParaTL(toplamMusteriOder);
@@ -810,9 +816,12 @@ function tarihFormatla(tarih) {
 // ============================================================
 function progresifButonuAyarla(veri) {
   var btn = document.getElementById("btn-progresif");
-  if (!veri.yakin) {
+  // Yakin objesi yoksa VEYA sag/sol ikisi de yoksa buton disabled - ADD hesaplanamaz
+  var yakinGecerli = veri.yakin && (veri.yakin.sag || veri.yakin.sol);
+  var _t3 = (typeof t === "function") ? t : function(k){ return k; };
+  if (!yakinGecerli) {
     btn.disabled = true;
-    btn.title = "Progresif cam icin yakin recete gerekli (ADD hesaplanamaz)";
+    btn.title = _t3("sgk.progresifBtnYok");
     btn.style.opacity = "0.5";
   } else {
     btn.disabled = false;
@@ -825,12 +834,18 @@ function progresifButonuAyarla(veri) {
 // PROGRESIF ONERISINE GIT (MODUL 1 ENTEGRASYONU)
 // ============================================================
 function progresifOnerisineGit() {
-  if (!mevcutRecete || !mevcutRecete.yakin) {
-    bildirimGoster("Progresif cam icin yakin recete gerekli!", "hata");
+  var _t4 = (typeof t === "function") ? t : function(k){ return k; };
+  // Yakin objesi yoksa VEYA sag+sol ikisi de yoksa durdur
+  if (!mevcutRecete || !mevcutRecete.yakin ||
+      (!mevcutRecete.yakin.sag && !mevcutRecete.yakin.sol)) {
+    bildirimGoster(_t4("sgk.yakinGerekli"), "hata");
     return;
   }
 
   var v = mevcutRecete;
+  // Tek gozluk yakin varsa (ornegin sadece sag) digerini sag'dan kopyala
+  if (!v.yakin.sag && v.yakin.sol) v.yakin.sag = v.yakin.sol;
+  if (!v.yakin.sol && v.yakin.sag) v.yakin.sol = v.yakin.sag;
 
   // Isaret ile birlestirilmis SPH degerleri
   // Uzak SPH (isareti dahil)

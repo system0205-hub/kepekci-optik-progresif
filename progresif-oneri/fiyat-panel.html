@@ -488,16 +488,42 @@ function duzenleKaydet(kategori, key) {
   var yeniFiyat = parseFloat(input.value);
   if (isNaN(yeniFiyat) || yeniFiyat < 0) {
     bildirimGoster("Gecerli bir fiyat girin", "uyari");
+    input.focus();
     return;
   }
-  overrideKaydet(kategori, key, yeniFiyat);
 
-  // Satiri yeniden render et
-  var satir = document.getElementById("satir-" + kategori + "-" + key);
-  var degismis = isDegismis(kategori, key);
-  satir.outerHTML = fiyatSatirHTML(kategori, key, yeniFiyat, degismis);
+  // Loading feedback - input disabled + kaydet butonu spinner
+  input.disabled = true;
+  var satirEski = document.getElementById("satir-" + kategori + "-" + key);
+  var btnKaydet = satirEski && satirEski.querySelector(".fiyat-btn-kaydet");
+  var eskiBtnMetin = btnKaydet ? btnKaydet.textContent : null;
+  if (btnKaydet) {
+    btnKaydet.disabled = true;
+    btnKaydet.textContent = "Kaydediliyor...";
+    btnKaydet.style.opacity = "0.6";
+  }
 
-  bildirimGoster((URUN_ADLARI[key] || key) + ": " + formatTL(yeniFiyat), "basarili");
+  // localStorage senkron ama UX icin 120ms bekleme (hissedilir feedback)
+  setTimeout(function() {
+    try {
+      overrideKaydet(kategori, key, yeniFiyat);
+
+      // Satiri yeniden render et
+      var satir = document.getElementById("satir-" + kategori + "-" + key);
+      var degismis = isDegismis(kategori, key);
+      if (satir) satir.outerHTML = fiyatSatirHTML(kategori, key, yeniFiyat, degismis);
+
+      bildirimGoster((URUN_ADLARI[key] || key) + " guncellendi: " + formatTL(yeniFiyat), "basarili");
+    } catch (hata) {
+      bildirimGoster("Kaydetme hatasi: " + (hata && hata.message ? hata.message : hata), "hata");
+      if (btnKaydet && eskiBtnMetin !== null) {
+        btnKaydet.disabled = false;
+        btnKaydet.textContent = eskiBtnMetin;
+        btnKaydet.style.opacity = "1";
+      }
+      if (input) input.disabled = false;
+    }
+  }, 120);
 }
 
 function duzenleIptal(kategori, key) {
