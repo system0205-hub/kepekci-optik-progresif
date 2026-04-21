@@ -423,7 +423,62 @@
   <!-- Ekran Butonları -->
   <div class="ekran-butonlar">
     <button class="btn-yazdir" onclick="window.print()">Yazdır</button>
+    <button class="btn-whatsapp" id="btn-whatsapp-paylas" type="button">WhatsApp ile Gönder</button>
     <button class="btn-geri" onclick="window.close(); window.location.href='index.html';">Geri Dön</button>
+  </div>
+  <style>
+    .btn-whatsapp {
+      background: #25d366;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      margin-right: 8px;
+      min-height: 48px;
+    }
+    .btn-whatsapp:hover { background: #128c7e; }
+    .btn-whatsapp:focus-visible { outline: 3px solid #25d366; outline-offset: 2px; }
+    @media print { .btn-whatsapp { display: none; } }
+
+    /* WhatsApp modal */
+    #wa-modal {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+      display: none; align-items: center; justify-content: center;
+      z-index: 9999; padding: 16px;
+    }
+    #wa-modal.acik { display: flex; }
+    #wa-modal-icerik {
+      background: white; border-radius: 12px; padding: 24px;
+      max-width: 480px; width: 100%; max-height: 90vh; overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    #wa-modal h3 { margin: 0 0 12px; color: #128c7e; }
+    #wa-modal label { display: block; margin-top: 12px; font-size: 13px; font-weight: 600; color: #374151; }
+    #wa-modal input { width: 100%; padding: 10px; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 14px; margin-top: 4px; min-height: 48px; box-sizing: border-box; }
+    #wa-modal .wa-altlik { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; flex-wrap: wrap; }
+    #wa-modal .wa-btn { padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; min-height: 48px; font-size: 14px; }
+    #wa-modal .wa-btn-iptal { background: #e5e7eb; color: #374151; }
+    #wa-modal .wa-btn-gonder { background: #25d366; color: white; }
+    #wa-modal .wa-onizleme { background: #f3f4f6; border-radius: 6px; padding: 12px; margin-top: 8px; font-size: 13px; white-space: pre-wrap; font-family: monospace; max-height: 160px; overflow-y: auto; line-height: 1.5; color: #1f2937; }
+  </style>
+
+  <!-- Faz 10: WhatsApp Paylasim Modal -->
+  <div id="wa-modal" role="dialog" aria-modal="true" aria-labelledby="wa-modal-baslik">
+    <div id="wa-modal-icerik">
+      <h3 id="wa-modal-baslik">WhatsApp ile Gonder</h3>
+      <p style="font-size:13px; color:#64748b; margin-top:4px;">Hasta telefon numarasini girin. Talimatlar WhatsApp uzerinden gonderilecek.</p>
+      <label for="wa-tel">Hasta Telefonu</label>
+      <input type="tel" id="wa-tel" placeholder="05XX XXX XX XX" autocomplete="tel" inputmode="tel">
+      <label for="wa-onizleme" style="margin-top:12px;">Mesaj Onizleme</label>
+      <div class="wa-onizleme" id="wa-onizleme" role="textbox" aria-readonly="true"></div>
+      <div class="wa-altlik">
+        <button type="button" class="wa-btn wa-btn-iptal" id="btn-wa-iptal">Iptal</button>
+        <button type="button" class="wa-btn wa-btn-gonder" id="btn-wa-gonder">WhatsApp'a Git</button>
+      </div>
+    </div>
   </div>
 
   <div class="sayfa">
@@ -667,6 +722,99 @@
         icerikDiv.innerHTML = html;
       }
     })();
+
+  // Faz 10: WhatsApp paylasim
+  (function() {
+    'use strict';
+    var btnAc = document.getElementById('btn-whatsapp-paylas');
+    var modal = document.getElementById('wa-modal');
+    var btnIptal = document.getElementById('btn-wa-iptal');
+    var btnGonder = document.getElementById('btn-wa-gonder');
+    var telInput = document.getElementById('wa-tel');
+    var onizleme = document.getElementById('wa-onizleme');
+    if (!btnAc || !modal) return;
+
+    function mesajOlustur() {
+      var isim = (document.getElementById('isimSoyisim') || {}).value || '';
+      var bugun = new Date().toLocaleDateString('tr-TR');
+      var satirlar = [
+        '*Kepekci Optik - Progresif Cam Kullanim Talimati*',
+        '',
+        isim ? ('Sayin ' + isim + ',') : 'Merhaba,',
+        '',
+        'Yeni progresif camlarinizla rahat gormeniz icin asagidaki talimatlari okuyun:',
+        '',
+        '1) Ilk 1-2 hafta: yavas kafa hareketleri yapin, gozlerinizi dogrudan hedefe cevirin',
+        '2) Okumak icin: basi hafif kaldirin, bakislarla asagi inin',
+        '3) Merdiven: basi ONE egin, ust camdan bakin',
+        '4) Arac kullanirken: panel/ayna icin basi hafif kaldirin',
+        '5) Bas donmesi olursa: 1-2 gun gunluk 2-3 saat takin, surtunme aliskanliga kadar',
+        '',
+        'Uyum sureci 1-2 haftadir. Rahatsizlik surerse gelin ayarlayalim.',
+        '',
+        'Saglikli gunler dileriz.',
+        'Kepekci Optik - Kilis',
+        'Tel: 0506 905 55 70',
+        '',
+        'Tarih: ' + bugun
+      ];
+      return satirlar.join('\n');
+    }
+
+    function telTemizle(t) {
+      var temiz = String(t || '').replace(/\D/g, '');
+      if (temiz.length === 10 && !temiz.startsWith('0')) temiz = '0' + temiz;
+      if (temiz.length === 11 && temiz.startsWith('0')) temiz = '90' + temiz.substring(1);
+      if (temiz.length === 12 && temiz.startsWith('90')) return temiz;
+      return null;
+    }
+
+    function modalAc() {
+      onizleme.textContent = mesajOlustur();
+      modal.classList.add('acik');
+      setTimeout(function() { telInput.focus(); }, 50);
+    }
+    function modalKapat() {
+      modal.classList.remove('acik');
+      btnAc.focus();
+    }
+
+    btnAc.addEventListener('click', modalAc);
+    btnIptal.addEventListener('click', modalKapat);
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) modalKapat();
+    });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && modal.classList.contains('acik')) modalKapat();
+    });
+
+    // Isim degistikce onizleme guncelle
+    var isimAlan = document.getElementById('isimSoyisim');
+    if (isimAlan) {
+      isimAlan.addEventListener('input', function() {
+        if (modal.classList.contains('acik')) {
+          onizleme.textContent = mesajOlustur();
+        }
+      });
+    }
+
+    btnGonder.addEventListener('click', function() {
+      var tel = telTemizle(telInput.value);
+      if (!tel) {
+        telInput.setAttribute('aria-invalid', 'true');
+        telInput.style.borderColor = '#ef4444';
+        telInput.focus();
+        alert('Lutfen gecerli bir telefon numarasi girin.\nOrnek: 0506 XXX XX XX');
+        return;
+      }
+      telInput.removeAttribute('aria-invalid');
+      telInput.style.borderColor = '';
+      var mesaj = encodeURIComponent(mesajOlustur());
+      var waUrl = 'https://wa.me/' + tel + '?text=' + mesaj;
+      window.open(waUrl, '_blank', 'noopener');
+      modalKapat();
+    });
+  })();
   </script>
 </body>
 </html>
