@@ -1244,7 +1244,14 @@
 
           <!-- Hasta Bilgileri -->
           <div class="goz-bolumu">
-            <h3>Hasta Bilgileri</h3>
+            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
+              <h3 style="margin:0;">Hasta Bilgileri</h3>
+              <!-- Faz 8: OCR Recete Fotograf Yukle -->
+              <button type="button" class="kp-btn kp-btn-disline" id="btn-ocr-ac" style="display:inline-flex; gap:8px;">
+                <span aria-hidden="true">📷</span>
+                <span>Recete Fotografi</span>
+              </button>
+            </div>
             <div class="hasta-bilgi-form">
               <div>
                 <label for="m_hasta_ad">Ad Soyad</label>
@@ -1591,6 +1598,186 @@
 
   <!-- JS -->
   <script src="js/recete.js"></script>
+  <script src="js/ocr.js"></script>
+
+  <!-- Faz 8: OCR Modal (Recete Fotograf Tanima) -->
+  <div class="kp-modal-ortu" id="ocr-modal" hidden role="dialog" aria-modal="true" aria-labelledby="ocr-modal-baslik">
+    <div class="kp-modal kp-modal-buyuk">
+      <div class="kp-modal-baslik">
+        <h3 class="kp-h3" id="ocr-modal-baslik">📷 Recete Fotografi Tanima</h3>
+        <button class="kp-modal-kapat" type="button" aria-label="Modal kapat" data-ocr-kapat>&times;</button>
+      </div>
+      <div class="kp-modal-govde">
+        <!-- Asama 1: Dosya sec -->
+        <div id="ocr-asama-sec">
+          <p class="kp-p">Recete fotografini yukleyin. Kamera ile cekebilir veya galeriden secebilirsiniz.</p>
+          <p class="kp-p kp-p-soluk" style="font-size:13px;">Netlik onemli: metin okunabilir, parlamasiz, kenarlar kirpilmamis olmali.</p>
+          <div style="margin:16px 0;">
+            <label for="ocr-dosya" class="kp-btn kp-btn-buyuk kp-btn-tamgenislik" style="cursor:pointer;">
+              <span aria-hidden="true" style="font-size:24px;">📷</span>
+              <span>Fotograf Sec veya Cek</span>
+            </label>
+            <input type="file" id="ocr-dosya" accept="image/*" capture="environment" style="display:none;" aria-label="Recete fotografi">
+          </div>
+          <div style="padding:12px;background:var(--color-warning-bg);border-left:3px solid var(--color-warning);border-radius:6px;font-size:13px;">
+            <strong>Dikkat:</strong> OCR %80-90 dogrulukta calisir. Sonuclari MUTLAKA kontrol edin, ardindan "Forma Doldur" basin. Yanlis deger = yanlis cam siparisi.
+          </div>
+        </div>
+
+        <!-- Asama 2: Onizleme + tarama -->
+        <div id="ocr-asama-tara" hidden>
+          <div style="margin-bottom:12px; text-align:center;">
+            <img id="ocr-onizleme" alt="Recete onizleme" style="max-width:100%; max-height:300px; border-radius:8px; border:1px solid var(--yuzey-sinir);">
+          </div>
+          <div id="ocr-ilerleme-kapsayici" style="margin:12px 0;">
+            <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:4px;">
+              <span>Taraniyor...</span>
+              <span id="ocr-yuzde">0%</span>
+            </div>
+            <div style="height:8px; background:var(--yuzey-ucuncul); border-radius:4px; overflow:hidden;">
+              <div id="ocr-ilerleme-bar" style="height:100%; background:var(--color-primary); width:0%; transition:width 200ms ease;"></div>
+            </div>
+            <p id="ocr-durum-mesaj" style="font-size:13px; color:var(--yuzey-govde-soluk); margin-top:6px;">Tesseract.js indiriliyor (ilk tarama 2-3 dakika surebilir)...</p>
+          </div>
+        </div>
+
+        <!-- Asama 3: Sonuc dogrulama -->
+        <div id="ocr-asama-dogrula" hidden>
+          <p class="kp-p"><strong>Bulunan degerler</strong> (kontrol edin):</p>
+          <div id="ocr-sonuc-tablosu" style="background:var(--yuzey-ikincil); padding:12px; border-radius:8px;"></div>
+          <details style="margin-top:12px;">
+            <summary style="cursor:pointer; font-size:13px; color:var(--yuzey-govde-soluk);">Ham OCR metnini goster</summary>
+            <pre id="ocr-raw-metin" style="background:var(--yuzey-ucuncul); padding:8px; border-radius:6px; font-size:12px; overflow-x:auto; margin-top:8px;"></pre>
+          </details>
+        </div>
+
+        <!-- Asama 4: Hata -->
+        <div id="ocr-asama-hata" hidden>
+          <div style="padding:16px; background:var(--color-critical-bg); border-left:4px solid var(--color-critical); border-radius:6px;">
+            <strong style="color:var(--color-critical-dark);">OCR basarisiz</strong>
+            <p id="ocr-hata-mesaj" class="kp-p" style="margin-top:6px;"></p>
+          </div>
+        </div>
+      </div>
+      <div class="kp-modal-altlik">
+        <button class="kp-btn kp-btn-ikincil" type="button" data-ocr-kapat>Vazgec</button>
+        <button class="kp-btn kp-btn-ikincil" type="button" id="btn-ocr-yeniden" hidden>Yeniden dene</button>
+        <button class="kp-btn kp-btn-basari" type="button" id="btn-ocr-doldur" hidden>Forma Doldur</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Faz 8: OCR JavaScript -->
+  <script>
+  (function() {
+    'use strict';
+    var modal = document.getElementById('ocr-modal');
+    var btnAc = document.getElementById('btn-ocr-ac');
+    var dosyaInput = document.getElementById('ocr-dosya');
+    var asamaSec = document.getElementById('ocr-asama-sec');
+    var asamaTara = document.getElementById('ocr-asama-tara');
+    var asamaDogrula = document.getElementById('ocr-asama-dogrula');
+    var asamaHata = document.getElementById('ocr-asama-hata');
+    var onizleme = document.getElementById('ocr-onizleme');
+    var ilerlemeBar = document.getElementById('ocr-ilerleme-bar');
+    var yuzdeEl = document.getElementById('ocr-yuzde');
+    var durumMesaj = document.getElementById('ocr-durum-mesaj');
+    var sonucTablo = document.getElementById('ocr-sonuc-tablosu');
+    var rawEl = document.getElementById('ocr-raw-metin');
+    var hataEl = document.getElementById('ocr-hata-mesaj');
+    var btnDoldur = document.getElementById('btn-ocr-doldur');
+    var btnYeniden = document.getElementById('btn-ocr-yeniden');
+
+    var sonParseVeri = null;
+    var oncekiOdak = null;
+
+    function modalAc() {
+      modal.hidden = false;
+      oncekiOdak = document.activeElement;
+      asamaGoster('sec');
+      dosyaInput.value = '';
+      setTimeout(function() {
+        var firstFocus = modal.querySelector('label[for="ocr-dosya"]');
+        if (firstFocus) firstFocus.focus();
+      }, 50);
+      document.body.style.overflow = 'hidden';
+    }
+    function modalKapat() {
+      modal.hidden = true;
+      document.body.style.overflow = '';
+      if (oncekiOdak && oncekiOdak.focus) oncekiOdak.focus();
+    }
+
+    function asamaGoster(ad) {
+      asamaSec.hidden = ad !== 'sec';
+      asamaTara.hidden = ad !== 'tara';
+      asamaDogrula.hidden = ad !== 'dogrula';
+      asamaHata.hidden = ad !== 'hata';
+      btnDoldur.hidden = ad !== 'dogrula';
+      btnYeniden.hidden = ad === 'sec' || ad === 'tara';
+    }
+
+    if (btnAc) btnAc.addEventListener('click', modalAc);
+    modal.querySelectorAll('[data-ocr-kapat]').forEach(function(b) {
+      b.addEventListener('click', modalKapat);
+    });
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) modalKapat();
+    });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && !modal.hidden) modalKapat();
+    });
+
+    dosyaInput.addEventListener('change', function() {
+      var file = dosyaInput.files && dosyaInput.files[0];
+      if (!file) return;
+      if (!file.type.match(/^image\//)) {
+        hataEl.textContent = 'Lutfen bir resim dosyasi secin';
+        asamaGoster('hata');
+        return;
+      }
+      asamaGoster('tara');
+      ilerlemeBar.style.width = '0%';
+      yuzdeEl.textContent = '0%';
+      durumMesaj.textContent = window.Tesseract ? 'OCR baslatiliyor...' : 'Tesseract.js indiriliyor (ilk tarama 2-3 dakika surebilir)...';
+
+      window.KepekciOCR.dosyayiOku(file).then(function(dataUrl) {
+        onizleme.src = dataUrl;
+        return window.KepekciOCR.ocrCalistir(dataUrl, function(yuzde) {
+          ilerlemeBar.style.width = yuzde + '%';
+          yuzdeEl.textContent = yuzde + '%';
+          durumMesaj.textContent = 'OCR calisiyor, lutfen bekleyin...';
+        });
+      }).then(function(metin) {
+        rawEl.textContent = metin || '(OCR sonuc bos)';
+        sonParseVeri = window.KepekciOCR.receteyiParse(metin);
+        sonucTablo.innerHTML = window.KepekciOCR.dogrulamaTablosuHtml(sonParseVeri);
+        asamaGoster('dogrula');
+      }).catch(function(err) {
+        console.error('OCR hatasi:', err);
+        hataEl.textContent = err.message || 'Bilinmeyen hata. Internet baglantinizi kontrol edin.';
+        asamaGoster('hata');
+      });
+    });
+
+    btnDoldur.addEventListener('click', function() {
+      if (!sonParseVeri) return;
+      window.KepekciOCR.formaDoldur(sonParseVeri);
+      modalKapat();
+      // Bildirim
+      if (typeof bildirimGoster === 'function') {
+        bildirimGoster('Recete alanlari dolduruldu - kontrol edin', 'basarili');
+      }
+    });
+
+    btnYeniden.addEventListener('click', function() {
+      sonParseVeri = null;
+      asamaGoster('sec');
+      dosyaInput.value = '';
+    });
+  })();
+  </script>
+
   <!-- Faz 7.5: Stepper state yonetimi -->
   <script>
   (function() {
