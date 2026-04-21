@@ -2440,6 +2440,37 @@
          ============================================================ -->
     <main class="main">
 
+        <!-- Faz 7.5: 5-Step Flow Indicator -->
+        <nav aria-label="Siparis akisi" style="margin-bottom:24px; padding: 0 16px;">
+          <ol class="kp-stepper" id="akis-stepper" role="list">
+            <li class="kp-step" data-durum="tamam">
+              <button class="kp-step-dugme" type="button" aria-label="1. adim: Recete"><span class="kp-step-numara">1</span></button>
+              <span class="kp-step-etiket">Recete</span>
+            </li>
+            <span class="kp-step-cizgi" data-tamam="true"></span>
+            <li class="kp-step" data-durum="tamam">
+              <button class="kp-step-dugme" type="button" aria-label="2. adim: Yasam tarzi"><span class="kp-step-numara">2</span></button>
+              <span class="kp-step-etiket">Yasam</span>
+            </li>
+            <span class="kp-step-cizgi" data-tamam="true"></span>
+            <li class="kp-step" data-durum="aktif">
+              <button class="kp-step-dugme" type="button" aria-current="step" aria-label="3. adim: Oneriler"><span class="kp-step-numara">3</span></button>
+              <span class="kp-step-etiket">Oneriler</span>
+            </li>
+            <span class="kp-step-cizgi"></span>
+            <li class="kp-step" data-durum="bekle">
+              <button class="kp-step-dugme" type="button" aria-label="4. adim: Yorum"><span class="kp-step-numara">4</span></button>
+              <span class="kp-step-etiket">Yorum</span>
+            </li>
+            <span class="kp-step-cizgi"></span>
+            <li class="kp-step" data-durum="bekle">
+              <button class="kp-step-dugme" type="button" aria-label="5. adim: Siparis"><span class="kp-step-numara">5</span></button>
+              <span class="kp-step-etiket">Siparis</span>
+            </li>
+          </ol>
+          <div class="kp-gorsel-gizli" id="akis-stepper-anons" role="status" aria-live="polite"></div>
+        </nav>
+
         <!-- ========== FORM SECTION ========== -->
         <section id="form-section">
 
@@ -3388,6 +3419,90 @@
           this.setAttribute("aria-pressed", "true");
           localStorage.setItem("kepekci_font", "large");
         }
+      });
+    })();
+
+    // Faz 7.5: Stepper state yonetimi (URL param + event wrapping)
+    (function() {
+      'use strict';
+      var stepler = document.querySelectorAll('#akis-stepper .kp-step');
+      var cizgiler = document.querySelectorAll('#akis-stepper .kp-step-cizgi');
+      var anons = document.getElementById('akis-stepper-anons');
+      if (!stepler.length) return;
+
+      function adimaGit(adim) {
+        stepler.forEach(function(step, i) {
+          var no = i + 1;
+          var btn = step.querySelector('.kp-step-dugme');
+          if (no < adim) {
+            step.dataset.durum = 'tamam';
+            if (btn) btn.removeAttribute('aria-current');
+          } else if (no === adim) {
+            step.dataset.durum = 'aktif';
+            if (btn) btn.setAttribute('aria-current', 'step');
+          } else {
+            step.dataset.durum = 'bekle';
+            if (btn) btn.removeAttribute('aria-current');
+          }
+        });
+        cizgiler.forEach(function(c, i) {
+          if (i + 1 < adim) c.setAttribute('data-tamam', 'true');
+          else c.removeAttribute('data-tamam');
+        });
+        var etiketler = ['Recete', 'Yasam tarzi', 'Oneriler', 'Yorum', 'Siparis'];
+        if (anons && etiketler[adim-1]) {
+          anons.textContent = (adim) + '. adim: ' + etiketler[adim-1];
+        }
+      }
+      window.akisAdimaGit = adimaGit;
+
+      // URL'den recete param'i geldiyse step 3 baslangic
+      var urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.has('od_sph') || urlParams.has('os_sph')) {
+        adimaGit(3);
+      }
+
+      // gosterYorumlar cagrildiginda step 4 aktif
+      if (typeof window.gosterYorumlar === 'function') {
+        var _origYorum = window.gosterYorumlar;
+        window.gosterYorumlar = function(yorumlar) {
+          var sonuc = _origYorum.apply(this, arguments);
+          if (yorumlar && yorumlar.length > 0) adimaGit(4);
+          return sonuc;
+        };
+      }
+
+      // gosterSiparisDurumu cagrildiginda step 5 aktif
+      if (typeof window.gosterSiparisDurumu === 'function') {
+        var _origSiparis = window.gosterSiparisDurumu;
+        window.gosterSiparisDurumu = function(sonuc) {
+          var out = _origSiparis.apply(this, arguments);
+          adimaGit(5);
+          return out;
+        };
+      }
+
+      // Stepler tiklanabilir — daha onceki adima scroll
+      stepler.forEach(function(step, i) {
+        var btn = step.querySelector('.kp-step-dugme');
+        if (!btn) return;
+        btn.addEventListener('click', function() {
+          var no = i + 1;
+          var hedefId;
+          if (no === 3) hedefId = 'siparis-durum-section';
+          else if (no === 4) hedefId = 'yorum-section';
+          else if (no === 5) hedefId = 'siparis-durum-section';
+          if (hedefId) {
+            var hedef = document.getElementById(hedefId);
+            if (hedef && hedef.style.display !== 'none' && hedef.scrollIntoView) {
+              hedef.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          }
+          if (no <= 2) {
+            // Recete sayfasina donus
+            window.location.href = 'recete.html';
+          }
+        });
       });
     })();
     </script>
