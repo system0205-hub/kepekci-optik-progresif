@@ -520,14 +520,18 @@ window.LENS_DATABASE = {
       oncelik: 4,
       uyumGarantisi: false,
       modeller: [
+        // ============ PREMIUM PROGRESIF (Mart 2026 Novax katalogu) ============
         {
           id: "novax-synthesis",
-          ad: "Synthesis",
+          ad: "Synthesis Progresif",
           seviye: "premium",
-          tasarim: "freeform",
+          tasarim: "freeform-morphing",
+          ozelAmac: null,
           koridorlar: [],
           minFittingHeight: 14,
-          teknolojiler: ["Yapay Zeka", "VR Gorsel Harita"],
+          uyumGarantisi: false,
+          vrGerektirir: true,
+          teknolojiler: ["Gaze Analyzer", "Stabilis", "DuoBalance", "OptiPure", "DigitAll", "MidPoint Plus", "SlimEdge", "AutoFit", "Morphing Tasarim"],
           ozellikler: {
             genisMesafe: true,
             genisYakin: true,
@@ -537,22 +541,251 @@ window.LENS_DATABASE = {
             surusOptimize: true
           },
           indeksler: ["1.50", "1.61", "1.67", "1.74"],
-          fiyatAraligi: { min: 29500, max: 96500 },
-          hedefKitle: "En ust seviye, kisisel deneyim arayanlar",
-          aciklama: "VR gozluk ile goz/bas hareketi analizi. Yapay zeka ile tamamen kisisel tasarim."
+          fiyatAraligi: { min: 32500, max: 105500 },
+          hedefKitle: "Performans beklentisi cok yuksek olan progresif cam kullanicilari",
+          aciklama: "VR cihazi ile bakis dinamikleri haritasi. Morphing Tasarim ile kisiye ozel. Yapay zeka optimizasyonu. Beyaz 1.50=32.500TL, 1.74=70.500TL. Fotokromik/polarize varyantlar dahil max 105.500TL."
+        },
+        {
+          id: "novax-nucleo-5d-progresif",
+          ad: "Nucleo 5D Progresif",
+          seviye: "premium",
+          tasarim: "freeform-personalized",
+          ozelAmac: null,
+          koridorlar: [],
+          minFittingHeight: 14,
+          uyumGarantisi: false,
+          teknolojiler: ["Front Surface Innovation", "Rayform AI", "AmplifEye", "Stabilis", "DuoBalance", "DigitAll", "MidPoint Plus", "FlexiFit"],
+          ozellikler: {
+            genisMesafe: true,
+            genisYakin: true,
+            genisOrta: true,
+            yuzmeEtkisiAzaltma: true,
+            dijitalCihazOptimize: true,
+            surusOptimize: false
+          },
+          indeksler: ["1.50", "1.61", "1.67", "1.74"],
+          fiyatAraligi: { min: 24500, max: 91500 },
+          hedefKitle: "Mukemmel gorus deneyimi arayan progresif cam kullanicilari",
+          aciklama: "Stabilis metodolojisi ile binoculer gorus. 4 kisisel konfigurasyon (Dengeli/Uzak/Orta/Yakin). Rayform AI ile akomodasyon hesabi."
+        },
+        {
+          id: "novax-nexus-4d",
+          ad: "Nexus 4D",
+          seviye: "premium",
+          tasarim: "freeform-personalized",
+          ozelAmac: null,
+          koridorlar: [],
+          minFittingHeight: 14,
+          uyumGarantisi: false,
+          teknolojiler: ["AmplifEye", "Stabilis", "DuoBalance", "OptiPure", "DigitAll", "MidPoint Plus", "SlimEdge"],
+          ozellikler: {
+            genisMesafe: true,
+            genisYakin: true,
+            genisOrta: true,
+            yuzmeEtkisiAzaltma: false,
+            dijitalCihazOptimize: true,
+            surusOptimize: false
+          },
+          indeksler: ["1.50", "1.58", "1.61", "1.67", "1.74"],
+          fiyatAraligi: { min: 20500, max: 74000 },
+          hedefKitle: "Gorus deneyimini yasam tarzina gore ozellestirmek isteyenler",
+          aciklama: "YENI. 4 konfigurasyon (+30% Uzak/Orta/Yakin + %20 Dengeli). Ilk kez progresif cam kullananlar icin kolay adaptasyon. Bombeli cerceve destegi."
+        },
+        {
+          id: "novax-trion-3d",
+          ad: "Trion 3D 2.0",
+          seviye: "premium",
+          tasarim: "freeform-personalized",
+          ozelAmac: null,
+          koridorlar: [],
+          minFittingHeight: 14,
+          uyumGarantisi: false,
+          teknolojiler: ["Rayform AI", "Stabilis", "DuoBalance", "DigitAll", "MidPoint Plus"],
+          ozellikler: {
+            genisMesafe: true,
+            genisYakin: true,
+            genisOrta: true,
+            yuzmeEtkisiAzaltma: false,
+            dijitalCihazOptimize: true,
+            surusOptimize: false
+          },
+          indeksler: ["1.50", "1.58", "1.61", "1.67", "1.74"],
+          fiyatAraligi: { min: 16500, max: 70000 },
+          hedefKitle: "Gorus deneyiminde ideal performans arayanlar",
+          aciklama: "YENI. 3D ic yuzey tasarim. Cerceve parametreleri (PD/pantoskopik/verteks/bombe) ile uretim."
+        },
+        // ============ PREMIUM OZEL AMACLI ============
+        {
+          id: "novax-synthesis-ofis",
+          ad: "Synthesis Ofis (Degresif)",
+          seviye: "premium",
+          tasarim: "freeform-morphing-degresif",
+          ozelAmac: "ofis",
+          koridorlar: [],
+          minFittingHeight: 14,
+          uyumGarantisi: false,
+          vrGerektirir: true,
+          teknolojiler: ["Gaze Analyzer", "OptiPure", "MidPoint Plus", "SlimEdge"],
+          ozellikler: {
+            genisMesafe: false,
+            genisYakin: true,
+            genisOrta: true,
+            yuzmeEtkisiAzaltma: false,
+            dijitalCihazOptimize: true,
+            surusOptimize: false
+          },
+          indeksler: ["1.50", "1.61", "1.67", "1.74"],
+          fiyatAraligi: { min: 26500, max: 66500 },
+          hedefKitle: "Farkli calisma alanlarina gore net gorus isteyen kullanicilar",
+          aciklama: "Ofis/ic mekan icin kisiye ozel degresif. VR ile bakis dinamigi. UZAK SURUS ICIN UYGUN DEGIL."
+        },
+        {
+          id: "novax-nucleo-5d-ofis",
+          ad: "Nucleo 5D Ofis",
+          seviye: "premium",
+          tasarim: "freeform-degresif",
+          ozelAmac: "ofis",
+          koridorlar: [],
+          minFittingHeight: 14,
+          uyumGarantisi: false,
+          teknolojiler: ["Front Surface Innovation", "Rayform AI", "MidPoint Plus"],
+          ozellikler: {
+            genisMesafe: false,
+            genisYakin: true,
+            genisOrta: true,
+            yuzmeEtkisiAzaltma: false,
+            dijitalCihazOptimize: true,
+            surusOptimize: false
+          },
+          indeksler: ["1.50", "1.61", "1.67", "1.74"],
+          fiyatAraligi: { min: 21500, max: 61500 },
+          hedefKitle: "Gun boyu ekran kullanan secik presbiyoplar",
+          aciklama: "4 calisma mesafe secenegi: 1.3m (yakin ofis), 2m (orta ofis), 4m (genis oda), 6m (cok genis). UZAK SURUS ICIN UYGUN DEGIL."
+        },
+        {
+          id: "novax-nucleo-5d-drive",
+          ad: "Nucleo 5D Drive",
+          seviye: "premium",
+          tasarim: "freeform-personalized",
+          ozelAmac: "drive",
+          koridorlar: [],
+          minFittingHeight: 14,
+          uyumGarantisi: false,
+          teknolojiler: ["Front Surface Innovation", "Rayform AI", "Stabilis", "DuoBalance", "DigitAll", "MidPoint Plus", "FlexiFit"],
+          ozellikler: {
+            genisMesafe: true,
+            genisYakin: true,
+            genisOrta: true,
+            yuzmeEtkisiAzaltma: false,
+            dijitalCihazOptimize: false,
+            surusOptimize: true
+          },
+          indeksler: ["1.50", "1.61", "1.67", "1.74"],
+          fiyatAraligi: { min: 26500, max: 93500 },
+          hedefKitle: "Gece suruslerinde konfor arayan presbiyoplar",
+          aciklama: "Gece miyopisi telafisi (ust bolge -0.25D). Uzak %70, uzak-orta %45 genis. Astigmatik etki -%14.6."
+        },
+        {
+          id: "novax-nucleo-5d-sport",
+          ad: "Nucleo 5D Sport",
+          seviye: "premium",
+          tasarim: "freeform-personalized",
+          ozelAmac: "sport",
+          koridorlar: [],
+          minFittingHeight: 14,
+          uyumGarantisi: false,
+          teknolojiler: ["Front Surface Innovation", "Rayform AI", "Stabilis", "DuoBalance", "DigitAll", "MidPoint Plus", "FlexiFit"],
+          ozellikler: {
+            genisMesafe: true,
+            genisYakin: true,
+            genisOrta: true,
+            yuzmeEtkisiAzaltma: true,
+            dijitalCihazOptimize: false,
+            surusOptimize: true
+          },
+          indeksler: ["1.50", "1.61", "1.67", "1.74"],
+          fiyatAraligi: { min: 26500, max: 93500 },
+          hedefKitle: "Spor yaparken bombeli gozluklerde net gorus isteyen aktif kullanicilar",
+          aciklama: "180 derece panoramik uzak gorus. Bombeli cerceveler icin optimize. Aktif yasam tarzi."
+        },
+        {
+          id: "novax-nucleo-5d-pilot",
+          ad: "Nucleo 5D Pilot",
+          seviye: "premium",
+          tasarim: "freeform-personalized-dual-near",
+          ozelAmac: "pilot",
+          koridorlar: [],
+          minFittingHeight: 14,
+          uyumGarantisi: false,
+          teknolojiler: ["Rayform AI", "Stabilis", "DuoBalance", "DigitAll", "MidPoint Plus", "FlexiFit"],
+          ozellikler: {
+            genisMesafe: true,
+            genisYakin: true,
+            genisOrta: true,
+            yuzmeEtkisiAzaltma: false,
+            dijitalCihazOptimize: false,
+            surusOptimize: false
+          },
+          indeksler: ["1.50", "1.61", "1.67", "1.74"],
+          fiyatAraligi: { min: 26500, max: 93500 },
+          hedefKitle: "Pilotlar, dis hekimleri, tesisatcilar, araba tamircileri",
+          aciklama: "Ust bolgede 42mm yakin gorus ek adisyon alani. Hem ust hem alt yakin gorus."
+        },
+        {
+          id: "novax-synthesis-antifatigue",
+          ad: "Synthesis Anti-fatigue",
+          seviye: "premium",
+          tasarim: "freeform-morphing-antifatigue",
+          ozelAmac: "antifatigue",
+          koridorlar: [],
+          minFittingHeight: null,
+          uyumGarantisi: false,
+          vrGerektirir: true,
+          teknolojiler: ["Gaze Analyzer", "Stabilis", "OptiPure", "MidPoint Plus", "SlimEdge"],
+          ozellikler: {
+            genisMesafe: true,
+            genisYakin: true,
+            genisOrta: false,
+            yuzmeEtkisiAzaltma: false,
+            dijitalCihazOptimize: true,
+            surusOptimize: false
+          },
+          indeksler: ["1.50", "1.61", "1.67", "1.74"],
+          fiyatAraligi: { min: 21500, max: 64500 },
+          addSecenekleri: { hipermetrop: [0.60, 0.80, 1.00, 1.20], miyop: [0.40, 0.60, 0.80, 1.00] },
+          hedefKitle: "Dijital goz yorgunlugu ve bas agrisi hassasiyeti olan genc yetiskinler",
+          aciklama: "Presbiyopi ONCESI anti-fatigue cam. VR ile kisisel bakis dinamigi. Miyop/Hipermetrop ayri adisyon secenekleri."
+        },
+        {
+          id: "novax-nucleo-5d-antifatigue",
+          ad: "Nucleo 5D Anti-fatigue",
+          seviye: "premium",
+          tasarim: "double-asferik-antifatigue",
+          ozelAmac: "antifatigue",
+          koridorlar: [],
+          minFittingHeight: null,
+          uyumGarantisi: false,
+          teknolojiler: ["Rayform AI", "Stabilis", "MidPoint Plus"],
+          ozellikler: {
+            genisMesafe: true,
+            genisYakin: true,
+            genisOrta: false,
+            yuzmeEtkisiAzaltma: false,
+            dijitalCihazOptimize: true,
+            surusOptimize: false
+          },
+          indeksler: ["1.61", "1.67", "1.74"],
+          fiyatAraligi: { min: 26500, max: 59500 },
+          addSecenekleri: { seviyeler: [0.50, 0.75, 1.00] },
+          hedefKitle: "Goz yorgunlugu yasayan genc yetiskinler",
+          aciklama: "3 adisyon seviyesi (0.50/0.75/1.00D). Yogunlastirilmis yakin adisyon. Tek odakli konforunda."
         }
-        // NOT (2026-04-20): "Granite Kisisel" ve "Granite Standart" buradan silindi.
-        // Granite bir CAM MODELI degil, PixAR GRANITE adli KAPLAMADIR.
-        // Novax'in tum camlarinda standart olarak gelen super hidrofobik anti-refle
-        // kaplamadir (ucretsiz, UV400, 9H sertlik). Kaplamalar asagida
-        // "markalar.novax.kaplamalar[]" listesinde tanimlanmistir.
-        // 20+ gercek Novax progresif modeli Faz 1.4'te eklenecek (Nucleo 5D, Nexus 4D,
-        // Trion 3D, Matrix HD, Genius, Ventro, Novum NG, Sportive, DriveOn, Officient,
-        // Serenity, vb.)
+        // CLASSIC seri (Matrix HD, Genius, Ventro, Novum NG, Sportive, DriveOn, Officient, Serenity, Myopi-X, Bifokal, Terapatik)
+        // bir sonraki commit'te eklenecek (novax chunk 2).
       ],
-      // Novax kaplamalari (PixAR serisi). Standart olarak tum Novax camlarinda
-      // GRANITE Standart ucretsiz gelir; GRANITE Kisisel ekstra ucretlidir.
-      // BLUV (mavi isik), DRIVE (sürüs), AQUA (su iticilik) Faz 1.5'te eklenecek.
+      // Novax kaplamalari (PixAR serisi - Mart 2026 katalogu).
+      // GRANITE Standart ucretsiz, her Novax caminda varsayilan.
+      // BLUV (+1150), DRIVE (+1900), AQUA (+1900) opsiyonel ek kaplamalar.
       kaplamalar: [
         {
           id: "novax-pixar-granite-standart",
@@ -583,7 +816,60 @@ window.LENS_DATABASE = {
           },
           hedefKitle: "Kisiselletirilmis renk tonu isteyen musteriler",
           aciklama: "GRANITE Standart'in kisisel renk tonu secenekleriyle (yesil/mavi/kirmizi) guclendirilmis hali. Ekstra ucretli."
+        },
+        {
+          id: "novax-pixar-bluv",
+          ad: "PixAR BLUV",
+          kod: "PIX500BL",
+          tip: "mavi-isik-filtresi",
+          ucret: 1150,
+          ozellikler: {
+            superHidrofobik: true,
+            uvFiltresi: "UV420",
+            maviIsikFiltresi: true,
+            sertlik: "9H"
+          },
+          hedefKitle: "Uzun saat ekran karsisinda calisanlar",
+          aciklama: "Mavi-mor isigi (380-420nm) filtreleyen kaplama. Dijital goz yorgunlugunu azaltir. +1.150TL."
+        },
+        {
+          id: "novax-pixar-drive",
+          ad: "PixAR DRIVE",
+          kod: "PIX800DV",
+          tip: "surus",
+          ucret: 1900,
+          ozellikler: {
+            superHidrofobik: true,
+            uvFiltresi: "UV400",
+            parlamaAzaltma: true,
+            geceSurus: true,
+            sertlik: "9H"
+          },
+          hedefKitle: "Sik gece surusu yapanlar",
+          aciklama: "Arac farlarindan, sokak lambalarindan gelen parlamalari azaltir. Gece kontrast iyilestirici. +1.900TL."
+        },
+        {
+          id: "novax-pixar-aqua",
+          ad: "PixAR AQUA",
+          kod: "PIX800AU",
+          tip: "su-iticilik",
+          ucret: 1900,
+          ozellikler: {
+            superHidrofobik: true,
+            uvFiltresi: "UV400",
+            suIticilikGuclu: true,
+            buguOnleyici: true,
+            sertlik: "9H"
+          },
+          hedefKitle: "Su sporlari, yagmurlu iklim, yuzme seven kullanicilar",
+          aciklama: "Extra su iticilik (lotus etkisi). Yagmur damlalari kaymaz. Buguya karsi dayanikli. +1.900TL."
         }
+      ],
+      // Novax ozel islemler (Mart 2026 katalogu - tahmini, ayri sayfada detaylandirilacak)
+      ozelIslemler: [
+        { id: "midpoint-plus", ad: "MidPoint Plus (Pantoskopik+Verteks+Bombe)", ucret: 750 },
+        { id: "ara-cap", ad: "Ara Cap", ucret: 360 },
+        { id: "prizma", ad: "Prizmatik", ucret: 450 }
       ]
     },
 
