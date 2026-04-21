@@ -1,11 +1,15 @@
 // ============================================================
-// SGK BOOKMARKLET v6 - Recete Veri Okuma & Direkt Aktarma
+// SGK BOOKMARKLET v8 - Hibrit okuma (class + etiket fallback)
 // Kepekci Optik - Modul 2
 //
 // SGK e-recete sayfasi: gss.sgk.gov.tr/Optik_Firma2_Web/ereceteGiris.faces
-// Strateji v6: table.detaylarKutuCam class'i ile goz tablolarini bul.
-//              Sira: [0]=UZAK SAG, [1]=UZAK SOL, [2]=YAKIN SAG, [3]=YAKIN SOL
-//              QR yerine recete.html'e URL ile direkt aktarim.
+// Strateji v8: Iki farkli okuma yontemini dener
+//   Yontem A (hizli): table.detaylarKutuCam (v5/v6/v7 yolu)
+//   Yontem B (fallback): "SAG CAM" / "SOL CAM" etiket arama (v4 yolu)
+//   Yakin bulunamazsa B yolu otomatik denenir.
+//
+// Muzaffer Bey notu: progresif recetede uzak VP (sifir) + yakin numarali
+// olabilir. Uzak yok diye atma, yakin ayri ayri oku.
 // ============================================================
 
 (function() {
@@ -73,15 +77,69 @@
     return null;
   }
 
-  function tumGozlukVerileriniOku() {
-    // v7 - Daha genis tablo bulma + teshis raporu
+  // En yakin TABLE atasini bul (etiket -> tablo)
+  function enYakinTablo(el) {
+    var node = el;
+    while (node) {
+      node = node.parentElement;
+      if (node && node.tagName === "TABLE") return node;
+    }
+    return null;
+  }
+
+  // Etiket tabanli okuma (v4 yolu) - fallback
+  function etiketTabanliOku() {
+    var cells = document.querySelectorAll("td, th, span, label");
+    var sagTabloListesi = [];
+    var solTabloListesi = [];
+
+    for (var i = 0; i < cells.length; i++) {
+      var txt = (cells[i].textContent || "").trim().toUpperCase();
+      // Turkce karakter normalizasyonu
+      txt = txt.replace(/\u015e|\u015f/g, "S").replace(/\u011e|\u011f/g, "G")
+               .replace(/\u0130|\u0131/g, "I").replace(/\u00dc|\u00fc/g, "U")
+               .replace(/\u00d6|\u00f6/g, "O").replace(/\u00c7|\u00e7/g, "C");
+
+      // Cok uzun text'leri atla (baslik olabilir ama bir metnin parcasi olamaz)
+      if (txt.length > 30) continue;
+
+      if (txt === "SAG CAM" || txt === "SAG" || txt === "SAG GOZ" ||
+          txt.indexOf("SAG CAM") >= 0 || txt.indexOf("SAG GOZ") >= 0) {
+        var tbl = enYakinTablo(cells[i]);
+        if (tbl && sagTabloListesi.indexOf(tbl) < 0) sagTabloListesi.push(tbl);
+      }
+      if (txt === "SOL CAM" || txt === "SOL" || txt === "SOL GOZ" ||
+          txt.indexOf("SOL CAM") >= 0 || txt.indexOf("SOL GOZ") >= 0) {
+        var tbl2 = enYakinTablo(cells[i]);
+        if (tbl2 && solTabloListesi.indexOf(tbl2) < 0) solTabloListesi.push(tbl2);
+      }
+    }
+
+    var sonuc = { uzak: null, yakin: null, yontem: "etiket" };
+    var uzakSag = sagTabloListesi.length >= 1 ? camTablosuOku(sagTabloListesi[0]) : null;
+    var uzakSol = solTabloListesi.length >= 1 ? camTablosuOku(solTabloListesi[0]) : null;
+    if (uzakSag || uzakSol) sonuc.uzak = { sag: uzakSag, sol: uzakSol };
+
+    var yakinSag = sagTabloListesi.length >= 2 ? camTablosuOku(sagTabloListesi[1]) : null;
+    var yakinSol = solTabloListesi.length >= 2 ? camTablosuOku(solTabloListesi[1]) : null;
+    if (yakinSag || yakinSol) sonuc.yakin = { sag: yakinSag, sol: yakinSol };
+
+    // Teshise ekle
+    if (window._sgkTeshis) {
+      window._sgkTeshis.etiketSag = sagTabloListesi.length;
+      window._sgkTeshis.etiketSol = solTabloListesi.length;
+    }
+
+    return sonuc;
+  }
+
+  // Class tabanli okuma (v5-v7 yolu)
+  function classTabanliOku() {
     var camTablolari = document.querySelectorAll("table.detaylarKutuCam");
-    // Fallback: herhangi bir goz tablosu (class degismisse)
     if (camTablolari.length === 0) {
       camTablolari = document.querySelectorAll('table[class*="detay"], table[class*="Kutu"], table[class*="Cam"]');
     }
 
-    // Teshis: her tabloyu veri okunabilirligine gore isaretle
     window._sgkTeshis = {
       toplamTablo: camTablolari.length,
       okunabilir: [],
@@ -93,33 +151,39 @@
       var okundu = camTablosuOku(camTablolari[i]);
       okunanlar.push(okundu);
       if (okundu) {
-        window._sgkTeshis.okunabilir.push({
-          indeks: i,
-          veri: okundu,
-          sinif: camTablolari[i].className
-        });
+        window._sgkTeshis.okunabilir.push({ indeks: i, veri: okundu, sinif: camTablolari[i].className });
       } else {
-        var rows = camTablolari[i].querySelectorAll("tr");
-        window._sgkTeshis.okunamayan.push({
-          indeks: i,
-          satirSayisi: rows.length,
-          sinif: camTablolari[i].className
-        });
+        window._sgkTeshis.okunamayan.push({ indeks: i, satirSayisi: camTablolari[i].querySelectorAll("tr").length, sinif: camTablolari[i].className });
       }
     }
 
-    // [0]=UZAK SAG, [1]=UZAK SOL, [2]=YAKIN SAG, [3]=YAKIN SOL
-    var sonuc = { uzak: null, yakin: null };
-
-    if (okunanlar[0] || okunanlar[1]) {
-      sonuc.uzak = { sag: okunanlar[0] || null, sol: okunanlar[1] || null };
-    }
-
-    if (okunanlar[2] || okunanlar[3]) {
-      sonuc.yakin = { sag: okunanlar[2] || null, sol: okunanlar[3] || null };
-    }
-
+    var sonuc = { uzak: null, yakin: null, yontem: "class" };
+    if (okunanlar[0] || okunanlar[1]) sonuc.uzak = { sag: okunanlar[0] || null, sol: okunanlar[1] || null };
+    if (okunanlar[2] || okunanlar[3]) sonuc.yakin = { sag: okunanlar[2] || null, sol: okunanlar[3] || null };
     return sonuc;
+  }
+
+  function tumGozlukVerileriniOku() {
+    // v8 - Hibrit: class yolu + etiket yolu fallback
+    var classSonuc = classTabanliOku();
+
+    // Class yolu ile HEM uzak HEM yakin okunduysa donduru
+    if (classSonuc.uzak && classSonuc.yakin) {
+      return classSonuc;
+    }
+
+    // Aksi halde etiket tabanli dene
+    var etiketSonuc = etiketTabanliOku();
+
+    // Iki yolun sonuclarini birlestir (biri uzak veya yakin bulabilir)
+    var birlesik = {
+      uzak: classSonuc.uzak || etiketSonuc.uzak,
+      yakin: classSonuc.yakin || etiketSonuc.yakin,
+      yontem: (classSonuc.uzak && !etiketSonuc.uzak) ? "class" :
+              (!classSonuc.uzak && etiketSonuc.uzak) ? "etiket" : "hibrit"
+    };
+    if (window._sgkTeshis) window._sgkTeshis.kullanilanYontem = birlesik.yontem;
+    return birlesik;
   }
 
   // ============================================================
@@ -200,23 +264,28 @@
 
     // En az bir goz verisi okunmus mu kontrol et
     if (!veri.u && !veri.y) {
-      alert("Kepekci Optik - Goz verisi okunamadi\n\n" +
-        "Bulunan cam tablosu: " + t.toplamTablo + "\n" +
-        "Okunabilir: " + t.okunabilir.length + "\n" +
-        "Okunamayan: " + t.okunamayan.length + "\n\n" +
-        "Lutfen e-recete sayfasinda goz bilgilerinin dolu oldugunu kontrol edin.\nManuel giris kullanabilirsiniz.");
+      alert("Kepekci Optik - Goz verisi okunamadi (v8)\n\n" +
+        "Class yolu:\n" +
+        "  Toplam cam tablosu: " + t.toplamTablo + "\n" +
+        "  Okunabilir: " + t.okunabilir.length + "\n" +
+        "  Okunamayan: " + t.okunamayan.length + "\n" +
+        "Etiket yolu:\n" +
+        "  SAG tablo: " + (t.etiketSag || 0) + "\n" +
+        "  SOL tablo: " + (t.etiketSol || 0) + "\n\n" +
+        "Lutfen e-recete sayfasinin dolu oldugunu kontrol edin.\n" +
+        "Detayli rapor icin F12 -> Console: _sgkTeshis");
       return;
     }
 
     // Yakin recete bulunamadiysa uyar
     if (veri.u && !veri.y) {
-      var onay = confirm("Kepekci Optik - Yakin recete bulunamadi\n\n" +
+      var onay = confirm("Kepekci Optik - Yakin recete bulunamadi (v8)\n\n" +
         "Teshis:\n" +
-        "  Toplam cam tablosu: " + t.toplamTablo + "\n" +
-        "  Okunabilir: " + t.okunabilir.length + " (" + t.okunabilir.map(function(o){return o.indeks;}).join(",") + ")\n" +
-        "  Okunamayan: " + t.okunamayan.length + "\n\n" +
-        "SGK sayfasinda yakin recete bolumu gorunuyor mu?\n" +
-        "Bazi recetelerde sadece UZAK olur (progresif icin yakin sart).\n\n" +
+        "  Class yolu - Toplam: " + t.toplamTablo + ", Okunabilir: " + t.okunabilir.length + "\n" +
+        "  Etiket yolu - Sag: " + (t.etiketSag || 0) + ", Sol: " + (t.etiketSol || 0) + "\n" +
+        "  Kullanilan yontem: " + (t.kullanilanYontem || "?") + "\n\n" +
+        "SGK sayfasinda ayri bir 'yakin cam' bolumu var mi?\n" +
+        "Progresif icin yakin recete onemli.\n\n" +
         "DEVAM et (sadece uzak ile) mi? Yoksa IPTAL mi?");
       if (!onay) return;
     }
