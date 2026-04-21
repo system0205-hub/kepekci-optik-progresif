@@ -260,39 +260,18 @@
   // ============================================================
   try {
     var veri = sgkVerileriOku();
-    var t = window._sgkTeshis || { toplamTablo: 0, okunabilir: [], okunamayan: [] };
 
-    // En az bir goz verisi okunmus mu kontrol et
+    // Hicbir goz verisi okunmadiysa tek satir bildirim
     if (!veri.u && !veri.y) {
-      alert("Kepekci Optik - Goz verisi okunamadi (v8)\n\n" +
-        "Class yolu:\n" +
-        "  Toplam cam tablosu: " + t.toplamTablo + "\n" +
-        "  Okunabilir: " + t.okunabilir.length + "\n" +
-        "  Okunamayan: " + t.okunamayan.length + "\n" +
-        "Etiket yolu:\n" +
-        "  SAG tablo: " + (t.etiketSag || 0) + "\n" +
-        "  SOL tablo: " + (t.etiketSol || 0) + "\n\n" +
-        "Lutfen e-recete sayfasinin dolu oldugunu kontrol edin.\n" +
-        "Detayli rapor icin F12 -> Console: _sgkTeshis");
+      alert("Goz verisi okunamadi. Manuel giris kullanin.");
       return;
     }
 
-    // Yakin recete bulunamadiysa uyar
-    if (veri.u && !veri.y) {
-      var onay = confirm("Kepekci Optik - Yakin recete bulunamadi (v8)\n\n" +
-        "Teshis:\n" +
-        "  Class yolu - Toplam: " + t.toplamTablo + ", Okunabilir: " + t.okunabilir.length + "\n" +
-        "  Etiket yolu - Sag: " + (t.etiketSag || 0) + ", Sol: " + (t.etiketSol || 0) + "\n" +
-        "  Kullanilan yontem: " + (t.kullanilanYontem || "?") + "\n\n" +
-        "SGK sayfasinda ayri bir 'yakin cam' bolumu var mi?\n" +
-        "Progresif icin yakin recete onemli.\n\n" +
-        "DEVAM et (sadece uzak ile) mi? Yoksa IPTAL mi?");
-      if (!onay) return;
-    }
-
+    // Yakin yoksa bile sessizce devam - kullanici eski gibi aksa
+    // (teshis _sgkTeshis global'inde, F12 ile ihtiyac duyan gorur)
     receteyeAktar(veri);
   } catch (e) {
-    alert("Kepekci Optik Bookmarklet Hatasi:\n" + e.message + "\n\nManuel giris kullanin.");
+    alert("Bookmarklet hatasi: " + e.message);
   }
 
 })();
