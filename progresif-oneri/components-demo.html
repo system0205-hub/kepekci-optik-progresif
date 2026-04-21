@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kepekçi Optik — Komponent Demo (Faz 7.2)</title>
+  <meta name="theme-color" content="#1a1a2e">
+  <link rel="stylesheet" href="css/design-tokens.css">
+  <link rel="stylesheet" href="css/components.css">
+  <style>
+    /* Demo sayfasına özel (sadece demo için) */
+    body {
+      background: var(--yuzey-ikincil);
+      color: var(--yuzey-govde);
+      margin: 0;
+      padding: 0;
+      font-family: var(--font-govde);
+      transition: background 200ms ease;
+    }
+    .demo-sayfa {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: var(--bosluk-xl);
+    }
+    .demo-ust {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--bosluk-md);
+      margin-bottom: var(--bosluk-2xl);
+      padding-bottom: var(--bosluk-lg);
+      border-bottom: 1px solid var(--yuzey-sinir);
+    }
+    .demo-bolum {
+      margin-bottom: var(--bosluk-3xl);
+    }
+    .demo-bolum h2 {
+      font-family: var(--font-baslik);
+      font-size: var(--font-size-2xl);
+      font-weight: 700;
+      color: var(--yuzey-govde);
+      margin-bottom: var(--bosluk-md);
+      padding-bottom: var(--bosluk-sm);
+      border-bottom: 2px solid var(--color-primary);
+      display: inline-block;
+    }
+    .demo-alt {
+      background: var(--yuzey-bg);
+      border: 1px solid var(--yuzey-sinir);
+      border-radius: var(--radius-lg);
+      padding: var(--bosluk-lg);
+      margin-bottom: var(--bosluk-md);
+    }
+    .demo-alt-baslik {
+      font-size: var(--font-size-sm);
+      color: var(--yuzey-govde-soluk);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: var(--bosluk-md);
+      font-weight: 600;
+    }
+    .demo-satir {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--bosluk-md);
+      align-items: center;
+    }
+    .demo-etiket {
+      font-size: var(--font-size-sm);
+      color: var(--yuzey-govde-soluk);
+      margin-top: var(--bosluk-sm);
+    }
+  </style>
+</head>
+<body>
+  <div class="kp-toast-alan" id="toastAlan" role="region" aria-live="polite" aria-label="Bildirimler"></div>
+
+  <main class="demo-sayfa">
+    <header class="demo-ust">
+      <div>
+        <h1 class="kp-h2">Kepekçi Optik — Komponent Kütüphanesi</h1>
+        <p class="kp-p kp-p-soluk">Faz 7.2 — Tablet-first, dark mode, A+ font ile uyumlu</p>
+      </div>
+      <div class="kp-tema-toggle" role="group" aria-label="Görünüm tercihleri">
+        <button id="temaDugme" aria-pressed="false" aria-label="Karanlık moda geç">🌙 Karanlık</button>
+        <button id="fontDugme" aria-pressed="false" aria-label="Büyük fonta geç">A+ Büyük Font</button>
+      </div>
+    </header>
+
+    <!-- ================ 1. BUTONLAR ================ -->
+    <section class="demo-bolum" aria-labelledby="h-butonlar">
+      <h2 id="h-butonlar">1. Butonlar</h2>
+
+      <div class="demo-alt">
+        <div class="demo-alt-baslik">Varyantlar</div>
+        <div class="demo-satir">
+          <button class="kp-btn">Birincil</button>
+          <button class="kp-btn kp-btn-ikincil">İkincil</button>
+          <button class="kp-btn kp-btn-disline">Dışçizgili</button>
+          <button class="kp-btn kp-btn-hayalet">Hayalet</button>
+          <button class="kp-btn kp-btn-basari">Başarı</button>
+          <button class="kp-btn kp-btn-uyar">Uyarı</button>
+          <button class="kp-btn kp-btn-engel">Engel</button>
+        </div>
+      </div>
+
+      <div class="demo-alt">
+        <div class="demo-alt-baslik">Boyutlar (48px → 72px dokunma hedefi)</div>
+        <div class="demo-satir">
+          <button class="kp-btn kp-btn-kucuk">Küçük</button>
+          <button class="kp-btn">Normal (48px)</button>
+          <button class="kp-btn kp-btn-buyuk">Büyük (56px)</button>
+          <button class="kp-btn kp-btn-dev">Dev (64px)</button>
+        </div>
+      </div>
+
+      <div class="demo-alt">
+        <div class="demo-alt-baslik">Özel durumlar</div>
+        <div class="demo-satir">
+          <button class="kp-btn" disabled>Devre dışı</button>
+          <button class="kp-btn" id="yukDugme">Yükleme testi (tıkla)</button>
+          <button class="kp-btn kp-btn-ikon" aria-label="Ayarlar">⚙</button>
+          <button class="kp-btn kp-btn-ikon kp-btn-buyuk" aria-label="Ara">🔍</button>
+        </div>
+        <p class="demo-etiket">Min genişlik = min yükseklik = --dokunma-min (48px)</p>
+      </div>
+
+      <div class="demo-alt">
+        <div class="demo-alt-baslik">Tam genişlik</div>
+        <button class="kp-btn kp-btn-tamgenislik kp-btn-buyuk">Siparişi onayla</button>
+      </div>
+    </section>
+
+    <!-- ================ 2. KARTLAR ================ -->
+    <section class="demo-bolum" aria-labelledby="h-kartlar">
+      <h2 id="h-kartlar">2. Kartlar</h2>
+
+      <div class="kp-grid kp-grid-oto">
+        <article class="kp-kart kp-kart-sol-vurgu kp-kart-mukemmel">
+          <div class="kp-kart-baslik">
+            <h3 class="kp-h4">Kodak PowerUp</h3>
+            <span class="kp-rozet kp-rozet-mukemmel">Mükemmel</span>
+          </div>
+          <div class="kp-kart-govde">
+            <p class="kp-p">Geniş koridor, 14mm dikey boşluk. Tablet/bilgisayar ağırlıklı kullanıma %100 uygun.</p>
+          </div>
+          <div class="kp-kart-altlik">
+            <button class="kp-btn kp-btn-kucuk">Detay</button>
+            <button class="kp-btn kp-btn-kucuk kp-btn-basari">Seç</button>
+          </div>
+        </article>
+
+        <article class="kp-kart kp-kart-sol-vurgu kp-kart-iyi kp-kart-tiklanabilir" tabindex="0">
+          <div class="kp-kart-baslik">
+            <h3 class="kp-h4">Nikon SeeMax</h3>
+            <span class="kp-rozet kp-rozet-iyi">İyi</span>
+          </div>
+          <div class="kp-kart-govde">
+            <p class="kp-p">Standart koridor. Günlük kullanıcı için dengeli seçenek.</p>
+          </div>
+        </article>
+
+        <article class="kp-kart kp-kart-sol-vurgu kp-kart-uyar">
+          <div class="kp-kart-baslik">
+            <h3 class="kp-h4">Visionart Standart</h3>
+            <span class="kp-rozet kp-rozet-uyar">Uyarı</span>
+          </div>
+          <div class="kp-kart-govde">
+            <p class="kp-p">Koridor dar. Yakın iş yoğun olan reçeteler için dikkat edin.</p>
+          </div>
+        </article>
+
+        <article class="kp-kart kp-kart-sol-vurgu kp-kart-engel">
+          <div class="kp-kart-baslik">
+            <h3 class="kp-h4">Tora Entry</h3>
+            <span class="kp-rozet kp-rozet-engel">Uygun değil</span>
+          </div>
+          <div class="kp-kart-govde">
+            <p class="kp-p">Bu reçete için koridor yetersiz. Başka model öneriyoruz.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ================ 3. STEPPER (5-step) ================ -->
+    <section class="demo-bolum" aria-labelledby="h-stepper">
+      <h2 id="h-stepper">3. Stepper (5-Step Akış)</h2>
+
+      <div class="demo-alt">
+        <ol class="kp-stepper" id="demoStepper" role="list" aria-label="Sipariş akışı">
+          <li class="kp-step" data-durum="tamam">
+            <button class="kp-step-dugme" data-adim="1" aria-label="1. adım — Reçete">
+              <span class="kp-step-numara">1</span>
+            </button>
+            <span class="kp-step-etiket">Reçete</span>
+          </li>
+          <span class="kp-step-cizgi" data-tamam="true"></span>
+          <li class="kp-step" data-durum="tamam">
+            <button class="kp-step-dugme" data-adim="2" aria-label="2. adım — Yaşam">
+              <span class="kp-step-numara">2</span>
+            </button>
+            <span class="kp-step-etiket">Yaşam tarzı</span>
+          </li>
+          <span class="kp-step-cizgi" data-tamam="true"></span>
+          <li class="kp-step" data-durum="aktif">
+            <button class="kp-step-dugme" data-adim="3" aria-current="step" aria-label="3. adım — Öneriler">
+              <span class="kp-step-numara">3</span>
+            </button>
+            <span class="kp-step-etiket">Öneriler</span>
+          </li>
+          <span class="kp-step-cizgi"></span>
+          <li class="kp-step" data-durum="bekle">
+            <button class="kp-step-dugme" data-adim="4" aria-label="4. adım — Yorum">
+              <span class="kp-step-numara">4</span>
+            </button>
+            <span class="kp-step-etiket">Yorum</span>
+          </li>
+          <span class="kp-step-cizgi"></span>
+          <li class="kp-step" data-durum="bekle">
+            <button class="kp-step-dugme" data-adim="5" aria-label="5. adım — Sipariş">
+              <span class="kp-step-numara">5</span>
+            </button>
+            <span class="kp-step-etiket">Sipariş</span>
+          </li>
+        </ol>
+        <p class="demo-etiket">Adımlara tıklayarak durumunu değiştirebilirsiniz</p>
+      </div>
+    </section>
+
+    <!-- ================ 4. FORM ================ -->
+    <section class="demo-bolum" aria-labelledby="h-form">
+      <h2 id="h-form">4. Form</h2>
+
+      <form class="demo-alt" onsubmit="event.preventDefault(); toastGoster('basari', 'Form gönderildi', 'Tüm alanlar geçerli');">
+        <div class="kp-grid kp-grid-2">
+          <div class="kp-alan">
+            <label class="kp-label" for="ad">Ad Soyad <span class="kp-zorunlu" aria-hidden="true">*</span></label>
+            <input id="ad" class="kp-input" type="text" required placeholder="Örn: Ayşe Yılmaz" autocomplete="name">
+          </div>
+          <div class="kp-alan">
+            <label class="kp-label" for="tel">Telefon</label>
+            <input id="tel" class="kp-input" type="tel" placeholder="0532 XXX XX XX" autocomplete="tel">
+            <span class="kp-yardim">Sipariş hazır olduğunda SMS gönderilir</span>
+          </div>
+          <div class="kp-alan">
+            <label class="kp-label" for="yas">Yaş <span class="kp-zorunlu" aria-hidden="true">*</span></label>
+            <input id="yas" class="kp-input" type="number" min="40" max="100" required placeholder="45">
+          </div>
+          <div class="kp-alan">
+            <label class="kp-label" for="kullanim">Kullanım alanı</label>
+            <select id="kullanim" class="kp-select">
+              <option value="">Seçin...</option>
+              <option value="ofis">Ofis / bilgisayar</option>
+              <option value="surus">Araç kullanımı</option>
+              <option value="spor">Spor aktif yaşam</option>
+              <option value="gunluk">Günlük kullanım</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="kp-alan">
+          <label class="kp-label" for="notlar">Özel notlar</label>
+          <textarea id="notlar" class="kp-textarea" placeholder="Müşterinin özel istekleri, alerjileri vb."></textarea>
+        </div>
+
+        <div class="kp-alan">
+          <label class="kp-label" for="hataliAlan">Hata durumu (demo)</label>
+          <input id="hataliAlan" class="kp-input" type="text" aria-invalid="true" value="Geçersiz değer">
+          <span class="kp-hata" role="alert">Bu alan yanlış formatta</span>
+        </div>
+
+        <div class="kp-alan">
+          <label class="kp-secim">
+            <input type="checkbox" checked>
+            <span>SGK indirimi uygulanabilir</span>
+          </label>
+          <label class="kp-secim">
+            <input type="checkbox">
+            <span>Müşteri uyum garantisi kabul etti</span>
+          </label>
+        </div>
+
+        <div style="display:flex; gap: var(--bosluk-sm); justify-content: flex-end;">
+          <button type="reset" class="kp-btn kp-btn-ikincil">Sıfırla</button>
+          <button type="submit" class="kp-btn kp-btn-basari">Siparişi oluştur</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- ================ 5. MODAL ================ -->
+    <section class="demo-bolum" aria-labelledby="h-modal">
+      <h2 id="h-modal">5. Modal</h2>
+      <div class="demo-alt">
+        <div class="demo-satir">
+          <button class="kp-btn" id="modalAc">Küçük modal aç</button>
+          <button class="kp-btn kp-btn-ikincil" id="modalBuyukAc">Büyük modal aç (ADD uyarısı)</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================ 6. TOAST ================ -->
+    <section class="demo-bolum" aria-labelledby="h-toast">
+      <h2 id="h-toast">6. Toast / Bildirim</h2>
+      <div class="demo-alt">
+        <div class="demo-satir">
+          <button class="kp-btn kp-btn-basari" onclick="toastGoster('basari', 'Kayıt tamam', 'Sipariş veritabanına yazıldı')">Başarı</button>
+          <button class="kp-btn kp-btn-uyar" onclick="toastGoster('uyar', 'Dikkat', 'Reçete tarihi 1 yıldan eski')">Uyarı</button>
+          <button class="kp-btn kp-btn-engel" onclick="toastGoster('hata', 'Hata', 'ADD değeri geçersiz (0.75-3.50 aralığı)')">Hata</button>
+          <button class="kp-btn kp-btn-ikincil" onclick="toastGoster('bilgi', 'Bilgi', 'SGK indirimi otomatik hesaplandı')">Bilgi</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================ 7. TAB ================ -->
+    <section class="demo-bolum" aria-labelledby="h-tab">
+      <h2 id="h-tab">7. Tab</h2>
+      <div class="demo-alt">
+        <div role="tablist" class="kp-tab-liste" aria-label="Cam kategorileri">
+          <button role="tab" class="kp-tab" aria-selected="true" aria-controls="panel1" id="tab1">Kodak</button>
+          <button role="tab" class="kp-tab" aria-selected="false" aria-controls="panel2" id="tab2" tabindex="-1">Nikon</button>
+          <button role="tab" class="kp-tab" aria-selected="false" aria-controls="panel3" id="tab3" tabindex="-1">Tora</button>
+          <button role="tab" class="kp-tab" aria-selected="false" aria-controls="panel4" id="tab4" tabindex="-1">Visionart</button>
+          <button role="tab" class="kp-tab" aria-selected="false" aria-controls="panel5" id="tab5" tabindex="-1">Novax</button>
+        </div>
+        <div role="tabpanel" id="panel1" class="kp-tab-panel" aria-labelledby="tab1">
+          <p class="kp-p">Kodak progresif camlar — PowerUp, Precise, Unique.</p>
+        </div>
+        <div role="tabpanel" id="panel2" class="kp-tab-panel" aria-labelledby="tab2" hidden>
+          <p class="kp-p">Nikon SeeMax, Presio, Home &amp; Office.</p>
+        </div>
+        <div role="tabpanel" id="panel3" class="kp-tab-panel" aria-labelledby="tab3" hidden>
+          <p class="kp-p">Tora Premium, Standard, Driver.</p>
+        </div>
+        <div role="tabpanel" id="panel4" class="kp-tab-panel" aria-labelledby="tab4" hidden>
+          <p class="kp-p">Visionart Premium, Active, Office.</p>
+        </div>
+        <div role="tabpanel" id="panel5" class="kp-tab-panel" aria-labelledby="tab5" hidden>
+          <p class="kp-p">Novax Premium, Classic, Drive, BLUV.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================ 8. ACCORDION ================ -->
+    <section class="demo-bolum" aria-labelledby="h-accordion">
+      <h2 id="h-accordion">8. Accordion (SSS)</h2>
+      <div class="demo-alt">
+        <div class="kp-accordion">
+          <div class="kp-accordion-oge">
+            <button class="kp-accordion-baslik" aria-expanded="false" aria-controls="acc1">
+              <span>Progresif camlara alışma süresi nedir?</span>
+              <span class="kp-accordion-ok" aria-hidden="true">▼</span>
+            </button>
+            <div id="acc1" class="kp-accordion-icerik" hidden>
+              <p class="kp-p">Çoğu kullanıcı 1-2 hafta içinde tam alışır. İlk günler baş dönmesi normaldir.</p>
+            </div>
+          </div>
+          <div class="kp-accordion-oge">
+            <button class="kp-accordion-baslik" aria-expanded="false" aria-controls="acc2">
+              <span>ADD değeri nedir?</span>
+              <span class="kp-accordion-ok" aria-hidden="true">▼</span>
+            </button>
+            <div id="acc2" class="kp-accordion-icerik" hidden>
+              <p class="kp-p">ADD (Addition), yakın görüşü sağlayan ek diyoptridir. 0.75-3.50 arası normaldir.</p>
+            </div>
+          </div>
+          <div class="kp-accordion-oge">
+            <button class="kp-accordion-baslik" aria-expanded="false" aria-controls="acc3">
+              <span>SGK indirimi nasıl uygulanır?</span>
+              <span class="kp-accordion-ok" aria-hidden="true">▼</span>
+            </button>
+            <div id="acc3" class="kp-accordion-icerik" hidden>
+              <p class="kp-p">2 yılda bir SGK progresif cam masrafına katkı sağlar. Reçete tarihinden sonra 3 ay içinde işleme alınmalı.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================ 9. ROZET ================ -->
+    <section class="demo-bolum" aria-labelledby="h-rozet">
+      <h2 id="h-rozet">9. Rozet</h2>
+      <div class="demo-alt">
+        <div class="demo-satir">
+          <span class="kp-rozet kp-rozet-mukemmel">✓ Mükemmel</span>
+          <span class="kp-rozet kp-rozet-iyi">İyi</span>
+          <span class="kp-rozet kp-rozet-uyar">⚠ Dikkat</span>
+          <span class="kp-rozet kp-rozet-engel">✕ Uygun değil</span>
+          <span class="kp-rozet">Nötr</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================ 10. BOŞ DURUM ================ -->
+    <section class="demo-bolum" aria-labelledby="h-bos">
+      <h2 id="h-bos">10. Boş Durum</h2>
+      <div class="demo-alt">
+        <div class="kp-bos">
+          <div class="kp-bos-ikon" aria-hidden="true">🔍</div>
+          <div class="kp-bos-baslik">Öneri bulunamadı</div>
+          <p class="kp-p kp-p-soluk">Girilen reçete değerleri veritabanında eşleşmedi. Lütfen değerleri kontrol edin.</p>
+          <button class="kp-btn kp-btn-ikincil kp-mt-md">Reçeteyi tekrar gir</button>
+        </div>
+      </div>
+    </section>
+
+    <footer style="margin-top: var(--bosluk-3xl); padding-top: var(--bosluk-lg); border-top: 1px solid var(--yuzey-sinir); text-align: center; color: var(--yuzey-govde-soluk); font-size: var(--font-size-sm);">
+      <p>Kepekçi Optik — Progresif Cam Öneri Sistemi — Faz 7.2 Komponent Demo</p>
+      <p>Dokunma hedefi: <strong>48×48px min</strong> · Kontrast WCAG AA+ · Motion reduce destekli</p>
+    </footer>
+  </main>
+
+  <!-- Modal template -->
+  <div class="kp-modal-ortu" id="kucukModal" hidden role="dialog" aria-modal="true" aria-labelledby="kucukModalBaslik">
+    <div class="kp-modal">
+      <div class="kp-modal-baslik">
+        <h3 class="kp-h3" id="kucukModalBaslik">Onay gerekli</h3>
+        <button class="kp-modal-kapat" aria-label="Modalı kapat" data-modal-kapat="kucukModal">✕</button>
+      </div>
+      <div class="kp-modal-govde">
+        <p class="kp-p">Siparişi onayladığınızda SGK başvurusu otomatik oluşturulacak. Devam etmek istiyor musunuz?</p>
+      </div>
+      <div class="kp-modal-altlik">
+        <button class="kp-btn kp-btn-ikincil" data-modal-kapat="kucukModal">Vazgeç</button>
+        <button class="kp-btn kp-btn-basari" data-modal-kapat="kucukModal">Onayla</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="kp-modal-ortu" id="buyukModal" hidden role="dialog" aria-modal="true" aria-labelledby="buyukModalBaslik">
+    <div class="kp-modal kp-modal-buyuk">
+      <div class="kp-modal-baslik">
+        <h3 class="kp-h3" id="buyukModalBaslik">⚠ ADD değeri dikkat</h3>
+        <button class="kp-modal-kapat" aria-label="Modalı kapat" data-modal-kapat="buyukModal">✕</button>
+      </div>
+      <div class="kp-modal-govde">
+        <p class="kp-p">Girilen ADD değeri <strong>4.25</strong>. Standart aralık 0.75-3.50 arasıdır.</p>
+        <p class="kp-p">Bu değerlerle özel üretim gerekebilir. Devam etmek için reçeteyi kontrol edin veya 3.50'ye sınırlandıralım.</p>
+        <ul style="padding-left: var(--bosluk-lg); line-height: var(--line-height);">
+          <li>Reçete orijinalini kontrol edin</li>
+          <li>Doktorla teyit alın</li>
+          <li>Özel üretim maliyetini hesaba katın</li>
+        </ul>
+      </div>
+      <div class="kp-modal-altlik">
+        <button class="kp-btn kp-btn-ikincil" data-modal-kapat="buyukModal">Reçeteyi düzenle</button>
+        <button class="kp-btn kp-btn-uyar" data-modal-kapat="buyukModal">3.50'ye sabitle</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  (function(){
+    'use strict';
+
+    // ===== Tema & Font toggle (localStorage ile kalıcı) =====
+    const temaDugme = document.getElementById('temaDugme');
+    const fontDugme = document.getElementById('fontDugme');
+    const html = document.documentElement;
+
+    // Başlangıç durumu
+    const kayitliTema = localStorage.getItem('kp-tema') || 'light';
+    const kayitliFont = localStorage.getItem('kp-font') || 'normal';
+    if (kayitliTema === 'dark') {
+      html.setAttribute('data-theme', 'dark');
+      temaDugme.setAttribute('aria-pressed', 'true');
+      temaDugme.textContent = '☀ Açık';
+    }
+    if (kayitliFont === 'large') {
+      html.setAttribute('data-font', 'large');
+      fontDugme.setAttribute('aria-pressed', 'true');
+      fontDugme.textContent = 'A Normal font';
+    }
+
+    temaDugme.addEventListener('click', () => {
+      const koyu = html.getAttribute('data-theme') === 'dark';
+      if (koyu) {
+        html.removeAttribute('data-theme');
+        temaDugme.setAttribute('aria-pressed', 'false');
+        temaDugme.textContent = '🌙 Karanlık';
+        localStorage.setItem('kp-tema', 'light');
+      } else {
+        html.setAttribute('data-theme', 'dark');
+        temaDugme.setAttribute('aria-pressed', 'true');
+        temaDugme.textContent = '☀ Açık';
+        localStorage.setItem('kp-tema', 'dark');
+      }
+    });
+
+    fontDugme.addEventListener('click', () => {
+      const buyuk = html.getAttribute('data-font') === 'large';
+      if (buyuk) {
+        html.removeAttribute('data-font');
+        fontDugme.setAttribute('aria-pressed', 'false');
+        fontDugme.textContent = 'A+ Büyük Font';
+        localStorage.setItem('kp-font', 'normal');
+      } else {
+        html.setAttribute('data-font', 'large');
+        fontDugme.setAttribute('aria-pressed', 'true');
+        fontDugme.textContent = 'A Normal font';
+        localStorage.setItem('kp-font', 'large');
+      }
+    });
+
+    // ===== Toast =====
+    window.toastGoster = function(tip, baslik, mesaj) {
+      const alan = document.getElementById('toastAlan');
+      const toast = document.createElement('div');
+      toast.className = 'kp-toast kp-toast-' + tip;
+      toast.setAttribute('role', tip === 'hata' ? 'alert' : 'status');
+      toast.innerHTML = `
+        <div class="kp-toast-icerik">
+          <div class="kp-toast-baslik"></div>
+          <div class="kp-toast-mesaj"></div>
+        </div>
+        <button class="kp-toast-kapat" aria-label="Bildirimi kapat">✕</button>
+      `;
+      toast.querySelector('.kp-toast-baslik').textContent = baslik;
+      toast.querySelector('.kp-toast-mesaj').textContent = mesaj;
+      const kapat = () => {
+        toast.classList.add('kp-toast-cikis');
+        setTimeout(() => toast.remove(), 250);
+      };
+      toast.querySelector('.kp-toast-kapat').addEventListener('click', kapat);
+      alan.appendChild(toast);
+      setTimeout(kapat, 5000);
+    };
+
+    // ===== Modal (focus trap + Escape) =====
+    function modalAc(id) {
+      const modal = document.getElementById(id);
+      if (!modal) return;
+      modal.hidden = false;
+      modal._oncekiOdak = document.activeElement;
+      const odaklanabilir = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+      if (odaklanabilir.length) odaklanabilir[0].focus();
+      document.body.style.overflow = 'hidden';
+    }
+    function modalKapat(id) {
+      const modal = document.getElementById(id);
+      if (!modal) return;
+      modal.hidden = true;
+      document.body.style.overflow = '';
+      if (modal._oncekiOdak) modal._oncekiOdak.focus();
+    }
+    document.getElementById('modalAc').addEventListener('click', () => modalAc('kucukModal'));
+    document.getElementById('modalBuyukAc').addEventListener('click', () => modalAc('buyukModal'));
+    document.querySelectorAll('[data-modal-kapat]').forEach(btn => {
+      btn.addEventListener('click', () => modalKapat(btn.dataset.modalKapat));
+    });
+    document.querySelectorAll('.kp-modal-ortu').forEach(ortu => {
+      ortu.addEventListener('click', e => {
+        if (e.target === ortu) modalKapat(ortu.id);
+      });
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.kp-modal-ortu:not([hidden])').forEach(m => modalKapat(m.id));
+      }
+    });
+
+    // ===== Stepper =====
+    const stepper = document.getElementById('demoStepper');
+    stepper.querySelectorAll('.kp-step-dugme').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const step = btn.closest('.kp-step');
+        const durumlar = ['bekle', 'aktif', 'tamam'];
+        const mevcut = step.dataset.durum;
+        const yeniIndex = (durumlar.indexOf(mevcut) + 1) % 3;
+        step.dataset.durum = durumlar[yeniIndex];
+        if (durumlar[yeniIndex] === 'aktif') {
+          btn.setAttribute('aria-current', 'step');
+        } else {
+          btn.removeAttribute('aria-current');
+        }
+      });
+    });
+
+    // ===== Tab =====
+    document.querySelectorAll('[role="tablist"]').forEach(liste => {
+      const tabler = liste.querySelectorAll('[role="tab"]');
+      tabler.forEach(tab => {
+        tab.addEventListener('click', () => {
+          tabler.forEach(t => {
+            t.setAttribute('aria-selected', 'false');
+            t.tabIndex = -1;
+            const panel = document.getElementById(t.getAttribute('aria-controls'));
+            if (panel) panel.hidden = true;
+          });
+          tab.setAttribute('aria-selected', 'true');
+          tab.tabIndex = 0;
+          const panel = document.getElementById(tab.getAttribute('aria-controls'));
+          if (panel) panel.hidden = false;
+        });
+        tab.addEventListener('keydown', e => {
+          let hedef = null;
+          if (e.key === 'ArrowRight') hedef = tab.nextElementSibling;
+          if (e.key === 'ArrowLeft') hedef = tab.previousElementSibling;
+          if (e.key === 'Home') hedef = tabler[0];
+          if (e.key === 'End') hedef = tabler[tabler.length - 1];
+          if (hedef && hedef.getAttribute && hedef.getAttribute('role') === 'tab') {
+            e.preventDefault();
+            hedef.focus();
+            hedef.click();
+          }
+        });
+      });
+    });
+
+    // ===== Accordion =====
+    document.querySelectorAll('.kp-accordion-baslik').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const acik = btn.getAttribute('aria-expanded') === 'true';
+        btn.setAttribute('aria-expanded', String(!acik));
+        const icerik = document.getElementById(btn.getAttribute('aria-controls'));
+        if (icerik) icerik.hidden = acik;
+      });
+    });
+
+    // ===== Yukleme dugmesi (demo) =====
+    document.getElementById('yukDugme').addEventListener('click', function() {
+      this.setAttribute('data-yukleniyor', 'true');
+      setTimeout(() => {
+        this.removeAttribute('data-yukleniyor');
+        toastGoster('basari', 'Tamam', 'Yükleme simülasyonu bitti');
+      }, 2000);
+    });
+  })();
+  </script>
+</body>
+</html>

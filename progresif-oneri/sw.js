@@ -1,8 +1,11 @@
 // Kepekci Optik - Service Worker (Offline Destek)
-var CACHE_NAME = "kepekci-optik-v32";
+var CACHE_NAME = "kepekci-optik-v33";
 var OFFLINE_URLS = [
   "./index.html",
   "./css/style.css",
+  "./css/design-tokens.css",
+  "./css/components.css",
+  "./components-demo.html",
   "./js/i18n.js",
   "./js/data.js",
   "./js/engine.js",

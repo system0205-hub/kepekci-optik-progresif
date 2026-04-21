@@ -1,0 +1,854 @@
+/* ============================================================
+   Kepekci Optik - Faz 7.2 Komponent Kutuphanesi
+   ============================================================
+   Tum classlar `kp-` prefix ile (Kepekci Progresif) — mevcut
+   style.css ile CAKISMAZ. design-tokens.css'e dayanir.
+
+   Komponentler:
+     1. Buton (kp-btn)
+     2. Kart (kp-kart)
+     3. Stepper (kp-stepper)
+     4. Modal (kp-modal)
+     5. Form (kp-form-*, kp-input, kp-label)
+     6. Toast (kp-toast)
+     7. Tab (kp-tab)
+     8. Accordion (kp-accordion)
+     9. Rozet (kp-rozet)
+    10. Bos durum (kp-bos)
+   ============================================================ */
+
+/* -------------------------------------------------------
+   0. BASE (komponentlerin dayandigi govde)
+   ------------------------------------------------------- */
+.kp-body,
+[class*="kp-"] {
+  font-family: var(--font-govde);
+}
+
+.kp-baslik,
+.kp-h1, .kp-h2, .kp-h3, .kp-h4 {
+  font-family: var(--font-baslik);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.25;
+  color: var(--yuzey-govde);
+  letter-spacing: -0.01em;
+}
+.kp-h1 { font-size: var(--font-size-4xl); }
+.kp-h2 { font-size: var(--font-size-3xl); }
+.kp-h3 { font-size: var(--font-size-2xl); }
+.kp-h4 { font-size: var(--font-size-xl); }
+
+.kp-p {
+  font-size: var(--font-size-md);
+  color: var(--yuzey-govde);
+  line-height: var(--line-height);
+}
+.kp-p-soluk { color: var(--yuzey-govde-soluk); }
+
+/* -------------------------------------------------------
+   1. BUTON (kp-btn)
+   ------------------------------------------------------- */
+.kp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--bosluk-sm);
+  min-height: var(--btn-min-height);
+  padding: var(--btn-padding-y) var(--btn-padding-x);
+  border: 2px solid transparent;
+  border-radius: var(--btn-radius);
+  background: var(--color-primary);
+  color: var(--color-white);
+  font-family: var(--font-govde);
+  font-size: var(--font-size-md);
+  font-weight: var(--btn-font-weight);
+  line-height: 1;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+  transition: transform var(--transition-fast),
+              box-shadow var(--transition-fast),
+              background var(--transition-fast);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.kp-btn:hover:not(:disabled) {
+  background: var(--color-primary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.kp-btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: var(--shadow-xs);
+}
+
+.kp-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.kp-btn:disabled,
+.kp-btn[aria-disabled="true"] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Varyantlar */
+.kp-btn-ikincil {
+  background: var(--yuzey-ucuncul);
+  color: var(--yuzey-govde);
+}
+.kp-btn-ikincil:hover:not(:disabled) {
+  background: var(--color-gray-200);
+}
+
+.kp-btn-disline {
+  background: transparent;
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+.kp-btn-disline:hover:not(:disabled) {
+  background: var(--color-primary-bg);
+  color: var(--color-primary-dark);
+  transform: translateY(-1px);
+}
+
+.kp-btn-hayalet {
+  background: transparent;
+  color: var(--color-primary);
+  box-shadow: none;
+}
+.kp-btn-hayalet:hover:not(:disabled) {
+  background: var(--color-primary-bg);
+  box-shadow: none;
+}
+
+.kp-btn-basari { background: var(--renk-mukemmel); }
+.kp-btn-basari:hover:not(:disabled) { background: var(--color-success-dark); }
+
+.kp-btn-uyar { background: var(--renk-uyar); color: #1e293b; }
+.kp-btn-uyar:hover:not(:disabled) { background: var(--color-warning-dark); }
+
+.kp-btn-engel { background: var(--renk-engel); }
+.kp-btn-engel:hover:not(:disabled) { background: var(--color-critical-dark); }
+
+/* Boyutlar */
+.kp-btn-kucuk {
+  min-height: 40px;
+  padding: var(--bosluk-sm) var(--bosluk-md);
+  font-size: var(--font-size-sm);
+}
+.kp-btn-buyuk {
+  min-height: var(--dokunma-rahat);
+  padding: var(--bosluk-lg) var(--bosluk-xl);
+  font-size: var(--font-size-lg);
+}
+.kp-btn-dev {
+  min-height: var(--dokunma-genis);
+  padding: var(--bosluk-xl) var(--bosluk-2xl);
+  font-size: var(--font-size-xl);
+}
+
+.kp-btn-tamgenislik {
+  display: flex;
+  width: 100%;
+}
+
+/* Icon button */
+.kp-btn-ikon {
+  width: var(--dokunma-min);
+  padding: 0;
+  aspect-ratio: 1;
+}
+.kp-btn-ikon.kp-btn-buyuk { width: var(--dokunma-rahat); }
+
+/* Loading state */
+.kp-btn[data-yukleniyor="true"] {
+  pointer-events: none;
+  position: relative;
+  color: transparent;
+}
+.kp-btn[data-yukleniyor="true"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 20px;
+  height: 20px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  color: var(--color-white);
+  animation: kp-spin 700ms linear infinite;
+}
+
+@keyframes kp-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* -------------------------------------------------------
+   2. KART (kp-kart)
+   ------------------------------------------------------- */
+.kp-kart {
+  background: var(--kart-bg);
+  border: var(--kart-sinir);
+  border-radius: var(--kart-radius);
+  padding: var(--kart-padding);
+  box-shadow: var(--kart-golge);
+  transition: transform var(--transition-base),
+              box-shadow var(--transition-base);
+}
+
+.kp-kart-tiklanabilir {
+  cursor: pointer;
+}
+.kp-kart-tiklanabilir:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-hover);
+}
+.kp-kart-tiklanabilir:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.kp-kart-sol-vurgu {
+  border-left: 4px solid var(--color-primary);
+}
+.kp-kart-mukemmel { border-left-color: var(--renk-mukemmel); }
+.kp-kart-iyi      { border-left-color: var(--renk-iyi); }
+.kp-kart-uyar     { border-left-color: var(--renk-uyar); }
+.kp-kart-engel    { border-left-color: var(--renk-engel); }
+
+.kp-kart-baslik {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--bosluk-md);
+  margin-bottom: var(--bosluk-md);
+}
+.kp-kart-baslik h3,
+.kp-kart-baslik .kp-h3,
+.kp-kart-baslik .kp-h4 {
+  margin: 0;
+}
+
+.kp-kart-govde > * + * {
+  margin-top: var(--bosluk-md);
+}
+
+.kp-kart-altlik {
+  margin-top: var(--bosluk-lg);
+  padding-top: var(--bosluk-md);
+  border-top: 1px solid var(--yuzey-sinir);
+  display: flex;
+  gap: var(--bosluk-sm);
+  flex-wrap: wrap;
+}
+
+/* -------------------------------------------------------
+   3. STEPPER (kp-stepper) — 5-step flow
+   ------------------------------------------------------- */
+.kp-stepper {
+  display: flex;
+  align-items: center;
+  gap: var(--step-gap);
+  list-style: none;
+  padding: var(--bosluk-md) 0;
+  margin: 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.kp-step {
+  display: flex;
+  align-items: center;
+  gap: var(--bosluk-sm);
+  flex: 0 0 auto;
+}
+
+.kp-step-dugme {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--step-size);
+  height: var(--step-size);
+  border: 2px solid var(--step-bekle-bg);
+  border-radius: 50%;
+  background: var(--yuzey-bg);
+  color: var(--step-bekle-text);
+  font-family: var(--font-baslik);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--step-font-size);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.kp-step[data-durum="aktif"] .kp-step-dugme {
+  background: var(--step-aktif-bg);
+  border-color: var(--step-aktif-bg);
+  color: var(--step-aktif-text);
+  transform: scale(1.1);
+  box-shadow: var(--shadow-md);
+}
+
+.kp-step[data-durum="tamam"] .kp-step-dugme {
+  background: var(--step-tamam-bg);
+  border-color: var(--step-tamam-bg);
+  color: var(--step-tamam-text);
+}
+
+.kp-step[data-durum="tamam"] .kp-step-dugme::after {
+  content: "✓";
+}
+.kp-step[data-durum="tamam"] .kp-step-numara {
+  display: none;
+}
+
+.kp-step-etiket {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--yuzey-govde-soluk);
+  white-space: nowrap;
+}
+.kp-step[data-durum="aktif"] .kp-step-etiket {
+  color: var(--color-primary);
+  font-weight: var(--font-weight-semibold);
+}
+.kp-step[data-durum="tamam"] .kp-step-etiket {
+  color: var(--renk-mukemmel);
+}
+
+.kp-step-cizgi {
+  flex: 1 0 40px;
+  height: 2px;
+  background: var(--step-bekle-bg);
+  min-width: 40px;
+  transition: background var(--transition-base);
+}
+.kp-step-cizgi[data-tamam="true"] {
+  background: var(--step-tamam-bg);
+}
+
+.kp-step-dugme:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* -------------------------------------------------------
+   4. MODAL (kp-modal) — erisilebilir dialog
+   ------------------------------------------------------- */
+.kp-modal-ortu {
+  position: fixed;
+  inset: 0;
+  background: var(--modal-overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--bosluk-md);
+  z-index: var(--z-modal);
+  animation: kp-fade 200ms ease-out;
+}
+
+.kp-modal-ortu[hidden] {
+  display: none;
+}
+
+.kp-modal {
+  background: var(--modal-bg);
+  border-radius: var(--modal-radius);
+  padding: var(--modal-padding);
+  max-width: var(--modal-max-w);
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-2xl);
+  animation: kp-modal-giris 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.kp-modal-buyuk { max-width: 720px; }
+.kp-modal-dev  { max-width: 960px; }
+
+.kp-modal-baslik {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--bosluk-md);
+  margin-bottom: var(--bosluk-lg);
+}
+.kp-modal-baslik .kp-h3,
+.kp-modal-baslik h3 {
+  margin: 0;
+}
+
+.kp-modal-kapat {
+  background: transparent;
+  border: 0;
+  font-size: var(--font-size-2xl);
+  line-height: 1;
+  cursor: pointer;
+  color: var(--yuzey-govde-soluk);
+  min-width: var(--dokunma-min);
+  min-height: var(--dokunma-min);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  transition: background var(--transition-fast);
+}
+.kp-modal-kapat:hover {
+  background: var(--yuzey-ucuncul);
+  color: var(--yuzey-govde);
+}
+.kp-modal-kapat:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.kp-modal-govde {
+  color: var(--yuzey-govde);
+  line-height: var(--line-height);
+}
+.kp-modal-govde > * + * {
+  margin-top: var(--bosluk-md);
+}
+
+.kp-modal-altlik {
+  margin-top: var(--bosluk-lg);
+  display: flex;
+  gap: var(--bosluk-sm);
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+@keyframes kp-fade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes kp-modal-giris {
+  from { opacity: 0; transform: scale(0.94) translateY(8px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0); }
+}
+
+/* -------------------------------------------------------
+   5. FORM (kp-form, kp-input, kp-label, kp-yardim, kp-hata)
+   ------------------------------------------------------- */
+.kp-alan {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bosluk-sm);
+  margin-bottom: var(--bosluk-md);
+}
+
+.kp-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--yuzey-govde);
+}
+
+.kp-label .kp-zorunlu {
+  color: var(--renk-engel);
+  margin-left: 4px;
+}
+
+.kp-input,
+.kp-textarea,
+.kp-select {
+  min-height: var(--input-min-height);
+  padding: var(--input-padding-y) var(--input-padding-x);
+  background: var(--input-bg);
+  border: var(--input-sinir);
+  border-radius: var(--input-radius);
+  font-family: var(--font-govde);
+  font-size: var(--input-font-size);
+  color: var(--yuzey-govde);
+  transition: border-color var(--transition-fast),
+              box-shadow var(--transition-fast);
+  width: 100%;
+}
+
+.kp-textarea {
+  min-height: 120px;
+  resize: vertical;
+  line-height: var(--line-height);
+}
+
+.kp-input:focus,
+.kp-textarea:focus,
+.kp-select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: var(--focus-ring);
+}
+
+.kp-input[aria-invalid="true"],
+.kp-textarea[aria-invalid="true"],
+.kp-select[aria-invalid="true"] {
+  border-color: var(--renk-engel);
+}
+.kp-input[aria-invalid="true"]:focus,
+.kp-textarea[aria-invalid="true"]:focus,
+.kp-select[aria-invalid="true"]:focus {
+  box-shadow: var(--focus-ring-hata);
+}
+
+.kp-input:disabled,
+.kp-textarea:disabled,
+.kp-select:disabled {
+  background: var(--yuzey-ucuncul);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.kp-yardim {
+  font-size: var(--font-size-xs);
+  color: var(--yuzey-govde-soluk);
+}
+.kp-hata {
+  font-size: var(--font-size-xs);
+  color: var(--renk-engel);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Onay kutusu / radyo */
+.kp-secim {
+  display: flex;
+  align-items: center;
+  gap: var(--bosluk-sm);
+  min-height: var(--dokunma-min);
+  padding: var(--bosluk-sm);
+  cursor: pointer;
+  user-select: none;
+  border-radius: var(--radius-md);
+  transition: background var(--transition-fast);
+}
+.kp-secim:hover {
+  background: var(--yuzey-ikincil);
+}
+.kp-secim input[type="checkbox"],
+.kp-secim input[type="radio"] {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}
+
+/* -------------------------------------------------------
+   6. TOAST (kp-toast)
+   ------------------------------------------------------- */
+.kp-toast-alan {
+  position: fixed;
+  top: var(--bosluk-lg);
+  right: var(--bosluk-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--bosluk-sm);
+  z-index: var(--z-toast);
+  pointer-events: none;
+  max-width: var(--toast-max-w);
+}
+
+.kp-toast {
+  min-width: var(--toast-min-w);
+  padding: var(--toast-padding);
+  background: var(--yuzey-bg);
+  border-radius: var(--toast-radius);
+  box-shadow: var(--shadow-lg);
+  border-left: 4px solid var(--color-primary);
+  display: flex;
+  align-items: start;
+  gap: var(--bosluk-md);
+  pointer-events: auto;
+  animation: kp-toast-giris 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  color: var(--yuzey-govde);
+}
+
+.kp-toast-basari { border-left-color: var(--renk-mukemmel); background: var(--renk-mukemmel-bg); }
+.kp-toast-hata   { border-left-color: var(--renk-engel);    background: var(--renk-engel-bg); }
+.kp-toast-uyar   { border-left-color: var(--renk-uyar);     background: var(--renk-uyar-bg); }
+.kp-toast-bilgi  { border-left-color: var(--renk-iyi);      background: var(--renk-iyi-bg); }
+
+.kp-toast-icerik {
+  flex: 1;
+}
+.kp-toast-baslik {
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: 2px;
+}
+.kp-toast-mesaj {
+  font-size: var(--font-size-sm);
+  color: var(--yuzey-govde);
+}
+
+.kp-toast-kapat {
+  background: transparent;
+  border: 0;
+  font-size: var(--font-size-lg);
+  color: var(--yuzey-govde-soluk);
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  min-width: 32px;
+  min-height: 32px;
+  border-radius: var(--radius-sm);
+}
+.kp-toast-kapat:hover {
+  color: var(--yuzey-govde);
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.kp-toast.kp-toast-cikis {
+  animation: kp-toast-cikis 200ms ease-in forwards;
+}
+
+@keyframes kp-toast-giris {
+  from { opacity: 0; transform: translateX(100%); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes kp-toast-cikis {
+  to { opacity: 0; transform: translateX(100%); }
+}
+
+/* -------------------------------------------------------
+   7. TAB (kp-tab)
+   ------------------------------------------------------- */
+.kp-tab-liste {
+  display: flex;
+  gap: var(--bosluk-xs);
+  border-bottom: 2px solid var(--yuzey-sinir);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--bosluk-lg);
+}
+
+.kp-tab {
+  padding: var(--tab-padding-y) var(--tab-padding-x);
+  min-height: var(--tab-min-height);
+  border: 0;
+  background: transparent;
+  color: var(--yuzey-govde-soluk);
+  font-family: var(--font-govde);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.kp-tab:hover {
+  color: var(--yuzey-govde);
+}
+
+.kp-tab[aria-selected="true"] {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+  font-weight: var(--font-weight-semibold);
+}
+
+.kp-tab:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+}
+
+.kp-tab-panel[hidden] {
+  display: none;
+}
+
+/* -------------------------------------------------------
+   8. ACCORDION (kp-accordion)
+   ------------------------------------------------------- */
+.kp-accordion {
+  border: 1px solid var(--yuzey-sinir);
+  border-radius: var(--radius-lg);
+  background: var(--yuzey-bg);
+  overflow: hidden;
+}
+
+.kp-accordion-oge + .kp-accordion-oge {
+  border-top: 1px solid var(--yuzey-sinir);
+}
+
+.kp-accordion-baslik {
+  width: 100%;
+  min-height: var(--dokunma-min);
+  padding: var(--bosluk-md) var(--bosluk-lg);
+  background: transparent;
+  border: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--bosluk-md);
+  font-family: var(--font-baslik);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--yuzey-govde);
+  cursor: pointer;
+  text-align: left;
+  transition: background var(--transition-fast);
+}
+
+.kp-accordion-baslik:hover {
+  background: var(--yuzey-ikincil);
+}
+.kp-accordion-baslik:focus-visible {
+  outline: none;
+  box-shadow: inset var(--focus-ring);
+}
+
+.kp-accordion-ok {
+  display: inline-block;
+  transition: transform var(--transition-base);
+  color: var(--yuzey-govde-soluk);
+}
+.kp-accordion-baslik[aria-expanded="true"] .kp-accordion-ok {
+  transform: rotate(180deg);
+}
+
+.kp-accordion-icerik {
+  padding: 0 var(--bosluk-lg) var(--bosluk-md);
+  color: var(--yuzey-govde);
+  line-height: var(--line-height);
+}
+.kp-accordion-icerik[hidden] {
+  display: none;
+}
+
+/* -------------------------------------------------------
+   9. ROZET / BADGE (kp-rozet)
+   ------------------------------------------------------- */
+.kp-rozet {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  background: var(--yuzey-ucuncul);
+  color: var(--yuzey-govde);
+  line-height: 1.3;
+}
+
+.kp-rozet-mukemmel { background: var(--renk-mukemmel-bg); color: var(--color-success-dark); }
+.kp-rozet-iyi      { background: var(--renk-iyi-bg);      color: var(--color-primary-dark); }
+.kp-rozet-uyar     { background: var(--renk-uyar-bg);     color: var(--color-warning-dark); }
+.kp-rozet-engel    { background: var(--renk-engel-bg);    color: var(--color-critical-dark); }
+
+/* -------------------------------------------------------
+  10. BOS DURUM (kp-bos)
+   ------------------------------------------------------- */
+.kp-bos {
+  text-align: center;
+  padding: var(--bosluk-2xl);
+  color: var(--yuzey-govde-soluk);
+}
+.kp-bos-ikon {
+  font-size: 3rem;
+  margin-bottom: var(--bosluk-md);
+  opacity: 0.5;
+}
+.kp-bos-baslik {
+  font-family: var(--font-baslik);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--yuzey-govde);
+  margin-bottom: var(--bosluk-sm);
+}
+
+/* -------------------------------------------------------
+  11. YARDIMCILAR (yardimci siniflar)
+   ------------------------------------------------------- */
+.kp-gorsel-gizli {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.kp-flex        { display: flex; }
+.kp-flex-col    { flex-direction: column; }
+.kp-flex-merkez { align-items: center; justify-content: center; }
+.kp-flex-ara    { justify-content: space-between; }
+.kp-bosluk-xs   { gap: var(--bosluk-xs); }
+.kp-bosluk-sm   { gap: var(--bosluk-sm); }
+.kp-bosluk-md   { gap: var(--bosluk-md); }
+.kp-bosluk-lg   { gap: var(--bosluk-lg); }
+
+.kp-grid             { display: grid; }
+.kp-grid-2           { grid-template-columns: repeat(2, 1fr); gap: var(--bosluk-md); }
+.kp-grid-3           { grid-template-columns: repeat(3, 1fr); gap: var(--bosluk-md); }
+.kp-grid-4           { grid-template-columns: repeat(4, 1fr); gap: var(--bosluk-md); }
+.kp-grid-oto         { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--bosluk-md); }
+
+@media (max-width: 767px) {
+  .kp-grid-2,
+  .kp-grid-3,
+  .kp-grid-4 { grid-template-columns: 1fr; }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .kp-grid-3,
+  .kp-grid-4 { grid-template-columns: repeat(2, 1fr); }
+}
+
+.kp-metin-merkez { text-align: center; }
+.kp-metin-sag    { text-align: right; }
+.kp-metin-sol    { text-align: left; }
+
+.kp-mt-sm { margin-top: var(--bosluk-sm); }
+.kp-mt-md { margin-top: var(--bosluk-md); }
+.kp-mt-lg { margin-top: var(--bosluk-lg); }
+.kp-mt-xl { margin-top: var(--bosluk-xl); }
+.kp-mb-sm { margin-bottom: var(--bosluk-sm); }
+.kp-mb-md { margin-bottom: var(--bosluk-md); }
+.kp-mb-lg { margin-bottom: var(--bosluk-lg); }
+.kp-mb-xl { margin-bottom: var(--bosluk-xl); }
+
+.kp-p-md  { padding: var(--bosluk-md); }
+.kp-p-lg  { padding: var(--bosluk-lg); }
+.kp-p-xl  { padding: var(--bosluk-xl); }
+
+/* -------------------------------------------------------
+  12. TEMA DEGISTIRICI (theme toggle widget)
+   ------------------------------------------------------- */
+.kp-tema-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--bosluk-sm);
+}
+.kp-tema-toggle button {
+  min-width: var(--dokunma-min);
+  min-height: var(--dokunma-min);
+  padding: var(--bosluk-sm) var(--bosluk-md);
+  background: var(--yuzey-bg);
+  border: 1px solid var(--yuzey-sinir);
+  border-radius: var(--radius-md);
+  color: var(--yuzey-govde);
+  cursor: pointer;
+  font-size: var(--font-size-md);
+  transition: all var(--transition-fast);
+}
+.kp-tema-toggle button[aria-pressed="true"] {
+  background: var(--color-primary);
+  color: var(--color-white);
+  border-color: var(--color-primary);
+}
+.kp-tema-toggle button:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}

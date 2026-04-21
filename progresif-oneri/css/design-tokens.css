@@ -1,0 +1,268 @@
+/* ============================================================
+   Kepekci Optik - Progresif Cam Oneri Sistemi
+   Faz 7.1 - Design Tokens (Tablet-first, Dark Mode, A+ Font)
+   ============================================================
+   Bu dosya mevcut style.css'i GENISLETIR, degistirmez.
+   Yeni tokenler: Turkce semantic alias, dark mode, A+ font,
+   dokunma hedefi, motion preferences.
+
+   Muzaffer Bey icin:
+     - Dark mode:    <html data-theme="dark">
+     - A+ buyuk font: <html data-font="large">
+     - Her ikisi beraber: <html data-theme="dark" data-font="large">
+   ============================================================ */
+
+/* -------------------------------------------------------
+   1. Modern Typography (Inter + Plus Jakarta Sans)
+   PWA offline de calismali - local fallback zincir guclu tut
+   ------------------------------------------------------- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+
+/* -------------------------------------------------------
+   2. Yeni Tokenler (Light Mode + Turkce Alias)
+   ------------------------------------------------------- */
+:root {
+  /* Turkce semantic renk alias'lari (plan: yesil/mavi/sari/kirmizi) */
+  --renk-mukemmel:    var(--color-success);        /* Yesil - ideal cozum */
+  --renk-mukemmel-bg: var(--color-success-bg);
+  --renk-iyi:         var(--color-primary);        /* Mavi - kabul edilebilir */
+  --renk-iyi-bg:      var(--color-primary-bg);
+  --renk-uyar:        var(--color-warning);        /* Sari - dikkat */
+  --renk-uyar-bg:     var(--color-warning-bg);
+  --renk-engel:       var(--color-critical);       /* Kirmizi - onlem */
+  --renk-engel-bg:    var(--color-critical-bg);
+
+  /* Dokunma hedefi (WCAG 2.5.5 Target Size AAA: 44px, plan: 48px) */
+  --dokunma-min:    48px;
+  --dokunma-rahat:  56px;
+  --dokunma-genis:  64px;
+
+  /* Modern font stack (offline fallback icin sistem fontu zincirli) */
+  --font-govde:  'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+                 Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-baslik: 'Plus Jakarta Sans', 'Inter', -apple-system,
+                 BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Tablet-first spacing (48px grid'e oturur) */
+  --bosluk-xs: 4px;
+  --bosluk-sm: 8px;
+  --bosluk-md: 16px;
+  --bosluk-lg: 24px;
+  --bosluk-xl: 32px;
+  --bosluk-2xl: 48px;
+  --bosluk-3xl: 64px;
+
+  /* Step indicator (5-step flow) */
+  --step-aktif-bg:    var(--color-primary);
+  --step-tamam-bg:    var(--color-success);
+  --step-bekle-bg:    var(--color-gray-200);
+  --step-aktif-text:  var(--color-white);
+  --step-tamam-text:  var(--color-white);
+  --step-bekle-text:  var(--color-text-muted);
+
+  /* Yuzey katmanlari (komponent kutuphanesi icin) */
+  --yuzey-bg:         var(--color-white);
+  --yuzey-ikincil:    var(--color-off-white);
+  --yuzey-ucuncul:    var(--color-light-gray);
+  --yuzey-sinir:      var(--border-color);
+  --yuzey-govde:      var(--color-text);
+  --yuzey-govde-soluk:var(--color-text-muted);
+
+  /* Durum vurgularasi (form validation, toast vb.) */
+  --durum-basari-sol:   var(--color-success);
+  --durum-basari-bg:    var(--color-success-bg);
+  --durum-hata-sol:     var(--color-critical);
+  --durum-hata-bg:      var(--color-critical-bg);
+  --durum-uyari-sol:    var(--color-warning);
+  --durum-uyari-bg:     var(--color-warning-bg);
+  --durum-bilgi-sol:    var(--color-primary);
+  --durum-bilgi-bg:     var(--color-primary-bg);
+
+  /* Focus ring (erisilebilirlik) */
+  --focus-ring:       0 0 0 3px rgba(59, 130, 246, 0.4);
+  --focus-ring-basari:0 0 0 3px rgba(34, 197, 94, 0.4);
+  --focus-ring-hata:  0 0 0 3px rgba(239, 68, 68, 0.4);
+}
+
+/* -------------------------------------------------------
+   3. Dark Mode (data-theme="dark")
+   Muzaffer Bey gece magazada kullanacak - goz yormamali
+   ------------------------------------------------------- */
+:root[data-theme="dark"] {
+  /* Yuzey katmanlari */
+  --yuzey-bg:         #0f172a;
+  --yuzey-ikincil:    #1e293b;
+  --yuzey-ucuncul:    #334155;
+  --yuzey-sinir:      #334155;
+  --yuzey-govde:      #f1f5f9;
+  --yuzey-govde-soluk:#94a3b8;
+
+  /* Ana tokenler override */
+  --color-text:       #f1f5f9;
+  --color-text-muted: #94a3b8;
+  --color-text-light: #64748b;
+  --color-white:      #0f172a;
+  --color-off-white:  #1e293b;
+  --color-light-gray: #334155;
+  --border-color:     #334155;
+
+  /* Renkler dark'ta biraz soluklastirildi - parlak kirmizi goz yakar */
+  --color-primary:       #60a5fa;
+  --color-primary-dark:  #3b82f6;
+  --color-primary-light: #93c5fd;
+  --color-primary-bg:    #1e3a5f;
+  --color-success:       #4ade80;
+  --color-success-dark:  #22c55e;
+  --color-success-bg:    #14532d;
+  --color-warning:       #facc15;
+  --color-warning-dark:  #eab308;
+  --color-warning-bg:    #422006;
+  --color-danger:        #fb923c;
+  --color-danger-dark:   #f97316;
+  --color-danger-bg:     #431407;
+  --color-critical:      #f87171;
+  --color-critical-dark: #ef4444;
+  --color-critical-bg:   #450a0a;
+
+  /* Step indicator */
+  --step-bekle-bg:    #334155;
+  --step-bekle-text:  #94a3b8;
+
+  /* Focus ring dark'ta daha parlak */
+  --focus-ring:       0 0 0 3px rgba(96, 165, 250, 0.55);
+
+  /* Golgeler dark'ta daha guclu */
+  --shadow-card:       0 2px 8px rgba(0, 0, 0, 0.4), 0 0 1px rgba(0, 0, 0, 0.6);
+  --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.55), 0 0 1px rgba(0, 0, 0, 0.6);
+  --shadow-sm:         0 1px 3px rgba(0, 0, 0, 0.35);
+  --shadow-md:         0 4px 6px -1px rgba(0, 0, 0, 0.45);
+  --shadow-lg:         0 10px 15px -3px rgba(0, 0, 0, 0.55);
+  --shadow-xl:         0 20px 25px -5px rgba(0, 0, 0, 0.65);
+
+  /* Background */
+  color-scheme: dark;
+}
+
+/* Dark mode body arkaplani */
+:root[data-theme="dark"] body {
+  background-color: var(--yuzey-ikincil);
+  color: var(--yuzey-govde);
+}
+
+/* -------------------------------------------------------
+   4. A+ Buyuk Font Modu (data-font="large")
+   Yasli musteriler, gorme sorunlu musteriler icin
+   ------------------------------------------------------- */
+:root[data-font="large"] {
+  --font-size-xs:   0.875rem;    /* 14px (12 yerine) */
+  --font-size-sm:   1rem;        /* 16px (13 yerine) */
+  --font-size-base: 1.125rem;    /* 18px (15 yerine) */
+  --font-size-md:   1.25rem;     /* 20px (16 yerine) */
+  --font-size-lg:   1.375rem;    /* 22px (18 yerine) */
+  --font-size-xl:   1.5rem;      /* 24px (20 yerine) */
+  --font-size-2xl:  1.875rem;    /* 30px (24 yerine) */
+  --font-size-3xl:  2.25rem;     /* 36px (30 yerine) */
+  --font-size-4xl:  2.75rem;     /* 44px (36 yerine) */
+
+  /* Dokunma hedefi buyur */
+  --dokunma-min:    56px;
+  --dokunma-rahat:  64px;
+  --dokunma-genis:  72px;
+
+  /* Satir aralik artar */
+  --line-height: 1.7;
+}
+
+/* A+ dark kombinasyonu */
+:root[data-theme="dark"][data-font="large"] {
+  /* Butun alttaki kurallar birlesir */
+}
+
+/* -------------------------------------------------------
+   5. Motion Preferences (prefers-reduced-motion)
+   Vestibuler bozukluk olan kullanicilar icin
+   ------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --transition-fast:   0ms;
+    --transition-base:   0ms;
+    --transition-slow:   0ms;
+    --transition-spring: 0ms;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* -------------------------------------------------------
+   6. Tablet-first viewport helpers
+   1024x768 (landscape), 1366x1024, 768x1024 (portrait)
+   ------------------------------------------------------- */
+:root {
+  --tablet-min:  768px;
+  --tablet-max:  1366px;
+  --desktop-min: 1367px;
+  --mobile-max:  767px;
+}
+
+/* -------------------------------------------------------
+   7. Komponent token'lari (7.2'de kullanilacak)
+   ------------------------------------------------------- */
+:root {
+  /* Buton */
+  --btn-padding-y:    var(--bosluk-md);
+  --btn-padding-x:    var(--bosluk-lg);
+  --btn-radius:       var(--radius-md);
+  --btn-font-weight:  var(--font-weight-semibold);
+  --btn-min-height:   var(--dokunma-min);
+
+  /* Kart */
+  --kart-padding:     var(--bosluk-lg);
+  --kart-radius:      var(--radius-lg);
+  --kart-bg:          var(--yuzey-bg);
+  --kart-sinir:       1px solid var(--yuzey-sinir);
+  --kart-golge:       var(--shadow-card);
+
+  /* Form */
+  --input-padding-y:  var(--bosluk-md);
+  --input-padding-x:  var(--bosluk-md);
+  --input-radius:     var(--radius-md);
+  --input-min-height: var(--dokunma-min);
+  --input-bg:         var(--yuzey-bg);
+  --input-sinir:      1px solid var(--yuzey-sinir);
+  --input-font-size:  var(--font-size-md);
+
+  /* Modal */
+  --modal-bg:         var(--yuzey-bg);
+  --modal-radius:     var(--radius-xl);
+  --modal-padding:    var(--bosluk-xl);
+  --modal-overlay:    rgba(15, 23, 42, 0.5);
+  --modal-max-w:      560px;
+
+  /* Toast */
+  --toast-radius:     var(--radius-lg);
+  --toast-padding:    var(--bosluk-md) var(--bosluk-lg);
+  --toast-min-w:      320px;
+  --toast-max-w:      480px;
+
+  /* Stepper */
+  --step-size:        var(--dokunma-min);
+  --step-gap:         var(--bosluk-lg);
+  --step-font-size:   var(--font-size-md);
+
+  /* Tab */
+  --tab-padding-y:    var(--bosluk-md);
+  --tab-padding-x:    var(--bosluk-lg);
+  --tab-min-height:   var(--dokunma-min);
+  --tab-aktif-border: 3px solid var(--color-primary);
+}
+
+:root[data-theme="dark"] {
+  --modal-overlay: rgba(0, 0, 0, 0.7);
+}
