@@ -2229,3 +2229,229 @@ if (typeof window !== "undefined") {
   window.kontrolFittingGeometri = kontrolFittingGeometri;
   window.kontrolKaplamaUyumu = kontrolKaplamaUyumu;
 }
+
+// ============================================================================
+// FAZ 2 — MOTOR GENISLETME (CHUNK 3): 17 EDGE CASE (T2 - RECETE/MODEL)
+// Plan satir 275-293. Recete-model eslestirme kurallari.
+// Her uyari: { kural, seviye, mesaj, onerilenModeller, duzelt }
+// ============================================================================
+
+/**
+ * Oblik eksen mi? 30-60 veya 120-150 derece arasinda.
+ * @param {number} axis - derece
+ */
+function _oblikMi(axis) {
+  if (axis === null || axis === undefined || isNaN(axis)) return false;
+  var a = ((axis % 180) + 180) % 180;
+  return (a >= 30 && a <= 60) || (a >= 120 && a <= 150);
+}
+
+/**
+ * 17 edge case T2 kurallari. Recete + yasam + (opsiyonel) cerceve alir.
+ * @param {object} recete - { sagSph, solSph, sagCyl, solCyl, sagAks, solAks, sagAdd, solAdd }
+ * @param {object} cerceve - { b? }
+ * @param {object} context - { yas, ilkKullanim }
+ * @returns {Array<{kural, seviye, mesaj, onerilenModeller, duzelt}>}
+ */
+function kontrolKenarDurumlari(recete, cerceve, context) {
+  var uyarilar = [];
+  var r = recete || {};
+  var c = cerceve || {};
+  var ctx = context || {};
+  var yas = ctx.yas || 0;
+  var ilk = !!ctx.ilkKullanim;
+
+  var sphler = [r.sagSph, r.solSph].filter(function (v) { return v !== null && v !== undefined && !isNaN(v); });
+  var cyller = [r.sagCyl, r.solCyl].filter(function (v) { return v !== null && v !== undefined && !isNaN(v); });
+  var addler = [r.sagAdd, r.solAdd].filter(function (v) { return v !== null && v !== undefined && !isNaN(v); });
+  if (sphler.length === 0) return uyarilar;
+
+  // ES (Spherical Equivalent) hesapla: SPH + CYL/2
+  var esler = [];
+  if (r.sagSph !== null && r.sagSph !== undefined) esler.push(r.sagSph + (r.sagCyl || 0) / 2);
+  if (r.solSph !== null && r.solSph !== undefined) esler.push(r.solSph + (r.solCyl || 0) / 2);
+  var maxAbsES = esler.length ? Math.max.apply(null, esler.map(function (e) { return Math.abs(e); })) : 0;
+  var maxAbsSph = Math.max.apply(null, sphler.map(function (v) { return Math.abs(v); }));
+  var minSph = Math.min.apply(null, sphler);
+  var maxSph = Math.max.apply(null, sphler);
+  var maxAbsCyl = cyller.length ? Math.max.apply(null, cyller.map(function (v) { return Math.abs(v); })) : 0;
+  var maxAdd = addler.length ? Math.max.apply(null, addler) : 0;
+  var sphFark = sphler.length === 2 ? Math.abs(sphler[0] - sphler[1]) : 0;
+  var cylFark = cyller.length === 2 ? Math.abs(cyller[0] - cyller[1]) : 0;
+
+  // Kural T2-1: |ES| >= 8 -> 1.74 zorunlu
+  if (maxAbsES >= 8.0) {
+    uyarilar.push({
+      kural: "T2-1", seviye: "zorunlu",
+      mesaj: "Cok yuksek recete (|ES| = " + maxAbsES.toFixed(2) + "D). 1.74 indeks zorunlu, kisisel FreeForm tasarim gerekli.",
+      onerilenModeller: ["Nucleo 5D Double Asferik", "Matrix HD", "Seemax Ultimate Z"],
+      duzelt: "1.74 + premium FreeForm sec."
+    });
+  } else if (maxAbsES >= 6.0) {
+    // Kural T2-2
+    uyarilar.push({
+      kural: "T2-2", seviye: "uyari",
+      mesaj: "Yuksek recete (|ES| = " + maxAbsES.toFixed(2) + "D). 1.67 indeks onerilir, kozmetik icin 1.74 dusunulebilir.",
+      onerilenModeller: ["Nucleo 5D", "Matrix HD", "Presio Power Z"],
+      duzelt: "1.67 veya 1.74 indeks."
+    });
+  }
+
+  // Kural T2-3: SPH <= -10 -> yuksek miyopi
+  if (minSph <= -10.0 && minSph > -15.0) {
+    uyarilar.push({
+      kural: "T2-3", seviye: "uyari",
+      mesaj: "Yuksek miyopi (SPH " + minSph.toFixed(2) + "D). Kisa koridor + cift asferik + kucuk cerceve onerilir.",
+      onerilenModeller: ["Nucleo 5D Double Asferik", "Nucleo 5D TekOdakliDoubleAsferik", "Seemax Ultimate Z"],
+      duzelt: "1.74 + cift asferik teknoloji + cap <= 65mm."
+    });
+  }
+
+  // Kural T2-4: SPH <= -15 -> lentikuler zorunlu
+  if (minSph <= -15.0) {
+    uyarilar.push({
+      kural: "T2-4", seviye: "zorunlu",
+      mesaj: "Asiri miyopi (SPH " + minSph.toFixed(2) + "D). Lentikuler (fried-egg) tasarim ZORUNLU.",
+      onerilenModeller: ["Lentikuler (marka bagimsiz)"],
+      duzelt: "Lentikuler tek odakli/progresif secilmeli - standart cam uretilemez."
+    });
+  }
+
+  // Kural T2-5: SPH >= +4 -> asferik/atorik
+  if (maxSph >= 4.0 && maxSph < 6.0) {
+    uyarilar.push({
+      kural: "T2-5", seviye: "uyari",
+      mesaj: "Yuksek hipermetropi (SPH +" + maxSph.toFixed(2) + "D). Asferik/atorik tasarim ile merkez kalinligi ve 'buyuk goz' efekti azaltilir.",
+      onerilenModeller: ["SlimEdge Asferik", "Nucleo 5D", "Seemax Ultimate Z"],
+      duzelt: "1.67 asferik FreeForm + kucuk cerceve (50-52mm)."
+    });
+  } else if (maxSph >= 6.0) {
+    // Kural T2-6
+    uyarilar.push({
+      kural: "T2-6", seviye: "zorunlu",
+      mesaj: "Cok yuksek hipermetropi (SPH +" + maxSph.toFixed(2) + "D). Kucuk cerceve + atorik FreeForm ZORUNLU.",
+      onerilenModeller: ["Atorik FreeForm (Nucleo/Seemax)"],
+      duzelt: "1.67 veya 1.74 atorik + cap <= 50mm."
+    });
+  }
+
+  // Kural T2-7: CYL 2-2.5 -> yumusak tasarim
+  if (maxAbsCyl >= 2.0 && maxAbsCyl < 2.5) {
+    uyarilar.push({
+      kural: "T2-7", seviye: "uyari",
+      mesaj: "Orta-yuksek astigmat (|CYL| " + maxAbsCyl.toFixed(2) + "D). Yumusak tasarim - adaptasyon 4 haftaya uzayabilir.",
+      onerilenModeller: ["Synthesis (soft design)", "Varilux Comfort", "Presio Balance Z"],
+      duzelt: "Yumusak progresif + uzun koridor."
+    });
+  }
+
+  // Kural T2-8: CYL >= 2.5 -> kisisel/FreeForm zorunlu
+  if (maxAbsCyl >= 2.5) {
+    uyarilar.push({
+      kural: "T2-8", seviye: "zorunlu",
+      mesaj: "Yuksek astigmat (|CYL| " + maxAbsCyl.toFixed(2) + "D). Kisisel/FreeForm tasarim ZORUNLU - standart progresif kenarinda aberasyon kabul edilemez.",
+      onerilenModeller: ["Synthesis", "Matrix HD", "Nucleo 5D", "Seemax Ultimate Z"],
+      duzelt: "Premium FreeForm - pantoskopik + bombe + verteks olcum tam."
+    });
+  }
+
+  // Kural T2-9: Oblik eksen + CYL >= 1.25 (veya >= 1.5 plana gore)
+  var sagOblik = _oblikMi(r.sagAks);
+  var solOblik = _oblikMi(r.solAks);
+  var oblikVarMi = (sagOblik && Math.abs(r.sagCyl || 0) >= 1.25) || (solOblik && Math.abs(r.solCyl || 0) >= 1.25);
+  if (oblikVarMi && maxAbsCyl >= 1.5 && maxAbsCyl < 2.5) {
+    uyarilar.push({
+      kural: "T2-9", seviye: "uyari",
+      mesaj: "Oblik astigmat (aks 30-60 veya 120-150) + |CYL| " + maxAbsCyl.toFixed(2) + "D. Kisisel tasarim gerekli.",
+      onerilenModeller: ["Synthesis", "Nucleo 5D", "Matrix HD"],
+      duzelt: "Oblik aksta standart progresif yetersiz - FreeForm."
+    });
+  }
+
+  // Kural T2-10: Anizometropi >= 2D -> binokuler dengeli
+  if (sphFark >= 2.0 || cylFark >= 2.0) {
+    uyarilar.push({
+      kural: "T2-10", seviye: "zorunlu",
+      mesaj: "Anizometropi (SPH fark " + sphFark.toFixed(2) + "D, CYL fark " + cylFark.toFixed(2) + "D). DuoBalance/binokuler dengeli tasarim ZORUNLU.",
+      onerilenModeller: ["Nucleo 5D (DuoBalance)", "Varilux Physio 360 W.A.V.E", "Seemax Ultimate Z"],
+      duzelt: "Binokuler dengeli FreeForm - dikey prizma kontrolu."
+    });
+  }
+
+  // Kural T2-11: Ciddi anizometropi >= 3D
+  if (sphFark >= 3.0) {
+    uyarilar.push({
+      kural: "T2-11", seviye: "uyari",
+      mesaj: "Ciddi anizometropi (SPH fark " + sphFark.toFixed(2) + "D >= 3D). Slab-off prizma degerlendirilmeli.",
+      onerilenModeller: ["Slab-off (DuoBalance Premium)", "Nucleo 5D"],
+      duzelt: "Slab-off prizma + DuoBalance. Cift gorme / bas agrisi riski."
+    });
+  }
+
+  // Kural T2-12: ADD >= 2.50 -> uzun koridor + B >= 30mm
+  if (maxAdd >= 2.5 && maxAdd < 3.5) {
+    var bYeterli = (c.b === undefined || c.b === null) ? null : (c.b >= 30);
+    uyarilar.push({
+      kural: "T2-12", seviye: (bYeterli === false ? "zorunlu" : "uyari"),
+      mesaj: "Yuksek ADD (" + maxAdd.toFixed(2) + "D). Uzun koridor + B >= 30mm sart." + (bYeterli === false ? " Mevcut B " + c.b + "mm yetersiz." : ""),
+      onerilenModeller: ["Uzun koridor FreeForm (koridor >= 11mm)"],
+      duzelt: "A/G koridor (11-12mm) + B >= 30mm cerceve."
+    });
+  }
+
+  // Kural T2-13: ADD >= 3.50 -> yalniz premium FreeForm
+  if (maxAdd >= 3.5) {
+    uyarilar.push({
+      kural: "T2-13", seviye: "zorunlu",
+      mesaj: "Maksimum ADD (" + maxAdd.toFixed(2) + "D). Yalniz premium custom FreeForm cam uretilebilir.",
+      onerilenModeller: ["Seemax Ultimate Z", "Nucleo 5D Premium"],
+      duzelt: "ADD 3.50'u standart progresif desteklemez - premium custom."
+    });
+  }
+
+  // Kural T2-14: Genc + dusuk ADD + ilk kullanim -> anti-fatigue
+  if (yas > 0 && yas < 45 && maxAdd > 0 && maxAdd <= 1.0 && ilk) {
+    uyarilar.push({
+      kural: "T2-14", seviye: "bilgi",
+      mesaj: "Genc presbiyop (" + yas + " yas, ADD " + maxAdd.toFixed(2) + "D) + ilk kullanim. Tam progresif yerine anti-fatigue tek odakli daha uygun olabilir.",
+      onerilenModeller: ["Serenity", "RelaxSee Neo", "Anti-fatigue Double Asferic", "EyeZen", "Hoya Sync III"],
+      duzelt: "Anti-fatigue ile baslama, gercek presbiyopi gelince progresife gec."
+    });
+  }
+
+  // Kural T2-15: Ilk kullanim + yuksek ADD veya yuksek CYL -> adaptasyon riski
+  if (ilk && (maxAdd >= 2.25 || maxAbsCyl >= 2.0)) {
+    uyarilar.push({
+      kural: "T2-15", seviye: "uyari",
+      mesaj: "Ilk kez progresif kullanici + yuksek recete (ADD " + maxAdd.toFixed(2) + "D, |CYL| " + maxAbsCyl.toFixed(2) + "D). %23 orta-siddetli sikayet riski (Nature 2017).",
+      onerilenModeller: ["Synthesis Morphing", "Varilux Comfort", "Presio First", "Hoya Lifestyle"],
+      duzelt: "Yumusak tasarim + uzun koridor + ADD <= 2.00 ile baslama dusunulebilir."
+    });
+  }
+
+  // Kural T2-16: Ilk kullanim + oblik aks + CYL >= 1.25 -> %23 basarisizlik riski
+  if (ilk && oblikVarMi && maxAbsCyl >= 1.25) {
+    uyarilar.push({
+      kural: "T2-16", seviye: "uyari",
+      mesaj: "Ilk kullanim + oblik aks + |CYL| " + maxAbsCyl.toFixed(2) + "D. Basarisizlik riski yuksek - ozellikle dikkat.",
+      onerilenModeller: ["Synthesis (soft)", "anti-fatigue ara gecis", "Presio First"],
+      duzelt: "Anti-fatigue / soft progresif ile gecis yap."
+    });
+  }
+
+  // Kural T2-17: Cerceve B < 28 + ADD >= 1.75 (plan 2-17 orijinal)
+  if (c.b !== undefined && c.b !== null && c.b < 28 && maxAdd >= 1.75) {
+    uyarilar.push({
+      kural: "T2-17", seviye: "uyari",
+      mesaj: "Cerceve B " + c.b + "mm < 28mm + ADD " + maxAdd.toFixed(2) + "D. Okuma zonu sigmaz.",
+      onerilenModeller: ["Kisa koridor (D=5/E=7) modeller"],
+      duzelt: "Daha derin cerceve veya kisa koridor - ya da ADD dusurulsun (klinik re-evaluation)."
+    });
+  }
+
+  return uyarilar;
+}
+
+if (typeof window !== "undefined") {
+  window.kontrolKenarDurumlari = kontrolKenarDurumlari;
+}
