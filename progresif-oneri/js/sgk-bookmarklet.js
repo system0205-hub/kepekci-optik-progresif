@@ -74,24 +74,49 @@
   }
 
   function tumGozlukVerileriniOku() {
+    // v7 - Daha genis tablo bulma + teshis raporu
     var camTablolari = document.querySelectorAll("table.detaylarKutuCam");
-    // [0]=UZAK SAG, [1]=UZAK SOL, [2]=YAKIN SAG, [3]=YAKIN SOL
-    var sonuc = { uzak: null, yakin: null };
+    // Fallback: herhangi bir goz tablosu (class degismisse)
+    if (camTablolari.length === 0) {
+      camTablolari = document.querySelectorAll('table[class*="detay"], table[class*="Kutu"], table[class*="Cam"]');
+    }
 
-    if (camTablolari.length >= 2) {
-      var uzakSag = camTablosuOku(camTablolari[0]);
-      var uzakSol = camTablosuOku(camTablolari[1]);
-      if (uzakSag || uzakSol) {
-        sonuc.uzak = { sag: uzakSag, sol: uzakSol };
+    // Teshis: her tabloyu veri okunabilirligine gore isaretle
+    window._sgkTeshis = {
+      toplamTablo: camTablolari.length,
+      okunabilir: [],
+      okunamayan: []
+    };
+
+    var okunanlar = [];
+    for (var i = 0; i < camTablolari.length; i++) {
+      var okundu = camTablosuOku(camTablolari[i]);
+      okunanlar.push(okundu);
+      if (okundu) {
+        window._sgkTeshis.okunabilir.push({
+          indeks: i,
+          veri: okundu,
+          sinif: camTablolari[i].className
+        });
+      } else {
+        var rows = camTablolari[i].querySelectorAll("tr");
+        window._sgkTeshis.okunamayan.push({
+          indeks: i,
+          satirSayisi: rows.length,
+          sinif: camTablolari[i].className
+        });
       }
     }
 
-    if (camTablolari.length >= 4) {
-      var yakinSag = camTablosuOku(camTablolari[2]);
-      var yakinSol = camTablosuOku(camTablolari[3]);
-      if (yakinSag || yakinSol) {
-        sonuc.yakin = { sag: yakinSag, sol: yakinSol };
-      }
+    // [0]=UZAK SAG, [1]=UZAK SOL, [2]=YAKIN SAG, [3]=YAKIN SOL
+    var sonuc = { uzak: null, yakin: null };
+
+    if (okunanlar[0] || okunanlar[1]) {
+      sonuc.uzak = { sag: okunanlar[0] || null, sol: okunanlar[1] || null };
+    }
+
+    if (okunanlar[2] || okunanlar[3]) {
+      sonuc.yakin = { sag: okunanlar[2] || null, sol: okunanlar[3] || null };
     }
 
     return sonuc;
@@ -171,11 +196,29 @@
   // ============================================================
   try {
     var veri = sgkVerileriOku();
+    var t = window._sgkTeshis || { toplamTablo: 0, okunabilir: [], okunamayan: [] };
 
     // En az bir goz verisi okunmus mu kontrol et
     if (!veri.u && !veri.y) {
-      alert("Kepekci Optik:\n\nGoz numarasi okunamadi.\nLutfen e-recete sayfasinda goz bilgilerinin dolu oldugunu kontrol edin.\n\nManuel giris kullanabilirsiniz.");
+      alert("Kepekci Optik - Goz verisi okunamadi\n\n" +
+        "Bulunan cam tablosu: " + t.toplamTablo + "\n" +
+        "Okunabilir: " + t.okunabilir.length + "\n" +
+        "Okunamayan: " + t.okunamayan.length + "\n\n" +
+        "Lutfen e-recete sayfasinda goz bilgilerinin dolu oldugunu kontrol edin.\nManuel giris kullanabilirsiniz.");
       return;
+    }
+
+    // Yakin recete bulunamadiysa uyar
+    if (veri.u && !veri.y) {
+      var onay = confirm("Kepekci Optik - Yakin recete bulunamadi\n\n" +
+        "Teshis:\n" +
+        "  Toplam cam tablosu: " + t.toplamTablo + "\n" +
+        "  Okunabilir: " + t.okunabilir.length + " (" + t.okunabilir.map(function(o){return o.indeks;}).join(",") + ")\n" +
+        "  Okunamayan: " + t.okunamayan.length + "\n\n" +
+        "SGK sayfasinda yakin recete bolumu gorunuyor mu?\n" +
+        "Bazi recetelerde sadece UZAK olur (progresif icin yakin sart).\n\n" +
+        "DEVAM et (sadece uzak ile) mi? Yoksa IPTAL mi?");
+      if (!onay) return;
     }
 
     receteyeAktar(veri);
