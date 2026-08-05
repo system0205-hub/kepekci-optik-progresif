@@ -1406,7 +1406,7 @@ function gosterSiparisKontrol(bilgiler) {
     bilgiler.onerilen.forEach(function(item) {
       var icon = item.durum === "eksik" ? "&#9888;" : "&#10003;";
       var renk = item.durum === "eksik" ? "var(--warning)" : "var(--success)";
-      var deger = item.deger || "Olculmedil";
+      var deger = item.deger || "Olculmedi";
       var mesajHtml = item.mesaj ? '<div style="font-size: 0.8rem; color: var(--warning); margin-top: 2px;">' + item.mesaj + '</div>' : '';
       var div = document.createElement("div");
       div.style.cssText = "display: flex; align-items: flex-start; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--border-light);";

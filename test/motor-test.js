@@ -61,10 +61,13 @@ function cerceveOlustur(ozel) {
   }, ozel || {});
 }
 
-function analiz(recete, cerceve, yasamId, ilk) {
+function analiz(recete, cerceve, yasamId, ilk, ekOpts) {
+  const opts = Object.assign(
+    { yasam: { ofisSaat: 8, dijitalSaat: 6 }, yas: null, premiumFreeForm: false },
+    ekOpts || {}
+  );
   return analizEt(recete || receteOlustur(), cerceve || cerceveOlustur(),
-    yasamId || 'ofis', !!ilk,
-    { yasam: { ofisSaat: 8, dijitalSaat: 6 }, yas: null, premiumFreeForm: false });
+    yasamId || 'ofis', !!ilk, opts);
 }
 
 console.log('');
@@ -259,6 +262,35 @@ console.log('\n5e) SIFIR DEGERI - "0" girildi mi, girilmedi mi?');
   const normal = analiz(null, cerceveOlustur({ pantoskopikAci: 10 }));
   kontrol('Pantoskopik 10 derece (ideal) -> uyari CIKMAMALI',
     !normal.uyarilar.find(u => u.kural === 'T1-5'));
+}
+
+// ============================================================
+console.log('\n5f) HASTA YASI - forma girilen yas kontrole ulasiyor mu?');
+// ============================================================
+{
+  // T2-14: Genc presbiyop (< 45) + dusuk ADD (<= 1.0) + ilk kullanim
+  // -> "tam progresif yerine anti-fatigue daha uygun olabilir" bilgisi.
+  // Formda hasta_yasi alani olmadigi icin bu kural hic tetiklenmiyordu.
+  const r = receteOlustur({
+    sag: { sph: -1.00, cyl: null, ax: null, add: 0.75 },
+    sol: { sph: -1.00, cyl: null, ax: null, add: 0.75 }
+  });
+  const sonuc = analiz(r, null, 'ofis', true, { yas: 42 });
+  const gencUyari = sonuc.uyarilar.find(u => u.kural === 'T2-14');
+
+  kontrol('42 yas + ADD 0.75 + ilk kullanim -> T2-14 anti-fatigue bilgisi CIKMALI',
+    !!gencUyari,
+    gencUyari ? null : 'Yas kontrole ulasmiyor - kural atlaniyor');
+
+  // Ters kontrol 1: yas girilmemisse kural tetiklenmemeli
+  const yasSiz = analiz(r, null, 'ofis', true, { yas: null });
+  kontrol('Yas girilmemisse T2-14 CIKMAMALI',
+    !yasSiz.uyarilar.find(u => u.kural === 'T2-14'));
+
+  // Ters kontrol 2: gercek presbiyop yasinda kural tetiklenmemeli
+  const yasli = analiz(r, null, 'ofis', true, { yas: 58 });
+  kontrol('58 yas iken T2-14 CIKMAMALI',
+    !yasli.uyarilar.find(u => u.kural === 'T2-14'));
 }
 
 // ============================================================
