@@ -24,8 +24,10 @@ function analizEt(recete, cerceve, yasamTarziId, ilkKullanim, opts) {
     solAks: parseFloat(recete.sol.aks),
     sagAdd: parseFloat(recete.sag.add) || 0,
     solAdd: parseFloat(recete.sol.add) || 0,
-    monokPdSag: parseFloat(recete.sag.monokPd || recete.monokPdSag),
-    monokPdSol: parseFloat(recete.sol.monokPd || recete.monokPdSol)
+    // app.js formu "pdSag/pdSol" adiyla gonderir; eski cagiranlar icin diger
+    // isimler de desteklenir (once eski isimler, sonra form adi denenir).
+    monokPdSag: parseFloat(recete.sag.monokPd || recete.monokPdSag || recete.pdSag),
+    monokPdSol: parseFloat(recete.sol.monokPd || recete.monokPdSol || recete.pdSol)
   };
   // NaN -> null (kontrol fonksiyonlari null'i tolerans olarak yorumlar)
   Object.keys(flatR).forEach(function (k) { if (isNaN(flatR[k])) flatR[k] = null; });
