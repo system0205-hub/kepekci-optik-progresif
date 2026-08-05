@@ -266,7 +266,14 @@ function analizBaslat() {
     sonuc.montajKontrolListesi = montajKontrolListesiOlustur(recete, cerceve, sonuc, ilkKullanim);
 
     // FAZ 4: Her model icin yorum uret (yorum.js)
-    if (typeof uretYorum === "function" && sonuc.oneriler && sonuc.oneriler.length > 0) {
+    // onerMarkalar() bir OBJE dondurur: { premium, orta, baslangic } - dizi DEGIL.
+    // Yorum uretimi icin kademe sirasina gore diziye cevrilir.
+    // (sonuc.oneriler'in kendisine dokunulmaz - gosterMarkaOnerileri onu obje olarak kullanir.)
+    var yorumSirasi = ["premium", "orta", "baslangic"]
+      .map(function (tier) { return sonuc.oneriler ? sonuc.oneriler[tier] : null; })
+      .filter(function (o) { return o && o.model; });
+
+    if (typeof uretYorum === "function" && yorumSirasi.length > 0) {
       sonuc.yorumlar = [];
       var receteYorumFormat = {
         sag: {
@@ -280,11 +287,11 @@ function analizBaslat() {
           add: recete.sol.add || (recete.yakin && recete.yakin.sol && recete.yakin.sol.sph ? recete.yakin.sol.sph - (recete.sol.sph || 0) : 0)
         }
       };
-      sonuc.oneriler.forEach(function (oneri, idx) {
-        var altModel = (idx + 1 < sonuc.oneriler.length) ? sonuc.oneriler[idx + 1].model : null;
+      yorumSirasi.forEach(function (oneri, idx) {
+        var altModel = (idx + 1 < yorumSirasi.length) ? yorumSirasi[idx + 1].model : null;
         var yorum = uretYorum(oneri.model, receteYorumFormat, yasamProfil, {
           siralama: idx,
-          skor: oneri.skor || 0,
+          skor: oneri.puan || oneri.skor || 0, // puanlaModel() "puan" adiyla doner
           ilkKullanim: ilkKullanim,
           altModel: altModel,
           siparisEdilebilir: sonuc.siparisEdilebilir !== false,
