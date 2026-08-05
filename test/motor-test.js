@@ -189,6 +189,79 @@ console.log('\n5) YORUM URETIMI - app.js Faz 4 blogu calisiyor mu?');
 }
 
 // ============================================================
+console.log('\n5b) AKS KOPRUSU - form "ax" degeri motora ulasiyor mu?');
+// ============================================================
+{
+  // Oblik aks (45) + CYL 2.00 -> T2-9 "oblik astigmat" uyarisi CIKMALI.
+  // Aks motora ulasmazsa _oblikMi(null)=false doner ve kural sessizce atlanir.
+  const r = receteOlustur({
+    sag: { sph: -2.00, cyl: -2.00, ax: 45, add: 2.00 },
+    sol: { sph: -2.00, cyl: -2.00, ax: 135, add: 2.00 }
+  });
+  const sonuc = analiz(r);
+  const oblik = sonuc.uyarilar.find(u => u.kural === 'T2-9');
+
+  kontrol('Oblik aks (45/135) + CYL 2.00 -> T2-9 uyarisi CIKMALI',
+    !!oblik,
+    oblik ? null : 'Aks motora ulasmiyor - kural sessizce atlaniyor');
+}
+
+// ============================================================
+console.log('\n5c) DIK AKS ise oblik uyarisi CIKMAMALI (ters kontrol)');
+// ============================================================
+{
+  const r = receteOlustur({
+    sag: { sph: -2.00, cyl: -2.00, ax: 180, add: 2.00 },
+    sol: { sph: -2.00, cyl: -2.00, ax: 90, add: 2.00 }
+  });
+  const sonuc = analiz(r);
+  const oblik = sonuc.uyarilar.find(u => u.kural === 'T2-9');
+
+  kontrol('Aks 180/90 (dik) iken oblik uyarisi CIKMAMALI',
+    !oblik,
+    oblik ? 'Yanlis uyari: ' + oblik.mesaj : null);
+}
+
+// ============================================================
+console.log('\n5d) KORIDOR KOPRUSU - hesaplanan koridor kontrole gidiyor mu?');
+// ============================================================
+{
+  // b=24, fh=16 -> idealKoridor 14 -> minimum B = 28mm. b=24 yetersiz.
+  // Koridor kontrole ulasmazsa T1-1 kurali sessizce atlanir.
+  const sonuc = analiz(null, cerceveOlustur({
+    bOlcusu: 24, b: 24, fittingHeight: 16, fhSag: 16, fhSol: 16
+  }));
+  const koridorIhlali = sonuc.uyarilar.find(u => u.kural === 'T1-1');
+
+  kontrol('Sig cerceve (B=24, koridor=14) -> T1-1 uyarisi CIKMALI',
+    !!koridorIhlali,
+    koridorIhlali ? null : 'Koridor degeri kontrole ulasmiyor');
+
+  kontrol('Koridor degeri hesaplanmis olmali',
+    sonuc.koridor.idealKoridor === 14,
+    'idealKoridor = ' + sonuc.koridor.idealKoridor);
+}
+
+// ============================================================
+console.log('\n5e) SIFIR DEGERI - "0" girildi mi, girilmedi mi?');
+// ============================================================
+{
+  // Duz cerceve: pantoskopik 0 derece GECERLI bir olcumdur.
+  // "parseFloat(x) || null" kalibi sifiri yutup kurali atlardi.
+  const sonuc = analiz(null, cerceveOlustur({ pantoskopikAci: 0 }));
+  const pantoIhlali = sonuc.uyarilar.find(u => u.kural === 'T1-5');
+
+  kontrol('Pantoskopik 0 derece -> aralik disi uyarisi CIKMALI',
+    !!pantoIhlali,
+    pantoIhlali ? null : 'Sifir "girilmedi" sayiliyor - kural atlaniyor');
+
+  // Ters kontrol: 10 derece ideal aralikta, uyari cikmamali
+  const normal = analiz(null, cerceveOlustur({ pantoskopikAci: 10 }));
+  kontrol('Pantoskopik 10 derece (ideal) -> uyari CIKMAMALI',
+    !normal.uyarilar.find(u => u.kural === 'T1-5'));
+}
+
+// ============================================================
 console.log('\n6) YUKSEK RISK - kritik uyari mekanizmasi calisiyor mu?');
 // ============================================================
 {

@@ -20,8 +20,10 @@ function analizEt(recete, cerceve, yasamTarziId, ilkKullanim, opts) {
     solSph: parseFloat(recete.sol.sph),
     sagCyl: parseFloat(recete.sag.cyl) || 0,
     solCyl: parseFloat(recete.sol.cyl) || 0,
-    sagAks: parseFloat(recete.sag.aks),
-    solAks: parseFloat(recete.sol.aks),
+    // app.js formu aks degerini "ax" adiyla gonderir (motorun geri kalani da
+    // "ax" kullanir); eski cagiranlar icin "aks" da desteklenir.
+    sagAks: parseFloat(recete.sag.aks != null ? recete.sag.aks : recete.sag.ax),
+    solAks: parseFloat(recete.sol.aks != null ? recete.sol.aks : recete.sol.ax),
     sagAdd: parseFloat(recete.sag.add) || 0,
     solAdd: parseFloat(recete.sol.add) || 0,
     // app.js formu "pdSag/pdSol" adiyla gonderir; eski cagiranlar icin diger
@@ -32,16 +34,31 @@ function analizEt(recete, cerceve, yasamTarziId, ilkKullanim, opts) {
   // NaN -> null (kontrol fonksiyonlari null'i tolerans olarak yorumlar)
   Object.keys(flatR).forEach(function (k) { if (isNaN(flatR[k])) flatR[k] = null; });
 
+  // "0" gecerli bir olcumdur (duz cerceve = 0 derece pantoskopik/bombe).
+  // "parseFloat(x) || null" kalibi sifiri yutup "girilmedi" sayardi.
+  function _sayi(v) {
+    var n = parseFloat(v);
+    return isNaN(n) ? null : n;
+  }
+
+  // belirleKoridorTipi() koridor degerini "idealKoridor" adiyla dondurur.
+  // ("koridor" eski cagiranlar icin, cerceve.koridorMm son caredir.)
+  let _koridor = null;
+  if (koridorSonuc) {
+    _koridor = koridorSonuc.idealKoridor != null ? koridorSonuc.idealKoridor : koridorSonuc.koridor;
+  }
+  if (_koridor == null) _koridor = cerceve.koridorMm;
+
   const flatC = {
-    b: parseFloat(cerceve.b) || null,
-    koridorMm: koridorSonuc && koridorSonuc.koridor ? koridorSonuc.koridor : (parseFloat(cerceve.koridorMm) || null),
-    fhSag: parseFloat(cerceve.fhSag) || null,
-    fhSol: parseFloat(cerceve.fhSol) || null,
-    pantoskopikAci: parseFloat(cerceve.pantoskopikAci) || null,
-    bombeAcisi: parseFloat(cerceve.bombeAcisi) || null,
-    verteksMm: parseFloat(cerceve.verteksMm) || null,
-    a: parseFloat(cerceve.a) || null,
-    dbl: parseFloat(cerceve.dbl) || null
+    b: _sayi(cerceve.b),
+    koridorMm: _sayi(_koridor),
+    fhSag: _sayi(cerceve.fhSag),
+    fhSol: _sayi(cerceve.fhSol),
+    pantoskopikAci: _sayi(cerceve.pantoskopikAci),
+    bombeAcisi: _sayi(cerceve.bombeAcisi),
+    verteksMm: _sayi(cerceve.verteksMm),
+    a: _sayi(cerceve.a),
+    dbl: _sayi(cerceve.dbl)
   };
 
   const fittingIhlaller = kontrolFittingGeometri(flatR, flatC, {
