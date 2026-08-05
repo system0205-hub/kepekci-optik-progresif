@@ -89,3 +89,92 @@ yapılırsa gerçek veri burada.
   hastaya özel kesin sonuç vermez.
 - Minkwitz doğrulandı: istenmeyen astigmat, güç değişim hızının 2 katı hızla artar.
   Premium tasarım bunu **azaltmaz, yeniden dağıtır** — kritik bölgelerden uzağa iter.
+
+---
+
+# 🔴 NOVAX — FARKLI KORİDOR ÖLÇÜM SİSTEMİ (SİPARİŞ HATASI RİSKİ)
+
+Novax kataloğu s.51 "Progresif/Degresif Gravürlerin Anlamı" tablosu:
+
+| Sembol | Novax "koridor yüksekliği" | Novax "montaj yüksekliği" |
+|---|---|---|
+| D | 5 mm | 14 mm |
+| E | 7 mm | 16 mm |
+| F | 9 mm | 18 mm |
+| A | 11 mm | 20 mm |
+| G | 12 mm | 21 mm |
+
+**Novax'ta montaj yüksekliği = koridor + 9.**
+Sektör standardı ise montaj yüksekliği = koridor + 4 (araştırmayla doğrulandı).
+
+Yani Novax "koridor" derken diğer üreticilerden FARKLI bir şey ölçüyor.
+
+## Dönüşüm formülü (tabloyla birebir doğrulandı)
+
+    Diğer markaların koridoru = Novax koridoru + 5
+
+| Novax | Karşılığı | Kontrol: montaj yüks. |
+|---|---|---|
+| D = 5 | 10 mm | 10+4 = 14 ✓ |
+| E = 7 | 12 mm | 12+4 = 16 ✓ |
+| F = 9 | 14 mm | 14+4 = 18 ✓ |
+| A = 11 | 16 mm | 16+4 = 20 ✓ |
+| G = 12 | 17 mm | 17+4 = 21 ✓ |
+
+Beş satırın beşi de tutuyor.
+
+## RİSK
+
+Motor 16 mm koridor önerdiğinde, Novax'a "16" denirse Novax bunu kendi
+skalasında arar; 16'ya en yakın sembolü (G=12'nin üstü) sanır.
+DOĞRUSU: 16 mm = Novax **A** sembolü = Novax skalasında 11.
+5 mm'lik sapma = yanlış cam = geri dönüşü olmayan zarar.
+
+`data.js`'de Novax'ın 28 modelinin tamamında `koridorlar: []` boş olduğu için
+sistem şu an bu konuda hiçbir uyarı vermiyor.
+
+## Katalogdan okunan Novax model koridorları (Novax skalasında)
+
+| Model | Novax skalası | Dönüşümlü (diğer markalar gibi) |
+|---|---|---|
+| Synthesis Progresif | 5-7-9-11 | 10-12-14-16 |
+| Synthesis Ofis | 5 | 10 |
+| Synthesis Anti-fatigue | 7 | 12 |
+| Nucleo Progresif | 7-9-11 | 12-14-16 |
+| Nexus 4D | 5-7-9-11 | 10-12-14-16 |
+| Trion 3D | 5-7-9-11 | 10-12-14-16 |
+| Nucleo Ofis | 5-9 | 10-14 |
+| Nucleo Drive/Sport/Pilot | 7-9 | 12-14 |
+| Nucleo Anti-fatigue | 9 | 14 |
+| Matrix HD | 5-7-9-11 | 10-12-14-16 |
+| Genius | 7-9-11 | 12-14-16 |
+| Ventro | 7-9-11 | 12-14-16 |
+| Novum NG | 7-9-11 | 12-14-16 |
+| Sportive | 12 | 17 |
+| DriveOn | 12 | 17 |
+| Officient | 9 | 14 |
+| Serenity | 9 | 14 |
+
+## ⚠️ MUZAFFER BEY'E SORULACAK — veritabanına yazılmadan önce
+
+Novax'a sipariş verirken hangi sayıyı söylüyorsun?
+  (a) Novax'ın kendi skalası (5/7/9/11/12 veya D/E/F/A/G sembolü)
+  (b) Diğer markalardaki gibi mm (14/16/18)
+
+Cevaba göre `data.js`'e hangi değerlerin yazılacağı ve sipariş ekranında
+hangisinin gösterileceği belirlenecek. Doğrulanmadan yazılmadı.
+
+## Ek bulgu — Novax'ta hazır şikayet teşhis tablosu var (s.7-8)
+
+Katalogda "Yakın/Uzak Görüş Problemleri, Nedenleri ve Çözümleri" tabloları var:
+belirti → olası neden → çözüm, montaj hatası / reçete hatası ayrımıyla.
+Daha önce konuştuğumuz "şikayet teşhis ağacı" özelliği için hazır içerik.
+
+## Ek bulgu — ölü alan verisi (Novax)
+
+Sayısal iddialar mevcut:
+- Nucleo 5D Drive: astigmatik etkiyi premium progresiflere göre **%14,6 azaltır**,
+  uzak bölge **%70**, uzak-orta bölge **%45** daha geniş.
+- Synthesis: istenmeyen astigmatik etkiyi **%20'ye kadar** azaltır.
+- Nexus 4D / AmplifEye: uzak, orta veya yakından biri **%30**, üçü birden **%20** genişletilebilir.
+- Nucleo 5D kullanıcı anketi: %100 memnun, %94 tüm mesafelerde net, %83 dijital cihazda net.
