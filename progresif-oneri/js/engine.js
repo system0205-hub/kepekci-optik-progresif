@@ -419,15 +419,29 @@ function belirleKoridorTipi(cerceve, riskSkoru, recete, ilkKullanim) {
   }
 
   // === FITTING HEIGHT UYUMLULUK KONTROLU ===
+  // Cerceve yetersizse GECIS BOLGESI DEGISTIRILMEZ (fabrikaya giden deger sabittir);
+  // bunun yerine hangi cercevenin gerektigi somut mm olarak bildirilir.
+  //   gerekenFh: rahat okuma icin en az 5mm okuma alani -> koridor + 5
+  //   gerekenB : T1-1 kurali ile ayni formul -> koridor + 14
   const okumaAlani = fh - idealKoridor;
+  const gerekenFh = idealKoridor + 5;
+  const gerekenB = idealKoridor + 14;
   if (okumaAlani < 3) {
-    uyarilar.push("UYARI: Odak yuksekligi (" + fh + "mm) - Gecis bolgesi (" + idealKoridor + "mm) = " + okumaAlani + "mm. Yetersiz okuma alani! Daha buyuk cerceve onerilir.");
+    uyarilar.push("UYARI: Okuma alani sadece " + okumaAlani + "mm (odak yuksekligi " + fh +
+      "mm - gecis bolgesi " + idealKoridor + "mm). GEREKEN CERCEVE: odak yuksekligi en az " +
+      gerekenFh + "mm, cerceve yuksekligi (B) en az " + gerekenB + "mm. Mevcut cerceve: FH " +
+      fh + "mm / B " + b + "mm. Gecis bolgesi " + idealKoridor +
+      "mm degismez - cerceve degistirilmelidir.");
   } else if (okumaAlani < 5) {
-    uyarilar.push("Okuma alani sinirli (" + okumaAlani + "mm). Daha uzun cerceve dusunulebilir.");
+    uyarilar.push("Okuma alani sinirli (" + okumaAlani + "mm). Rahat okuma icin odak yuksekligi " +
+      gerekenFh + "mm ve uzeri cerceve tercih edilmelidir (mevcut: " + fh + "mm).");
   }
 
   if (fh < idealKoridor) {
-    uyarilar.push("KRITIK: Odak yuksekligi (" + fh + "mm) secilen gecis bolgesinden (" + idealKoridor + "mm) kisa! Cerceve degistirilmeli veya daha kisa gecis bolgesi secilmeli.");
+    uyarilar.push("KRITIK: Odak yuksekligi (" + fh + "mm) gecis bolgesinden (" + idealKoridor +
+      "mm) KISA. Okuma bolgesi cercevenin disinda kalir - bu cerceveyle SIPARIS VERILMEMELIDIR. " +
+      "GEREKEN: odak yuksekligi en az " + gerekenFh + "mm, cerceve yuksekligi (B) en az " +
+      gerekenB + "mm.");
   }
 
   // === MINKWITZ GUC DEGISIM HIZI KONTROLU ===
