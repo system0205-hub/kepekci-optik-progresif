@@ -53,7 +53,7 @@ ok("Sayfadaki esik degeri 0.50 D", /var THRESHOLD = 0\.50/.test(HTML));
 ok("Sayfadaki smootherstep turevi dogru", /30 \* t \* t \* \(t - 1\) \* \(t - 1\)/.test(HTML));
 ok("Sayfadaki tepe egim katsayisi 1.875", /1\.875/.test(HTML));
 ok("Kademe w degerleri sayfada tanimli",
-   /w: 0\.20/.test(HTML) && /w: 0\.60/.test(HTML) && /w: 1\.00/.test(HTML));
+   /w:\s*0\.20/.test(HTML) && /w:\s*0\.60/.test(HTML) && /w:\s*1\.00/.test(HTML));
 
 // ---------------------------------------------------------------
 // 3) MINKWITZ - teoremin kendisi
@@ -123,6 +123,20 @@ console.log("         (bilgi) 16->18mm koridor uzatmak: +" + koridorKazanc.toFix
 // Sayfa "kademe mi koridor mu" iddiasini HESAPLIYOR mu, yoksa uyduruyor mu?
 ok("Sayfa kademe/koridor karsilastirmasini hesapliyor (iddia etmiyor)",
    /kademeKazanc >= koridorKazanc/.test(HTML));
+
+// --- yeni gorsel: gercek cam silueti + gercek bulaniklik ---
+ok("Cam silueti superelips ile ciziliyor (kare degil)", /function lensOutline/.test(HTML));
+ok("Alt yarim daha yuvarlak, ust daha duz", /st > 0 \? 3\.3 : 5\.2/.test(HTML));
+ok("Alta dogru daralma var (fotograftaki kesim)", /1 - 0\.10 \* Math\.max\(0, f\)/.test(HTML));
+ok("Bulaniklik GERCEK blur ile ciziliyor", /g\.filter = "blur\(/.test(HTML));
+ok("ctx.filter yoksa yedek yol var", /ctx\.filter yoksa/.test(HTML));
+ok("Sahne izgara + bolge yazilarini BIRLIKTE tutuyor (yazilar da bulaniklasir)",
+   /function buildScene/.test(HTML) && /UZAK/.test(HTML) && /YAKIN/.test(HTML) &&
+   !/function sceneLabels/.test(HTML));
+ok("Cam kenari ve parlama ciziliyor", /cam kenari \+ parlama/.test(HTML));
+ok("Uygulamadan gelen recete okunuyor (URL parametreleri)",
+   /URLSearchParams/.test(HTML) && /q\.get\("add"\)/.test(HTML.replace(/uygula\(el\.add, "add"\)/g,'q.get("add")')));
+ok("Kaydirici adimina oturtma var (13.5 -> 14 gibi)", /Math\.round\(v \/ st\) \* st/.test(HTML));
 ok("Sayfada 'koridoru uzatmak daha cok kazandirir' seklinde kosulsuz iddia YOK",
    !/koridoru uzatmak, kademe y[üu]kseltmekten daha [çc]ok kazand[ıi]r/.test(HTML));
 
@@ -198,8 +212,29 @@ var markaIddia = /%42|%52|14,6|%30 daha|%70 daha/.test(
 );
 ok("Marka pazarlama yuzdeleri veri olarak kullanilmamis", !markaIddia);
 ok("Neyin hesaplandigi / neyin sematik oldugu yaziyor",
-   /Hesaplanm[ıi]ş olan/.test(HTML) && /Şematik olan/.test(HTML));
+   /Hesaplanan:/.test(HTML) && /Şematik olan:/.test(HTML));
 ok("Karsilastirilamazlik uyarisi sayfada var", /sahte bir kesinlik/.test(HTML));
+
+// ---------------------------------------------------------------
+// 9) UYGULAMA BAGLANTISI - recete girildikten sonra acilmali
+// ---------------------------------------------------------------
+console.log("\n9) UYGULAMA BAGLANTISI");
+
+var APP = fs.readFileSync(path.join(__dirname, "..", "progresif-oneri", "js", "app.js"), "utf8");
+var IDX = fs.readFileSync(path.join(__dirname, "..", "progresif-oneri", "index.html"), "utf8");
+var SW  = fs.readFileSync(path.join(__dirname, "..", "progresif-oneri", "sw.js"), "utf8");
+
+ok("Sonuc ekraninda simulasyon butonu var", /id="simulasyon-link"/.test(IDX));
+ok("Buton simulasyon.html'e gidiyor", /href="simulasyon\.html"/.test(IDX));
+ok("app.js link kurucu fonksiyonu tanimli", /function guncelleSimulasyonLinki/.test(APP));
+ok("Koridor gosterilirken link guncelleniyor", /guncelleSimulasyonLinki\(koridor\)/.test(APP));
+ok("Link ADD/koridor/odak/B parametrelerini gonderiyor",
+   /"add=" \+/.test(APP) && /"kor=" \+/.test(APP) && /"fh=" \+/.test(APP) && /"b=" \+/.test(APP));
+ok("Link ADD olarak iki gozun BUYUGUNU aliyor", /Math\.max\(addSag, addSol\)/.test(APP));
+ok("Kullanilan form alanlari gercekten var",
+   /id="fitting_height"/.test(IDX) && /id="b_measure"/.test(IDX));
+ok("Olmayan alan (hasta_ad) artik kullanilmiyor", !/getElementById\("hasta_ad"\)/.test(APP));
+ok("simulasyon.html cevrimdisi onbellekte", /\.\/simulasyon\.html/.test(SW));
 
 console.log("\n============================================");
 console.log(" SONUC:  " + gecti + " gecti  /  " + kaldi + " kaldi");

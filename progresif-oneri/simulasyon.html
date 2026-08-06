@@ -7,454 +7,296 @@
     --surface-2: #F5F8F6;
     --ink:       #0E1A1C;
     --ink-2:     #4A5D60;
-    --ink-3:     #78898B;
+    --ink-3:     #7C8D8F;
     --line:      #CFDAD7;
     --line-soft: #E3EBE8;
     --accent:    #0B7F78;
-    --accent-2:  #0E8C84;
     --warn:      #B4541B;
     --bad:       #9E2434;
-    --good:      #26734A;
-
-    --shadow: 0 1px 2px rgba(14,26,28,.05), 0 8px 24px -12px rgba(14,26,28,.18);
+    --glass:     #FBFDFC;
+    --scene:     #55686A;
+    --shadow: 0 1px 2px rgba(14,26,28,.05), 0 10px 28px -14px rgba(14,26,28,.22);
 
     --mono: ui-monospace, "Cascadia Mono", "SF Mono", Consolas, "Roboto Mono", monospace;
     --sans: ui-sans-serif, -apple-system, "Segoe UI Variable Text", "Segoe UI", Roboto, system-ui, sans-serif;
 
-    --step--1: clamp(.72rem, .70rem + .10vw, .78rem);
-    --step-0:  clamp(.90rem, .87rem + .14vw, 1.00rem);
-    --step-1:  clamp(1.06rem, 1.00rem + .28vw, 1.24rem);
-    --step-2:  clamp(1.32rem, 1.18rem + .60vw, 1.72rem);
-    --step-3:  clamp(1.70rem, 1.40rem + 1.30vw, 2.60rem);
+    --step--1: clamp(.74rem, .72rem + .10vw, .80rem);
+    --step-0:  clamp(.94rem, .90rem + .16vw, 1.04rem);
+    --step-1:  clamp(1.10rem, 1.03rem + .30vw, 1.30rem);
+    --step-2:  clamp(1.36rem, 1.20rem + .66vw, 1.84rem);
+    --step-3:  clamp(1.80rem, 1.45rem + 1.45vw, 2.80rem);
   }
 
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg:        #09100F;
-      --surface:   #0F1A19;
-      --surface-2: #14211F;
+      --bg:        #080F0E;
+      --surface:   #0E1918;
+      --surface-2: #13201E;
       --ink:       #E4EEEB;
-      --ink-2:     #93A8A6;
-      --ink-3:     #6B807E;
+      --ink-2:     #94A9A7;
+      --ink-3:     #6D8280;
       --line:      #22322F;
-      --line-soft: #1A2725;
-      --accent:    #35C9BC;
-      --accent-2:  #4FDCCE;
-      --warn:      #E4903F;
-      --bad:       #E4586A;
-      --good:      #4FC98A;
-      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 10px 30px -14px rgba(0,0,0,.7);
+      --line-soft: #192624;
+      --accent:    #38CCBE;
+      --warn:      #E6953F;
+      --bad:       #E75D6E;
+      --glass:     #162422;
+      --scene:     #9FB4B2;
+      --shadow: 0 1px 2px rgba(0,0,0,.45), 0 12px 34px -16px rgba(0,0,0,.8);
     }
   }
   :root[data-theme="dark"] {
-    --bg:        #09100F;
-    --surface:   #0F1A19;
-    --surface-2: #14211F;
-    --ink:       #E4EEEB;
-    --ink-2:     #93A8A6;
-    --ink-3:     #6B807E;
-    --line:      #22322F;
-    --line-soft: #1A2725;
-    --accent:    #35C9BC;
-    --accent-2:  #4FDCCE;
-    --warn:      #E4903F;
-    --bad:       #E4586A;
-    --good:      #4FC98A;
-    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 10px 30px -14px rgba(0,0,0,.7);
+    --bg:#080F0E; --surface:#0E1918; --surface-2:#13201E;
+    --ink:#E4EEEB; --ink-2:#94A9A7; --ink-3:#6D8280;
+    --line:#22322F; --line-soft:#192624;
+    --accent:#38CCBE; --warn:#E6953F; --bad:#E75D6E;
+    --glass:#162422; --scene:#9FB4B2;
+    --shadow: 0 1px 2px rgba(0,0,0,.45), 0 12px 34px -16px rgba(0,0,0,.8);
   }
   :root[data-theme="light"] {
-    --bg:        #EDF1EF;
-    --surface:   #FFFFFF;
-    --surface-2: #F5F8F6;
-    --ink:       #0E1A1C;
-    --ink-2:     #4A5D60;
-    --ink-3:     #78898B;
-    --line:      #CFDAD7;
-    --line-soft: #E3EBE8;
-    --accent:    #0B7F78;
-    --accent-2:  #0E8C84;
-    --warn:      #B4541B;
-    --bad:       #9E2434;
-    --good:      #26734A;
-    --shadow: 0 1px 2px rgba(14,26,28,.05), 0 8px 24px -12px rgba(14,26,28,.18);
+    --bg:#EDF1EF; --surface:#FFFFFF; --surface-2:#F5F8F6;
+    --ink:#0E1A1C; --ink-2:#4A5D60; --ink-3:#7C8D8F;
+    --line:#CFDAD7; --line-soft:#E3EBE8;
+    --accent:#0B7F78; --warn:#B4541B; --bad:#9E2434;
+    --glass:#FBFDFC; --scene:#55686A;
+    --shadow: 0 1px 2px rgba(14,26,28,.05), 0 10px 28px -14px rgba(14,26,28,.22);
   }
 
   * { box-sizing: border-box; }
 
   body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--ink);
-    font-family: var(--sans);
-    font-size: var(--step-0);
-    line-height: 1.55;
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: var(--sans); font-size: var(--step-0); line-height: 1.55;
     -webkit-font-smoothing: antialiased;
   }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: clamp(1.1rem,3vw,2.6rem) clamp(.85rem,3vw,2rem) 4rem; }
 
-  .wrap { max-width: 1180px; margin: 0 auto; padding: clamp(1.1rem, 3vw, 2.6rem) clamp(.85rem, 3vw, 2rem) 4rem; }
-
-  /* ---------- typography ---------- */
   .eyebrow {
-    font-family: var(--mono);
-    font-size: var(--step--1);
-    letter-spacing: .14em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin: 0 0 .5rem;
+    font-family: var(--mono); font-size: var(--step--1);
+    letter-spacing: .15em; text-transform: uppercase; color: var(--accent); margin: 0 0 .5rem;
   }
-  h1 {
-    font-size: var(--step-3);
-    line-height: 1.04;
-    letter-spacing: -.025em;
-    font-weight: 660;
-    margin: 0 0 .6rem;
-    text-wrap: balance;
-  }
-  h2 {
-    font-size: var(--step-2);
-    line-height: 1.15;
-    letter-spacing: -.018em;
-    font-weight: 640;
-    margin: 0 0 .35rem;
-    text-wrap: balance;
-  }
-  h3 {
-    font-size: var(--step-1);
-    line-height: 1.25;
-    letter-spacing: -.012em;
-    font-weight: 620;
-    margin: 0;
-  }
-  .lede { color: var(--ink-2); max-width: 62ch; margin: 0; font-size: var(--step-1); line-height: 1.45; }
-  p { margin: 0 0 .8rem; }
-  p:last-child { margin-bottom: 0; }
+  h1 { font-size: var(--step-3); line-height: 1.03; letter-spacing: -.028em; font-weight: 660; margin: 0 0 .55rem; text-wrap: balance; }
+  h2 { font-size: var(--step-2); line-height: 1.14; letter-spacing: -.018em; font-weight: 640; margin: 0 0 .3rem; text-wrap: balance; }
+  h3 { font-size: var(--step-1); line-height: 1.22; letter-spacing: -.012em; font-weight: 620; margin: 0; }
+  .lede { color: var(--ink-2); max-width: 60ch; margin: 0; font-size: var(--step-1); line-height: 1.45; }
+  p { margin: 0 0 .8rem; } p:last-child { margin-bottom: 0; }
   .muted { color: var(--ink-2); }
   .small { font-size: var(--step--1); line-height: 1.5; }
-  .num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
 
-  header.masthead {
-    display: flex; flex-direction: column; gap: .9rem;
-    padding-bottom: 1.6rem; margin-bottom: 1.6rem;
-    border-bottom: 1px solid var(--line);
-  }
+  header.masthead { padding-bottom: 1.5rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--line); }
 
-  /* ---------- panels ---------- */
-  .panel {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    box-shadow: var(--shadow);
-  }
-  .panel-hd {
-    display: flex; align-items: baseline; justify-content: space-between; gap: 1rem;
-    padding: .85rem 1.1rem; border-bottom: 1px solid var(--line-soft);
-    flex-wrap: wrap;
-  }
+  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 7px; box-shadow: var(--shadow); }
+  .panel-hd { display:flex; align-items:baseline; justify-content:space-between; gap:1rem; flex-wrap:wrap;
+              padding:.85rem 1.1rem; border-bottom:1px solid var(--line-soft); }
   .panel-bd { padding: 1.1rem; }
+  section { margin-top: clamp(1.7rem, 4vw, 2.9rem); }
 
-  section { margin-top: clamp(1.6rem, 4vw, 2.8rem); }
-
-  /* ---------- prescription controls ---------- */
-  .rx-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(178px, 1fr));
-    gap: 1.15rem 1.4rem;
-  }
-  .ctrl { display: flex; flex-direction: column; gap: .3rem; }
-  .ctrl > label {
-    font-family: var(--mono);
+  /* ---- yuklendi rozeti ---- */
+  .loaded-flag {
+    display:flex; align-items:center; gap:.55rem; flex-wrap:wrap;
+    padding:.6rem 1.1rem; border-bottom:1px solid var(--line-soft);
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
     font-size: var(--step--1);
-    letter-spacing: .06em;
-    text-transform: uppercase;
-    color: var(--ink-2);
-    display: flex; justify-content: space-between; align-items: baseline; gap: .5rem;
   }
-  .ctrl-val {
-    font-family: var(--mono);
-    font-variant-numeric: tabular-nums;
-    font-size: 1.02rem;
-    font-weight: 640;
-    color: var(--ink);
-    letter-spacing: 0;
-    text-transform: none;
-  }
-  input[type="range"] {
-    -webkit-appearance: none; appearance: none;
-    width: 100%; height: 26px; background: transparent; cursor: pointer; margin: 0;
-  }
-  input[type="range"]::-webkit-slider-runnable-track {
-    height: 3px; background: var(--line); border-radius: 2px;
-  }
-  input[type="range"]::-moz-range-track {
-    height: 3px; background: var(--line); border-radius: 2px;
-  }
-  input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none; appearance: none;
-    width: 20px; height: 20px; margin-top: -8.5px;
-    border-radius: 50%; background: var(--accent);
-    border: 3px solid var(--surface);
-    box-shadow: 0 0 0 1px var(--accent);
-  }
-  input[type="range"]::-moz-range-thumb {
-    width: 14px; height: 14px; border-radius: 50%;
-    background: var(--accent); border: 3px solid var(--surface);
-    box-shadow: 0 0 0 1px var(--accent);
-  }
-  input[type="range"]:focus-visible { outline: none; }
-  input[type="range"]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 1px var(--accent), 0 0 0 4px color-mix(in srgb, var(--accent) 35%, transparent); }
-  input[type="range"]:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 1px var(--accent), 0 0 0 4px color-mix(in srgb, var(--accent) 35%, transparent); }
-  .tick { display: flex; justify-content: space-between; font-family: var(--mono); font-size: .68rem; color: var(--ink-3); margin-top: -.15rem; }
+  .loaded-dot { width:7px; height:7px; border-radius:50%; background:var(--accent); flex:none; }
+  .loaded-hint { color:var(--ink-2); margin-left:auto; font-family:var(--mono); font-size:.7rem; }
 
-  /* ---------- lens cards ---------- */
-  .lenses {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 1rem;
+  /* ---- kaydiricilar ---- */
+  .rx-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1.1rem 1.5rem; }
+  .ctrl { display:flex; flex-direction:column; gap:.25rem; }
+  .ctrl > label {
+    font-family: var(--mono); font-size: var(--step--1); letter-spacing:.05em;
+    text-transform: uppercase; color: var(--ink-2);
+    display:flex; justify-content:space-between; align-items:baseline; gap:.5rem;
   }
+  .ctrl-val { font-family:var(--mono); font-variant-numeric:tabular-nums; font-size:1.05rem;
+              font-weight:660; color:var(--ink); letter-spacing:0; text-transform:none; }
+  input[type=range] { -webkit-appearance:none; appearance:none; width:100%; height:30px; background:transparent; cursor:pointer; margin:0; }
+  input[type=range]::-webkit-slider-runnable-track { height:3px; background:var(--line); border-radius:2px; }
+  input[type=range]::-moz-range-track { height:3px; background:var(--line); border-radius:2px; }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance:none; appearance:none; width:22px; height:22px; margin-top:-9.5px;
+    border-radius:50%; background:var(--accent); border:3px solid var(--surface); box-shadow:0 0 0 1px var(--accent);
+  }
+  input[type=range]::-moz-range-thumb {
+    width:16px; height:16px; border-radius:50%; background:var(--accent);
+    border:3px solid var(--surface); box-shadow:0 0 0 1px var(--accent);
+  }
+  input[type=range]:focus-visible::-webkit-slider-thumb { box-shadow:0 0 0 1px var(--accent),0 0 0 5px color-mix(in srgb,var(--accent) 32%,transparent); }
+  input[type=range]:focus-visible::-moz-range-thumb { box-shadow:0 0 0 1px var(--accent),0 0 0 5px color-mix(in srgb,var(--accent) 32%,transparent); }
+  input[type=range]:focus-visible { outline:none; }
+  .tick { display:flex; justify-content:space-between; font-family:var(--mono); font-size:.68rem; color:var(--ink-3); }
+
+  /* ---- camlar ---- */
+  .lenses { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1.1rem; }
   .lens-card {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    overflow: hidden;
-    display: flex; flex-direction: column;
-    box-shadow: var(--shadow);
-    transition: border-color .18s ease;
+    background:var(--surface); border:1px solid var(--line); border-radius:7px;
+    box-shadow:var(--shadow); overflow:hidden; display:flex; flex-direction:column;
+    transition:border-color .18s ease, box-shadow .18s ease;
   }
-  .lens-card.is-pick { border-color: var(--accent); box-shadow: var(--shadow), 0 0 0 1px var(--accent); }
-  .lens-hd { padding: .8rem .9rem .6rem; border-bottom: 1px solid var(--line-soft); }
-  .lens-name { display: flex; align-items: baseline; justify-content: space-between; gap: .5rem; }
-  .lens-sub { font-family: var(--mono); font-size: .70rem; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); margin-top: .15rem; }
-  .pick-flag {
-    font-family: var(--mono); font-size: .64rem; letter-spacing: .1em; text-transform: uppercase;
-    color: var(--surface); background: var(--accent);
-    padding: .17rem .42rem; border-radius: 3px; white-space: nowrap;
+  .lens-card.is-pick { border-color:var(--accent); box-shadow:var(--shadow),0 0 0 1px var(--accent); }
+  .lens-hd { padding:.85rem .95rem .55rem; display:flex; align-items:baseline; justify-content:space-between; gap:.5rem; }
+  .lens-sub { font-family:var(--mono); font-size:.69rem; letter-spacing:.07em; text-transform:uppercase; color:var(--ink-3); padding:0 .95rem .5rem; }
+  .pick-flag { font-family:var(--mono); font-size:.63rem; letter-spacing:.1em; text-transform:uppercase;
+               color:var(--surface); background:var(--accent); padding:.18rem .45rem; border-radius:3px; white-space:nowrap; }
+  .lens-stage { background:var(--surface-2); border-top:1px solid var(--line-soft); border-bottom:1px solid var(--line-soft); }
+  .lens-stage canvas { display:block; width:100%; height:auto; }
+  .lens-foot { padding:.85rem .95rem 1rem; margin-top:auto; }
+  .big-metric { display:flex; align-items:baseline; gap:.4rem; }
+  .big-metric b { font-family:var(--mono); font-variant-numeric:tabular-nums; font-size:1.7rem; font-weight:680; letter-spacing:-.02em; line-height:1; }
+  .big-metric span { font-size:var(--step--1); color:var(--ink-2); }
+  .metric-label { font-size:var(--step--1); color:var(--ink-2); margin-bottom:.3rem; }
+  .bar { height:5px; border-radius:3px; background:var(--line-soft); overflow:hidden; margin-top:.6rem; }
+  .bar > i { display:block; height:100%; background:var(--accent); border-radius:3px; transition:width .25s ease; }
+
+  /* ---- minkwitz ---- */
+  .mink-grid { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.05fr); gap:1.5rem; align-items:start; }
+  .steps { display:flex; flex-direction:column; gap:.55rem; }
+  .step {
+    display:grid; grid-template-columns:auto 1fr auto; align-items:baseline; gap:.75rem;
+    padding:.6rem .8rem; background:var(--surface-2); border:1px solid var(--line-soft); border-radius:5px;
   }
-  .lens-canvas-box { position: relative; background: var(--surface-2); }
-  .lens-canvas-box canvas { display: block; width: 100%; height: auto; }
-  .lens-metrics { padding: .75rem .9rem .9rem; display: flex; flex-direction: column; gap: .55rem; margin-top: auto; }
-  .metric { display: flex; align-items: baseline; justify-content: space-between; gap: .6rem; }
-  .metric-k { font-size: var(--step--1); color: var(--ink-2); }
-  .metric-v { font-family: var(--mono); font-variant-numeric: tabular-nums; font-weight: 640; font-size: 1.02rem; }
-  .bar { height: 5px; border-radius: 3px; background: var(--line-soft); overflow: hidden; }
-  .bar > i { display: block; height: 100%; background: var(--accent); border-radius: 3px; transition: width .25s ease; }
+  .step-n { font-family:var(--mono); font-size:.7rem; color:var(--accent); font-weight:660; }
+  .step-t { font-size:var(--step--1); color:var(--ink-2); }
+  .step-v { font-family:var(--mono); font-variant-numeric:tabular-nums; font-weight:660; white-space:nowrap; }
+  .step.is-final { background:color-mix(in srgb,var(--accent) 10%,transparent); border-color:color-mix(in srgb,var(--accent) 35%,transparent); }
+  .step.is-final .step-v { font-size:1.15rem; }
+  .xsec-box { background:var(--surface-2); border:1px solid var(--line-soft); border-radius:5px; }
+  .xsec-box canvas { display:block; width:100%; height:auto; }
 
-  /* ---------- legend ---------- */
-  .legend { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; font-size: var(--step--1); color: var(--ink-2); }
-  .ramp { height: 9px; width: 168px; border-radius: 2px; border: 1px solid var(--line);
-    background: linear-gradient(90deg,
-      rgba(255,255,255,0) 0%,
-      rgba(255,206,92,.40) 22%,
-      rgba(255,168,46,.66) 40%,
-      rgba(233,109,44,.82) 62%,
-      rgba(197,52,44,.90) 82%,
-      rgba(126,26,48,.95) 100%); }
-  .swatch { display: inline-block; width: 11px; height: 11px; border-radius: 2px; vertical-align: -1px; margin-right: .3rem; }
+  /* ---- hukum ---- */
+  .verdict { border-left:3px solid var(--accent); }
+  .verdict.is-warn { border-left-color:var(--warn); }
+  .verdict.is-bad  { border-left-color:var(--bad); }
+  .kv { display:grid; grid-template-columns:auto 1fr; gap:.3rem 1.1rem; font-size:var(--step--1); margin:1rem 0 0; }
+  .kv dt { color:var(--ink-2); }
+  .kv dd { margin:0; font-family:var(--mono); font-variant-numeric:tabular-nums; }
 
-  /* ---------- minkwitz ---------- */
-  .mink-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 1.4rem; align-items: start; }
-  .formula {
-    font-family: var(--mono);
-    background: var(--surface-2);
-    border: 1px solid var(--line-soft);
-    border-radius: 5px;
-    padding: .8rem .9rem;
-    font-size: .92rem;
-    line-height: 1.75;
-    overflow-x: auto;
-  }
-  .formula b { color: var(--accent); font-weight: 640; }
-  .xsec-box { background: var(--surface-2); border: 1px solid var(--line-soft); border-radius: 5px; }
-  .xsec-box canvas { display: block; width: 100%; height: auto; }
+  .source-note { font-size:var(--step--1); color:var(--ink-2); border-top:1px solid var(--line); padding-top:1.1rem; margin-top:2.4rem; }
+  .source-note b { color:var(--ink); font-weight:620; }
 
-  /* ---------- verdict ---------- */
-  .verdict { border-left: 3px solid var(--accent); }
-  .verdict.is-warn { border-left-color: var(--warn); }
-  .verdict.is-bad { border-left-color: var(--bad); }
-  .verdict-num { font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: var(--step-2); font-weight: 660; letter-spacing: -.01em; }
-
-  .kv { display: grid; grid-template-columns: auto 1fr; gap: .3rem 1rem; font-size: var(--step--1); }
-  .kv dt { color: var(--ink-2); }
-  .kv dd { margin: 0; font-family: var(--mono); font-variant-numeric: tabular-nums; }
-
-  table { width: 100%; border-collapse: collapse; font-size: var(--step--1); }
-  th, td { text-align: left; padding: .5rem .6rem; border-bottom: 1px solid var(--line-soft); }
-  th { font-family: var(--mono); font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); font-weight: 500; }
-  td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; }
-  th.n { text-align: right; }
-  .scroll-x { overflow-x: auto; }
-
-  .source-note {
-    font-size: var(--step--1); color: var(--ink-2);
-    border-top: 1px solid var(--line); padding-top: 1.1rem; margin-top: 2.4rem;
-  }
-  .source-note b { color: var(--ink); font-weight: 620; }
-
-  @media (max-width: 860px) {
-    .lenses { grid-template-columns: 1fr; }
-    .mink-grid { grid-template-columns: 1fr; }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    * { transition: none !important; animation: none !important; }
-  }
+  @media (max-width:880px) { .lenses{grid-template-columns:1fr;} .mink-grid{grid-template-columns:1fr;} }
+  @media (prefers-reduced-motion:reduce) { *{transition:none!important;animation:none!important;} }
 </style>
 
 <div class="wrap">
 
   <header class="masthead">
-    <div>
-      <p class="eyebrow">Kepekçi Optik · Geçiş bölgesi simülasyonu</p>
-      <h1>Aynı reçete, üç tasarım kademesi</h1>
-    </div>
+    <p class="eyebrow">Kepekçi Optik · Geçiş bölgesi simülasyonu</p>
+    <h1>Hasta camın arkasından ne görüyor</h1>
     <p class="lede">
-      Progresif camda bulanıklık yok edilemez — sadece yeri değiştirilebilir. Bu sayfa,
-      hastanın kendi adisyonu ve koridoruyla o bulanıklığın nereye düştüğünü hesaplar.
-      Pazarlama yüzdesi yok; her sayı Minkwitz teoreminden çıkıyor.
+      Aynı reçete, üç tasarım kademesi. Bulanıklık gerçek bulanıklık olarak çizildi —
+      renk kodu değil. Net alanın genişliği hastanın kendi adisyonundan ve koridorundan
+      hesaplanıyor.
     </p>
   </header>
 
-  <!-- ============ REÇETE ============ -->
+  <!-- ===== HASTA DEĞERLERİ ===== -->
   <div class="panel">
     <div class="panel-hd">
       <h3>Hasta değerleri</h3>
-      <span class="small muted">Kaydırıcıları oynatın — üç cam da anında yeniden çizilir</span>
+      <span class="small muted">Kaydırın — üç cam da anında yeniden çizilir</span>
     </div>
     <div class="panel-bd">
       <div class="rx-grid">
-
         <div class="ctrl">
-          <label for="add">Adisyon (ADD)<span class="ctrl-val" id="add-v">+2.25 D</span></label>
+          <label for="add">Adisyon<span class="ctrl-val" id="add-v">+2.25 D</span></label>
           <input type="range" id="add" min="0.75" max="3.50" step="0.25" value="2.25">
           <div class="tick"><span>+0.75</span><span>+3.50</span></div>
         </div>
-
         <div class="ctrl">
-          <label for="kor">Koridor uzunluğu<span class="ctrl-val" id="kor-v">16 mm</span></label>
+          <label for="kor">Koridor<span class="ctrl-val" id="kor-v">16 mm</span></label>
           <input type="range" id="kor" min="10" max="20" step="1" value="16">
           <div class="tick"><span>10</span><span>20</span></div>
         </div>
-
         <div class="ctrl">
           <label for="fh">Odak yüksekliği<span class="ctrl-val" id="fh-v">22 mm</span></label>
           <input type="range" id="fh" min="14" max="32" step="1" value="22">
           <div class="tick"><span>14</span><span>32</span></div>
         </div>
-
         <div class="ctrl">
-          <label for="bh">Çerçeve yüksekliği (B)<span class="ctrl-val" id="bh-v">34 mm</span></label>
+          <label for="bh">Çerçeve boyu (B)<span class="ctrl-val" id="bh-v">34 mm</span></label>
           <input type="range" id="bh" min="22" max="48" step="1" value="34">
           <div class="tick"><span>22</span><span>48</span></div>
         </div>
-
       </div>
     </div>
   </div>
 
-  <!-- ============ ÜÇ CAM ============ -->
+  <!-- ===== ÜÇ CAM ===== -->
   <section>
-    <div class="panel-hd" style="padding-left:0; padding-right:0; border-bottom:1px solid var(--line); margin-bottom:1rem;">
-      <div>
-        <h2>Camın üzerinde bulanıklık nereye düşüyor</h2>
-        <p class="small muted" style="margin:.15rem 0 0;">İstenmeyen astigmat haritası. Beyaz çerçeve çizgisi = gözlüğün gerçek açıklığı; dışında kalan bulanıklık hastaya ulaşmaz.</p>
-      </div>
-      <div class="legend">
-        <span>net</span>
-        <span class="ramp" role="img" aria-label="Bulanıklık ölçeği: 0 diyoptriden 2 diyoptri ve üzerine"></span>
-        <span>2.00 D+</span>
-      </div>
+    <div style="border-bottom:1px solid var(--line); padding-bottom:.8rem; margin-bottom:1.1rem;">
+      <h2>Kesilmiş camın üzerinde net alan</h2>
+      <p class="small muted" style="margin:.2rem 0 0; max-width:72ch;">
+        Camın arkasındaki ızgara ve yazılar, o noktadaki istenmeyen astigmat kadar bulandırıldı.
+        Kesikli çizgi <b>0.50 D</b> sınırı — içinde kalan yer hastanın net gördüğü alan.
+      </p>
     </div>
-
     <div class="lenses" id="lenses"></div>
-
-    <p class="small muted" style="margin-top:.85rem;">
-      <span class="swatch" style="background:var(--accent)"></span>Kesikli çizgi <b>0.50 D eşiği</b> — optik olarak "net" kabul edilen sınır.
-      İçinde kalan alan hastanın rahat gördüğü yer.
-    </p>
   </section>
 
-  <!-- ============ MINKWITZ ============ -->
+  <!-- ===== MINKWITZ ===== -->
   <section>
     <div class="panel">
       <div class="panel-hd">
         <div>
-          <p class="eyebrow" style="margin-bottom:.2rem;">Teoremin kendisi</p>
-          <h2 style="margin:0;">Minkwitz: net koridorun genişliği neden bu kadar</h2>
+          <p class="eyebrow" style="margin-bottom:.2rem;">Neden bu kadar dar</p>
+          <h2 style="margin:0;">Minkwitz teoremi</h2>
         </div>
       </div>
       <div class="panel-bd">
         <div class="mink-grid">
-
           <div>
-            <p>
-              Minkwitz teoremi tek bir şey söyler: koridorun ortasından yana doğru gidildiğinde
-              <b>istenmeyen astigmat, gücün dikeydeki artış hızının tam iki katı hızla büyür.</b>
-              Bu bir tasarım tercihi değil, yüzey geometrisinin zorunlu sonucu. Hiçbir marka bundan kaçamaz.
+            <p style="margin-bottom:.9rem;">
+              Koridorun ortasından yana kaydıkça istenmeyen astigmat,
+              <b>gücün dikeydeki artış hızının tam iki katı hızla</b> büyür.
+              Bu bir tasarım tercihi değil — yüzey geometrisinin zorunlu sonucu.
+              Hiçbir marka bundan kaçamaz.
             </p>
-            <div class="formula" id="formula"></div>
-            <p class="small muted" style="margin-top:.8rem;">
-              Yani net koridoru genişletmenin fizikte sadece iki yolu var: <b>adisyonu düşürmek</b>
-              (elimizde değil) veya <b>koridoru uzatmak</b> (çerçeve izin verdiği kadar).
-              Tasarım kademesi üçüncü bir yol açar — aşağıda.
+            <div class="steps" id="steps"></div>
+            <p class="small muted" style="margin-top:.9rem;">
+              Net alanı genişletmenin fizikte iki yolu var: adisyonu düşürmek (elimizde değil)
+              veya koridoru uzatmak (çerçeve izin verdiği kadar). Tasarım kademesi üçüncü bir yol açar.
             </p>
           </div>
-
           <div>
             <div class="xsec-box">
-              <canvas id="xsec" width="620" height="400" role="img"
-                      aria-label="Koridorun en dar noktasında yatay kesit: astigmatın merkezden uzaklaştıkça artışı"></canvas>
+              <canvas id="xsec" width="640" height="420" role="img"
+                aria-label="Koridorun en dar seviyesinde yatay kesit: astigmatın merkezden uzaklaştıkça artışı"></canvas>
             </div>
             <p class="small muted" style="margin-top:.5rem;">
-              Koridorun <b>en dar seviyesinden</b> alınan yatay kesit. Çizgi ne kadar dik yükseliyorsa
+              Koridorun en dar seviyesinden yatay kesit. Çizgi ne kadar dik yükseliyorsa
               net alan o kadar erken bitiyor.
             </p>
           </div>
-
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ============ KADEME NE YAPIYOR ============ -->
+  <!-- ===== KADEME ===== -->
   <section>
     <div class="panel">
-      <div class="panel-hd">
-        <div>
-          <p class="eyebrow" style="margin-bottom:.2rem;">Paranın karşılığı</p>
-          <h2 style="margin:0;">Üst kademe bulanıklığı azaltmaz — yayar</h2>
-        </div>
-      </div>
       <div class="panel-bd">
-        <p style="max-width:68ch;">
-          Toplam astigmat miktarı adisyonla sabittir. Tasarım kademesinin değiştirdiği şey,
-          gücün koridor boyunca <b>ne kadar düzgün dağıtıldığı</b>. Başlangıç tasarımı gücün çoğunu
-          koridorun ortasındaki kısa bir aralığa sıkıştırır; o seviyede eğim ikiye katlanır ve
-          Minkwitz gereği net koridor o noktada yarıya iner. Üst kademe aynı gücü koridorun
+        <p class="eyebrow" style="margin-bottom:.3rem;">Paranın karşılığı</p>
+        <h2>Üst kademe bulanıklığı azaltmaz — yayar</h2>
+        <p style="max-width:70ch;">
+          Toplam astigmat miktarı adisyonla sabittir. Kademenin değiştirdiği tek şey,
+          gücün koridor boyunca <b>ne kadar düzgün dağıtıldığı</b>. Başlangıç tasarımı gücün
+          çoğunu koridorun ortasındaki kısa bir aralığa sıkıştırır; orada eğim ikiye katlanır
+          ve Minkwitz gereği net alan o seviyede yarıya iner. Üst kademe aynı gücü koridorun
           tamamına yayar — en dar nokta genişler.
         </p>
-        <div class="scroll-x">
-          <table id="tiertable">
-            <thead>
-              <tr>
-                <th>Kademe</th>
-                <th class="n">Tepe güç eğimi</th>
-                <th class="n">En dar net koridor</th>
-                <th class="n">Başlangıca göre</th>
-                <th>Bedeli</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-        <p class="small muted" style="margin-top:.9rem;">
-          Üst kademenin ikinci avantajı tabloda yok çünkü sayıya dökülemez: freeform tasarım
-          kalan astigmatı <b>çerçevenin dışına</b> itebilir. Yukarıdaki haritalarda beyaz çerçeve
-          çizgisinin dışında kalan renk, hastanın hiç görmediği bulanıklıktır.
+        <p style="max-width:70ch;">
+          İkinci avantajı yukarıdaki camlarda görünüyor ama sayıya dökülemiyor: freeform tasarım
+          kalan astigmatı camın <b>kenarına, kesim dışına</b> itebilir. Camın dışında kalan
+          bulanıklık hastaya hiç ulaşmaz.
         </p>
       </div>
     </div>
   </section>
 
-  <!-- ============ HÜKÜM ============ -->
+  <!-- ===== HÜKÜM ===== -->
   <section>
     <div class="panel verdict" id="verdict">
       <div class="panel-bd">
@@ -465,15 +307,13 @@
   </section>
 
   <div class="source-note">
-    <p><b>Hesaplanmış olan:</b> güç değişim hızı, Minkwitz eğimi, net koridor genişliği ve
-    0.50 D eşik konturu — hepsi yukarıdaki adisyon ve koridor değerlerinden türetildi.
-    Marka verisi kullanılmadı.</p>
+    <p><b>Hesaplanan:</b> güç değişim hızı, Minkwitz eğimi, net alan genişliği ve 0.50 D sınırı —
+    hepsi yukarıdaki adisyon ve koridordan türetildi. Marka verisi kullanılmadı.</p>
     <p><b>Şematik olan:</b> kademeler arası fark tek bir mekanizmayla modellendi — gücün koridora
-    yayılma düzgünlüğü (yumuşak/sert tasarım). Gerçek bir modelin ölçülmüş haritası değildir;
-    kademeler arası ilişkiyi gösterir.</p>
-    <p><b>Kasıtlı olarak yapılmayan:</b> markaların ilan ettiği yüzdeler (Nikon %42, Novax %14,6 gibi)
-    bu sayfaya konmadı. Her üretici kendi referans camına göre, farklı koşullarda ölçüyor —
-    yan yana koymak sahte bir kesinlik üretirdi.</p>
+    yayılma düzgünlüğü. Belirli bir modelin ölçülmüş haritası değil, kademeler arası ilişkidir.</p>
+    <p><b>Kasıtlı olarak yapılmayan:</b> markaların ilan ettiği yüzdeler bu sayfaya konmadı.
+    Her üretici kendi referans camına göre, farklı koşullarda ölçüyor — yan yana koymak
+    sahte bir kesinlik üretirdi.</p>
   </div>
 
 </div>
@@ -483,401 +323,395 @@
   "use strict";
 
   /* ============================================================
-     FİZİK
-     ------------------------------------------------------------
-     Minkwitz:  dA/dx = 2 · dP/dy
-     A = istenmeyen astigmat (D), P = güç (D), x = yatay, y = dikey (mm)
-
-     Koridor boyunca güç profili:  P(y) = ADD · S(y/L)
-     S(0)=0, S(1)=1.  S'(t) profilin o noktadaki normalize eğimi.
-
-     Kademe farkı = S'in düzgünlüğü:
-       S_w(t) = (1-w)·t  +  w·smootherstep(t)
-       smootherstep(t) = 6t^5 - 15t^4 + 10t^3,  tepe eğimi 1.875
-       -> tepe eğim katsayısı k = (1-w) + 1.875w
+     FİZİK   —   Minkwitz:  dA/dx = 2 · dP/dy
      ============================================================ */
-
-  var THRESHOLD = 0.50;          // "net" sınırı, D
-  var SAT_FACTOR = 1.0;          // lateral astigmatın doyum seviyesi ≈ ADD
+  var THRESHOLD = 0.50;      // "net" siniri, D
+  var SAT = 1.0;             // lateral astigmatin doyumu ≈ ADD
 
   var TIERS = [
-    { id: "premium",   ad: "Premium",   alt: "Freeform kişiye özel", w: 0.20,
-      bedel: "En yüksek fiyat" },
-    { id: "orta",      ad: "Orta",      alt: "Gelişmiş tasarım",     w: 0.60,
-      bedel: "Dengeli" },
-    { id: "baslangic", ad: "Başlangıç", alt: "Standart tasarım",     w: 1.00,
-      bedel: "En ekonomik" }
+    { id:"premium",   ad:"Premium",   alt:"Freeform kişiye özel", w:0.20 },
+    { id:"orta",      ad:"Orta",      alt:"Gelişmiş tasarım",     w:0.60 },
+    { id:"baslangic", ad:"Başlangıç", alt:"Standart tasarım",     w:1.00 }
   ];
 
-  function smootherstep(t) { return t * t * t * (t * (t * 6 - 15) + 10); }
   function dSmootherstep(t) { return 30 * t * t * (t - 1) * (t - 1); }
+  function slopeNorm(t, w) { if (t <= 0 || t >= 1) return 0; return (1 - w) + w * dSmootherstep(t); }
+  function peakSlopeNorm(w) { return (1 - w) + w * 1.875; }
 
-  // normalize profil eğimi S'(t)
-  function slopeNorm(t, w) {
-    if (t <= 0 || t >= 1) return 0;
-    return (1 - w) * 1 + w * dSmootherstep(t);
-  }
-  function peakSlopeNorm(w) { return (1 - w) * 1 + w * 1.875; }
-
-  // y (mm, montaj haçından aşağı) noktasındaki güç değişim hızı, D/mm
   function gradAt(y, L, add, w) {
     if (y <= 0 || y >= L) return 0;
     return (add / L) * slopeNorm(y / L, w);
   }
-
-  // Astigmat lateral loblari koridorun altinda da devam eder:
-  // o yuksekligie kadar gorulen en buyuk egim tasinir.
+  // Lateral loblar koridorun altinda da surer: o yuksekligie kadarki en buyuk egim tasinir.
   function gradEffAt(y, L, add, w) {
     if (y <= 0) return 0;
-    var yy = Math.min(y, L);
-    var best = 0, N = 24;
+    var yy = y < L ? y : L, best = 0, N = 20;
     for (var i = 0; i <= N; i++) {
       var g = gradAt((yy * i) / N, L, add, w);
       if (g > best) best = g;
     }
     return best;
   }
-
   function astig(x, y, L, add, w) {
     var g = gradEffAt(y, L, add, w);
     if (g <= 0) return 0;
-    var a = 2 * g * Math.abs(x);          // Minkwitz
-    var sat = add * SAT_FACTOR;
-    return a < sat ? a : sat;             // doyum
+    var a = 2 * g * Math.abs(x), s = add * SAT;
+    return a < s ? a : s;
   }
+  function narrowestWidth(L, add, w) { return (THRESHOLD * L) / (add * peakSlopeNorm(w)); }
 
-  // en dar net koridor genisligi (mm)
-  function narrowestWidth(L, add, w) {
-    var k = peakSlopeNorm(w);
-    return (THRESHOLD * L) / (add * k);
+  function sgn(v) { return v < 0 ? -1 : (v > 0 ? 1 : 0); }
+  function cssVar(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+
+  /* ============================================================
+     CAM SİLUETİ  —  gercek kesim sekli (superelips + alta daralma)
+     ============================================================ */
+  var LENS_A = 50;   // cam genisligi mm (tipik kesim)
+
+  function lensOutline(A, B, fh) {
+    var hw = A / 2, top = -(B - fh), bot = fh;
+    var cy = (top + bot) / 2, hh = (bot - top) / 2;
+    var pts = [], N = 180;
+    for (var i = 0; i < N; i++) {
+      var t = (i / N) * Math.PI * 2;
+      var ct = Math.cos(t), st = Math.sin(t);
+      var n = st > 0 ? 3.3 : 5.2;                 // alt daha yuvarlak, ust daha duz
+      var ex = 2 / n;
+      var x = hw * sgn(ct) * Math.pow(Math.abs(ct), ex);
+      var y = cy + hh * sgn(st) * Math.pow(Math.abs(st), ex);
+      var f = (y - cy) / hh;                       // -1 ust ... +1 alt
+      x *= 1 - 0.10 * Math.max(0, f);              // alta dogru hafif daralma
+      pts.push([x, y]);
+    }
+    return pts;
   }
 
   /* ============================================================
-     RENK
+     SAHNE  —  camin arkasindaki izgara + bolge yazilari
      ============================================================ */
-  var STOPS = [
-    { a: 0.00, c: [255, 255, 255], o: 0.00 },
-    { a: 0.25, c: [255, 206,  92], o: 0.40 },
-    { a: 0.50, c: [255, 168,  46], o: 0.66 },
-    { a: 1.00, c: [233, 109,  44], o: 0.82 },
-    { a: 1.50, c: [197,  52,  44], o: 0.90 },
-    { a: 2.50, c: [126,  26,  48], o: 0.95 }
+  // Izgara + bolge yazilari TEK sahneye ciziliyor ki bulaniklastirma
+  // ikisini birden etkilesin - yazilar da bulunduklari bolge kadar bulaniklasir.
+  function buildScene(W, H, m, L) {
+    var c = document.createElement("canvas");
+    c.width = W; c.height = H;
+    var g = c.getContext("2d");
+    var col = cssVar("--scene");
+
+    // ince izgara (3 mm arayla) - bulaniklik izgarada aninda okunur
+    g.strokeStyle = col; g.globalAlpha = 0.32; g.lineWidth = Math.max(1, m.k * 0.09);
+    var xm, ym;
+    for (xm = -36; xm <= 36; xm += 3) { g.beginPath(); g.moveTo(m.sx(xm), 0); g.lineTo(m.sx(xm), H); g.stroke(); }
+    for (ym = -36; ym <= 46; ym += 3) { g.beginPath(); g.moveTo(0, m.sy(ym)); g.lineTo(W, m.sy(ym)); g.stroke(); }
+
+    // bolge yazilari
+    g.globalAlpha = 0.95; g.fillStyle = col; g.textAlign = "center";
+    g.font = "700 " + Math.max(9, Math.round(m.k * 2.9)) + "px system-ui, -apple-system, sans-serif";
+    var ustAlan = m.B - m.fh;
+    g.fillText("UZAK",  m.sx(0), m.sy(-Math.min(ustAlan * 0.55, 8)));
+    g.fillText("ORTA",  m.sx(0), m.sy(L * 0.55));
+    g.fillText("YAKIN", m.sx(0), m.sy(Math.min(m.fh - 3.5, L + 5.5)));
+    return c;
+  }
+
+  /* ============================================================
+     BULANIKLIK BANTLARI
+     ============================================================ */
+  var BANDS = [
+    { lo: 0.25, hi: 0.50, blur: 1.1, tint: 0.00 },
+    { lo: 0.50, hi: 1.00, blur: 2.8, tint: 0.05 },
+    { lo: 1.00, hi: 1.75, blur: 5.0, tint: 0.10 },
+    { lo: 1.75, hi: 99.0, blur: 8.0, tint: 0.16 }
   ];
 
-  function rampColor(a) {
-    if (a <= 0) return [0, 0, 0, 0];
-    for (var i = 1; i < STOPS.length; i++) {
-      if (a <= STOPS[i].a || i === STOPS.length - 1) {
-        var lo = STOPS[i - 1], hi = STOPS[i];
-        var t = (a - lo.a) / (hi.a - lo.a);
-        if (t < 0) t = 0; if (t > 1) t = 1;
-        return [
-          Math.round(lo.c[0] + (hi.c[0] - lo.c[0]) * t),
-          Math.round(lo.c[1] + (hi.c[1] - lo.c[1]) * t),
-          Math.round(lo.c[2] + (hi.c[2] - lo.c[2]) * t),
-          Math.round(255 * (lo.o + (hi.o - lo.o) * t))
-        ];
-      }
+  // Bir bandin serit bolgesini (sag + sol) yola cevirir. false donerse bolge yok.
+  function bandRegion(g, band, p, w, m, maxX) {
+    var sat = p.add * SAT;
+    if (band.lo >= sat) return false;
+    var inner = [], outer = [];
+    for (var y = 0; y <= m.botMm + 1; y += 0.4) {
+      var gr = gradEffAt(y, p.L, p.add, w);
+      if (gr <= 0) continue;
+      var xi = band.lo / (2 * gr);
+      var xo = (band.hi <= sat) ? band.hi / (2 * gr) : maxX;
+      if (xi >= maxX) continue;
+      if (xo > maxX) xo = maxX;
+      if (xo <= xi) continue;
+      inner.push([xi, y]); outer.push([xo, y]);
     }
-    return [126, 26, 48, 242];
-  }
+    if (inner.length < 2) return false;
 
-  function cssVar(n) {
-    return getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+    g.beginPath();
+    [1, -1].forEach(function (s) {
+      g.moveTo(m.sx(s * inner[0][0]), m.sy(inner[0][1]));
+      for (var i = 1; i < inner.length; i++) g.lineTo(m.sx(s * inner[i][0]), m.sy(inner[i][1]));
+      for (var j = outer.length - 1; j >= 0; j--) g.lineTo(m.sx(s * outer[j][0]), m.sy(outer[j][1]));
+      g.closePath();
+    });
+    return true;
   }
 
   /* ============================================================
-     LENS HARİTASI
+     CAM ÇİZİMİ
      ============================================================ */
-  var MM_X = 26;        // yariçap, mm  (-26 .. +26)
-  var MM_TOP = 16;      // hacin ustu, mm
-  var MM_BOT = 30;      // hacin alti, mm
-
   function drawLens(canvas, p, tier) {
-    var W = canvas.width, H = canvas.height;
-    var ctx = canvas.getContext("2d");
-    var accent = cssVar("--accent");
-    var ink3 = cssVar("--ink-3");
-
-    ctx.clearRect(0, 0, W, H);
-
-    var pxPerMmX = W / (MM_X * 2);
-    var pxPerMmY = H / (MM_TOP + MM_BOT);
-    function sx(xmm) { return (xmm + MM_X) * pxPerMmX; }
-    function sy(ymm) { return (ymm + MM_TOP) * pxPerMmY; }
-
-    // --- net alan zemini (pozitif olarak ciziliyor) ---
-    ctx.save();
-    ctx.fillStyle = accent;
-    ctx.globalAlpha = 0.07;
-    ctx.fillRect(0, 0, W, H);
-    ctx.restore();
-
-    // --- astigmat alani ---
-    var img = ctx.createImageData(W, H);
-    var d = img.data;
-    for (var py = 0; py < H; py++) {
-      var ymm = py / pxPerMmY - MM_TOP;
-      for (var px = 0; px < W; px++) {
-        var xmm = px / pxPerMmX - MM_X;
-        var a = astig(xmm, ymm, p.L, p.add, tier.w);
-        var c = rampColor(a);
-        var o = (py * W + px) * 4;
-        d[o] = c[0]; d[o + 1] = c[1]; d[o + 2] = c[2]; d[o + 3] = c[3];
-      }
+    var dpr = Math.min(2, window.devicePixelRatio || 1);
+    var cssW = canvas.clientWidth || 320;
+    var cssH = Math.round(cssW * 0.92);
+    if (canvas.width !== Math.round(cssW * dpr) || canvas.height !== Math.round(cssH * dpr)) {
+      canvas.width = Math.round(cssW * dpr);
+      canvas.height = Math.round(cssH * dpr);
     }
-    ctx.putImageData(img, 0, 0);
+    canvas.style.height = cssH + "px";
+    var W = canvas.width, H = canvas.height;
+    var g = canvas.getContext("2d");
+    g.setTransform(1, 0, 0, 1, 0, 0);
+    g.clearRect(0, 0, W, H);
 
-    // --- 0.50 D kontur cizgisi ---
-    ctx.save();
-    ctx.strokeStyle = accent;
-    ctx.lineWidth = 1.6;
-    ctx.setLineDash([4, 3]);
-    ctx.globalAlpha = 0.95;
-    [1, -1].forEach(function (sign) {
-      ctx.beginPath();
-      var started = false;
-      for (var yy = 0; yy <= MM_BOT; yy += 0.25) {
-        var g = gradEffAt(yy, p.L, p.add, tier.w);
-        if (g <= 0) continue;
-        var xc = THRESHOLD / (2 * g);
-        if (xc > MM_X) xc = MM_X;
-        var X = sx(sign * xc), Y = sy(yy);
-        if (!started) { ctx.moveTo(X, Y); started = true; } else { ctx.lineTo(X, Y); }
+    var topMm = -(p.B - p.fh), botMm = p.fh;
+    var padMm = 3.5;
+    var spanX = LENS_A + padMm * 2;
+    var spanY = (botMm - topMm) + padMm * 2;
+    var k = Math.min(W / spanX, H / spanY);
+    var ox = W / 2, oy = H / 2 - ((topMm + botMm) / 2) * k;
+    var m = {
+      k: k, top: topMm, botMm: botMm, fh: p.fh, B: p.B,
+      sx: function (x) { return ox + x * k; },
+      sy: function (y) { return oy + y * k; }
+    };
+
+    var accent = cssVar("--accent");
+    var pts = lensOutline(LENS_A, p.B, p.fh);
+
+    function lensPath() {
+      g.beginPath();
+      g.moveTo(m.sx(pts[0][0]), m.sy(pts[0][1]));
+      for (var i = 1; i < pts.length; i++) g.lineTo(m.sx(pts[i][0]), m.sy(pts[i][1]));
+      g.closePath();
+    }
+
+    // --- cam govdesi ---
+    g.save();
+    lensPath();
+    g.fillStyle = cssVar("--glass");
+    g.fill();
+    g.clip();
+
+    var scene = buildScene(W, H, m, p.L);
+    var canBlur = typeof g.filter === "string";
+
+    // once her yeri NET ciz
+    g.drawImage(scene, 0, 0);
+
+    // sonra bantlari sirayla bulaniklastirarak ustune bas
+    var maxX = LENS_A / 2 + padMm;
+    BANDS.forEach(function (band) {
+      g.save();
+      if (bandRegion(g, band, p, tier.w, m, maxX)) {
+        g.clip();
+        if (canBlur) {
+          g.filter = "blur(" + (band.blur * k / 7).toFixed(2) + "px)";
+          g.drawImage(scene, 0, 0);
+          g.filter = "none";
+        } else {
+          // ctx.filter yoksa renk tonuyla goster (yedek yol)
+          g.globalAlpha = 0.10 + band.blur * 0.045;
+          g.fillStyle = "#B4441F"; g.fillRect(0, 0, W, H); g.globalAlpha = 1;
+        }
+        if (band.tint > 0) {
+          g.globalAlpha = band.tint;
+          g.fillStyle = "#B4441F"; g.fillRect(0, 0, W, H); g.globalAlpha = 1;
+        }
       }
-      if (started) ctx.stroke();
+      g.restore();
     });
-    ctx.restore();
 
-    // --- koridor merkez cizgisi ---
-    ctx.save();
-    ctx.strokeStyle = accent;
-    ctx.globalAlpha = 0.5;
-    ctx.lineWidth = 1;
-    ctx.setLineDash([2, 4]);
-    ctx.beginPath(); ctx.moveTo(sx(0), sy(0)); ctx.lineTo(sx(0), sy(p.L)); ctx.stroke();
-    ctx.restore();
+    // --- 0.50 D siniri ---
+    g.save();
+    g.strokeStyle = accent; g.lineWidth = Math.max(1.4, k * 0.16);
+    g.setLineDash([k * 0.9, k * 0.7]); g.globalAlpha = 0.95;
+    [1, -1].forEach(function (s) {
+      g.beginPath(); var started = false;
+      for (var y = 0; y <= botMm; y += 0.25) {
+        var gr = gradEffAt(y, p.L, p.add, tier.w);
+        if (gr <= 0) continue;
+        var xc = THRESHOLD / (2 * gr);
+        if (xc > maxX) xc = maxX;
+        var X = m.sx(s * xc), Y = m.sy(y);
+        if (!started) { g.moveTo(X, Y); started = true; } else { g.lineTo(X, Y); }
+      }
+      if (started) g.stroke();
+    });
+    g.restore();
 
     // --- montaj haci ---
-    ctx.save();
-    ctx.strokeStyle = accent; ctx.lineWidth = 1.4; ctx.globalAlpha = 0.9;
-    ctx.beginPath();
-    ctx.moveTo(sx(-2.6), sy(0)); ctx.lineTo(sx(2.6), sy(0));
-    ctx.moveTo(sx(0), sy(-2.6)); ctx.lineTo(sx(0), sy(2.6));
-    ctx.stroke();
-    ctx.restore();
+    g.save();
+    g.strokeStyle = accent; g.lineWidth = Math.max(1.3, k * 0.15); g.globalAlpha = 0.85;
+    g.beginPath();
+    g.moveTo(m.sx(-2.4), m.sy(0)); g.lineTo(m.sx(2.4), m.sy(0));
+    g.moveTo(m.sx(0), m.sy(-2.4)); g.lineTo(m.sx(0), m.sy(2.4));
+    g.stroke();
+    g.restore();
 
-    // --- yakin referans noktasi ---
-    ctx.save();
-    ctx.strokeStyle = accent; ctx.lineWidth = 1.3; ctx.globalAlpha = 0.9;
-    ctx.beginPath(); ctx.arc(sx(0), sy(p.L), 4.2, 0, Math.PI * 2); ctx.stroke();
-    ctx.restore();
+    // --- yakin referans ---
+    g.save();
+    g.strokeStyle = accent; g.lineWidth = Math.max(1.2, k * 0.13); g.globalAlpha = 0.8;
+    g.beginPath(); g.arc(m.sx(0), m.sy(p.L), Math.max(3, k * 0.55), 0, Math.PI * 2); g.stroke();
+    g.restore();
 
-    // --- cerceve acikligi ---
-    var topMm = -(p.B - p.fh);
-    var botMm = p.fh;
-    if (topMm < -MM_TOP) topMm = -MM_TOP;
-    if (botMm > MM_BOT) botMm = MM_BOT;
-    ctx.save();
-    ctx.strokeStyle = cssVar("--ink");
-    ctx.globalAlpha = 0.55;
-    ctx.lineWidth = 2;
-    var rx = 21, ry0 = sy(topMm), ry1 = sy(botMm);
-    var rr = Math.min(16, (ry1 - ry0) / 2.4);
-    ctx.beginPath();
-    if (ctx.roundRect) {
-      ctx.roundRect(sx(-rx), ry0, sx(rx) - sx(-rx), ry1 - ry0, rr);
-    } else {
-      ctx.rect(sx(-rx), ry0, sx(rx) - sx(-rx), ry1 - ry0);
-    }
-    ctx.stroke();
-    ctx.restore();
+    g.restore(); // cam clip biter
 
-    // --- etiketler ---
-    ctx.save();
-    ctx.fillStyle = ink3;
-    ctx.font = "500 11px ui-monospace, Consolas, monospace";
-    ctx.textAlign = "left";
-    ctx.fillText("montaj haçı", sx(3.4), sy(0) + 4);
-    ctx.fillText("yakın referans", sx(6), sy(p.L) + 4);
-    ctx.restore();
+    // --- cam kenari + parlama (fotograftaki gibi) ---
+    g.save();
+    lensPath();
+    g.strokeStyle = cssVar("--ink"); g.globalAlpha = 0.30;
+    g.lineWidth = Math.max(1.6, k * 0.18); g.stroke();
+    g.globalAlpha = 0.14;
+    g.lineWidth = Math.max(3, k * 0.5);
+    g.strokeStyle = "#FFFFFF"; g.stroke();
+    g.restore();
   }
 
   /* ============================================================
      KESİT GRAFİĞİ
      ============================================================ */
   function drawXSection(canvas, p) {
-    var W = canvas.width, H = canvas.height;
-    var ctx = canvas.getContext("2d");
+    var W = canvas.width, H = canvas.height, g = canvas.getContext("2d");
     var ink = cssVar("--ink"), ink2 = cssVar("--ink-2"), ink3 = cssVar("--ink-3");
     var line = cssVar("--line"), accent = cssVar("--accent");
+    g.clearRect(0, 0, W, H);
 
-    ctx.clearRect(0, 0, W, H);
+    var padL = 56, padR = 18, padT = 20, padB = 56;
+    var pw = W - padL - padR, ph = H - padT - padB;
+    var xMax = 9, yMax = Math.max(1.5, p.add * 0.95);
+    function px(x) { return padL + (x / xMax) * pw; }
+    function py(a) { return padT + ph - (a / yMax) * ph; }
 
-    var padL = 52, padR = 16, padT = 22, padB = 44;
-    var plotW = W - padL - padR, plotH = H - padT - padB;
-
-    var xMax = 9;                                  // mm
-    var yMax = Math.max(1.5, p.add * 0.95);        // D
-
-    function px(xmm) { return padL + (xmm / xMax) * plotW; }
-    function py(a) { return padT + plotH - (a / yMax) * plotH; }
-
-    // izgara
-    ctx.save();
-    ctx.strokeStyle = line; ctx.lineWidth = 1; ctx.globalAlpha = 0.8;
-    ctx.font = "500 10px ui-monospace, Consolas, monospace";
-    ctx.fillStyle = ink3;
+    g.save();
+    g.strokeStyle = line; g.globalAlpha = 0.85; g.lineWidth = 1;
+    g.font = "500 11px ui-monospace, Consolas, monospace"; g.fillStyle = ink3;
     for (var gx = 0; gx <= xMax; gx += 3) {
-      ctx.beginPath(); ctx.moveTo(px(gx), padT); ctx.lineTo(px(gx), padT + plotH); ctx.stroke();
-      ctx.textAlign = "center";
-      ctx.fillText(gx + " mm", px(gx), padT + plotH + 15);
+      g.beginPath(); g.moveTo(px(gx), padT); g.lineTo(px(gx), padT + ph); g.stroke();
+      g.textAlign = "center"; g.fillText(gx + " mm", px(gx), padT + ph + 16);
     }
-    var stepY = yMax > 2 ? 0.5 : 0.25;
-    for (var gy = 0; gy <= yMax + 0.001; gy += stepY) {
-      ctx.beginPath(); ctx.moveTo(padL, py(gy)); ctx.lineTo(padL + plotW, py(gy)); ctx.stroke();
-      ctx.textAlign = "right";
-      ctx.fillText(gy.toFixed(2), padL - 8, py(gy) + 3.5);
+    var sY = yMax > 2 ? 0.5 : 0.25;
+    for (var gy = 0; gy <= yMax + 1e-6; gy += sY) {
+      g.beginPath(); g.moveTo(padL, py(gy)); g.lineTo(padL + pw, py(gy)); g.stroke();
+      g.textAlign = "right"; g.fillText(gy.toFixed(2), padL - 8, py(gy) + 4);
     }
-    ctx.restore();
+    g.restore();
 
-    // 0.50 D esigi
-    ctx.save();
-    ctx.strokeStyle = accent; ctx.lineWidth = 1.6; ctx.setLineDash([5, 4]);
-    ctx.beginPath(); ctx.moveTo(padL, py(THRESHOLD)); ctx.lineTo(padL + plotW, py(THRESHOLD)); ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.fillStyle = accent;
-    ctx.font = "600 10px ui-monospace, Consolas, monospace";
-    ctx.textAlign = "left";
-    ctx.fillText("0.50 D — net sınırı", padL + 6, py(THRESHOLD) - 6);
-    ctx.restore();
+    g.save();
+    g.strokeStyle = accent; g.lineWidth = 1.7; g.setLineDash([5, 4]);
+    g.beginPath(); g.moveTo(padL, py(THRESHOLD)); g.lineTo(padL + pw, py(THRESHOLD)); g.stroke();
+    g.setLineDash([]); g.fillStyle = accent;
+    g.font = "660 11px ui-monospace, Consolas, monospace"; g.textAlign = "left";
+    g.fillText("0.50 D — net sınırı", padL + 7, py(THRESHOLD) - 7);
+    g.restore();
 
-    // egriler
-    var styles = [
-      { dash: [],      alpha: 1.00, lw: 2.6 },
-      { dash: [7, 4],  alpha: 0.82, lw: 2.0 },
-      { dash: [2, 3],  alpha: 0.70, lw: 2.0 }
-    ];
-
+    var styles = [{ d: [], a: 1, lw: 2.8 }, { d: [8, 4], a: .8, lw: 2.2 }, { d: [2, 3.5], a: .68, lw: 2.2 }];
     TIERS.forEach(function (tier, i) {
-      var k = peakSlopeNorm(tier.w);
-      var slope = 2 * (p.add / p.L) * k;    // D per mm
-
-      ctx.save();
-      ctx.strokeStyle = ink;
-      ctx.globalAlpha = styles[i].alpha;
-      ctx.lineWidth = styles[i].lw;
-      ctx.setLineDash(styles[i].dash);
-      ctx.beginPath();
+      var slope = 2 * (p.add / p.L) * peakSlopeNorm(tier.w);
+      g.save();
+      g.strokeStyle = ink; g.globalAlpha = styles[i].a; g.lineWidth = styles[i].lw;
+      g.setLineDash(styles[i].d); g.beginPath();
       var first = true;
       for (var xm = 0; xm <= xMax; xm += 0.1) {
-        var a = Math.min(slope * xm, p.add * SAT_FACTOR);
+        var a = Math.min(slope * xm, p.add * SAT);
         if (a > yMax) a = yMax;
-        if (first) { ctx.moveTo(px(xm), py(a)); first = false; } else { ctx.lineTo(px(xm), py(a)); }
+        if (first) { g.moveTo(px(xm), py(a)); first = false; } else { g.lineTo(px(xm), py(a)); }
       }
-      ctx.stroke();
-      ctx.restore();
+      g.stroke(); g.restore();
 
-      // esik kesisimi
       var xc = THRESHOLD / slope;
       if (xc <= xMax) {
-        ctx.save();
-        ctx.fillStyle = ink;
-        ctx.globalAlpha = styles[i].alpha;
-        ctx.beginPath(); ctx.arc(px(xc), py(THRESHOLD), 3.6, 0, Math.PI * 2); ctx.fill();
-        ctx.globalAlpha = 1;
-        ctx.font = "600 10.5px ui-monospace, Consolas, monospace";
-        ctx.textAlign = "center";
-        ctx.fillStyle = ink2;
-        ctx.fillText(tier.ad, px(xc), py(THRESHOLD) + 20 + i * 13);
-        ctx.restore();
+        g.save();
+        g.fillStyle = ink; g.globalAlpha = styles[i].a;
+        g.beginPath(); g.arc(px(xc), py(THRESHOLD), 4, 0, Math.PI * 2); g.fill();
+        g.globalAlpha = 1; g.fillStyle = ink2; g.textAlign = "center";
+        g.font = "660 11px ui-monospace, Consolas, monospace";
+        g.fillText(tier.ad + "  " + (xc * 2).toFixed(1) + " mm", px(xc), py(THRESHOLD) + 22 + i * 15);
+        g.restore();
       }
     });
 
-    // eksen basliklari
-    ctx.save();
-    ctx.fillStyle = ink2;
-    ctx.font = "500 10.5px ui-monospace, Consolas, monospace";
-    ctx.textAlign = "center";
-    ctx.fillText("koridor merkezinden yana uzaklık", padL + plotW / 2, H - 8);
-    ctx.translate(13, padT + plotH / 2);
-    ctx.rotate(-Math.PI / 2);
-    ctx.fillText("istenmeyen astigmat (D)", 0, 0);
-    ctx.restore();
+    g.save();
+    g.fillStyle = ink2; g.font = "500 11px ui-monospace, Consolas, monospace"; g.textAlign = "center";
+    g.fillText("koridor merkezinden yana uzaklık", padL + pw / 2, H - 10);
+    g.translate(14, padT + ph / 2); g.rotate(-Math.PI / 2);
+    g.fillText("istenmeyen astigmat (D)", 0, 0);
+    g.restore();
   }
 
   /* ============================================================
      ARAYÜZ
      ============================================================ */
   var el = {
-    add: document.getElementById("add"),
-    kor: document.getElementById("kor"),
-    fh:  document.getElementById("fh"),
-    bh:  document.getElementById("bh"),
-    addV: document.getElementById("add-v"),
-    korV: document.getElementById("kor-v"),
-    fhV:  document.getElementById("fh-v"),
-    bhV:  document.getElementById("bh-v"),
+    add: document.getElementById("add"), kor: document.getElementById("kor"),
+    fh: document.getElementById("fh"),   bh: document.getElementById("bh"),
+    addV: document.getElementById("add-v"), korV: document.getElementById("kor-v"),
+    fhV: document.getElementById("fh-v"),   bhV: document.getElementById("bh-v"),
     lenses: document.getElementById("lenses"),
     xsec: document.getElementById("xsec"),
-    formula: document.getElementById("formula"),
-    tiertable: document.querySelector("#tiertable tbody"),
+    steps: document.getElementById("steps"),
     verdict: document.getElementById("verdict"),
     verdictBody: document.getElementById("verdict-body")
   };
 
-  // kart iskeletleri
   var cards = TIERS.map(function (tier) {
     var card = document.createElement("div");
     card.className = "lens-card";
     card.innerHTML =
-      '<div class="lens-hd">' +
-        '<div class="lens-name"><h3>' + tier.ad + '</h3><span class="pick-flag" hidden>Bu hastaya</span></div>' +
-        '<div class="lens-sub">' + tier.alt + '</div>' +
-      '</div>' +
-      '<div class="lens-canvas-box"><canvas width="340" height="300"></canvas></div>' +
-      '<div class="lens-metrics">' +
-        '<div class="metric"><span class="metric-k">En dar net koridor</span><span class="metric-v m-w"></span></div>' +
+      '<div class="lens-hd"><h3>' + tier.ad + '</h3><span class="pick-flag" hidden>Bu hastaya</span></div>' +
+      '<div class="lens-sub">' + tier.alt + '</div>' +
+      '<div class="lens-stage"><canvas></canvas></div>' +
+      '<div class="lens-foot">' +
+        '<div class="metric-label">En dar yerde net alan genişliği</div>' +
+        '<div class="big-metric"><b class="m-w"></b><span>mm</span></div>' +
         '<div class="bar"><i></i></div>' +
-        '<div class="metric"><span class="metric-k">Tepe güç eğimi</span><span class="metric-v m-g"></span></div>' +
-        '<div class="metric"><span class="metric-k">Çerçeve içi bulanık alan</span><span class="metric-v m-b"></span></div>' +
+        '<div class="small muted m-note" style="margin-top:.55rem;"></div>' +
       '</div>';
     el.lenses.appendChild(card);
     return {
-      tier: tier,
-      root: card,
-      canvas: card.querySelector("canvas"),
-      flag: card.querySelector(".pick-flag"),
-      w: card.querySelector(".m-w"),
-      g: card.querySelector(".m-g"),
-      b: card.querySelector(".m-b"),
-      bar: card.querySelector(".bar > i")
+      tier: tier, root: card, canvas: card.querySelector("canvas"),
+      flag: card.querySelector(".pick-flag"), w: card.querySelector(".m-w"),
+      note: card.querySelector(".m-note"), bar: card.querySelector(".bar > i")
     };
   });
 
-  // cerceve icinde 0.50 D ustu alanin orani
-  function blurShare(p, tier) {
-    var top = -(p.B - p.fh), bot = p.fh, halfW = 21;
-    var stepsY = 60, stepsX = 40, hit = 0, tot = 0;
-    for (var i = 0; i < stepsY; i++) {
-      var y = top + ((bot - top) * (i + 0.5)) / stepsY;
-      for (var j = 0; j < stepsX; j++) {
-        var x = -halfW + ((2 * halfW) * (j + 0.5)) / stepsX;
-        tot++;
-        if (astig(x, y, p.L, p.add, tier.w) >= THRESHOLD) hit++;
-      }
+  /* --- uygulamadan gelen hasta degerleri --- */
+  (function hastaDegerleri() {
+    var q; try { q = new URLSearchParams(window.location.search); } catch (e) { return; }
+    if (!q) return;
+    function uygula(input, key) {
+      var raw = q.get(key);
+      if (raw === null || raw === "") return false;
+      var v = parseFloat(raw); if (!isFinite(v)) return false;
+      var mn = parseFloat(input.min), mx = parseFloat(input.max), st = parseFloat(input.step);
+      v = Math.round(v / st) * st;
+      if (v < mn) v = mn; if (v > mx) v = mx;
+      input.value = String(v); return true;
     }
-    return tot ? hit / tot : 0;
-  }
+    var y = false;
+    if (uygula(el.add, "add")) y = true;
+    if (uygula(el.kor, "kor")) y = true;
+    if (uygula(el.fh, "fh")) y = true;
+    if (uygula(el.bh, "b")) y = true;
+    if (!y) return;
+    var ad = (q.get("ad") || "").slice(0, 40).replace(/[<>&"']/g, "");
+    var f = document.createElement("div");
+    f.className = "loaded-flag";
+    f.innerHTML = '<span class="loaded-dot"></span><span>' +
+      (ad ? ad + " — reçetesi" : "Hastanın reçetesi") +
+      ' uygulamadan yüklendi</span><span class="loaded-hint">değiştirebilirsiniz</span>';
+    var hd = document.querySelector(".panel .panel-hd");
+    if (hd) hd.insertAdjacentElement("afterend", f);
+  })();
 
   function render() {
     var p = {
-      add: parseFloat(el.add.value),
-      L:   parseFloat(el.kor.value),
-      fh:  parseFloat(el.fh.value),
-      B:   parseFloat(el.bh.value)
+      add: parseFloat(el.add.value), L: parseFloat(el.kor.value),
+      fh: parseFloat(el.fh.value),  B: parseFloat(el.bh.value)
     };
-
     el.addV.textContent = "+" + p.add.toFixed(2) + " D";
     el.korV.textContent = p.L.toFixed(0) + " mm";
     el.fhV.textContent  = p.fh.toFixed(0) + " mm";
@@ -888,76 +722,63 @@
     cards.forEach(function (c) {
       drawLens(c.canvas, p, c.tier);
       var wmm = narrowestWidth(p.L, p.add, c.tier.w);
-      var k = peakSlopeNorm(c.tier.w);
-      var grad = (p.add / p.L) * k;
-      c.w.textContent = wmm.toFixed(1) + " mm";
-      c.g.textContent = grad.toFixed(3) + " D/mm";
-      c.b.textContent = "%" + Math.round(blurShare(p, c.tier) * 100);
+      c.w.textContent = wmm.toFixed(1);
       c.bar.style.width = Math.round((wmm / widest) * 100) + "%";
+      c.note.textContent =
+        wmm >= 4 ? "Rahat okur, baş çevirmesine gerek kalmaz."
+        : wmm >= 2.8 ? "Kabul edilebilir. Okurken hafif baş hizalaması gerekir."
+        : wmm >= 2.0 ? "Dar. Hasta satır takibinde başını çevirmek zorunda kalır."
+        : "Çok dar. Yakın işte belirgin zorlanma beklenir.";
     });
 
     drawXSection(el.xsec, p);
 
-    // formul
-    var kPrem = peakSlopeNorm(TIERS[0].w);
-    var gradPrem = (p.add / p.L) * kPrem;
-    el.formula.innerHTML =
-      'güç değişim hızı = ADD ÷ koridor<br>' +
-      '&nbsp;&nbsp;= ' + p.add.toFixed(2) + ' ÷ ' + p.L.toFixed(0) + ' = <b>' + (p.add / p.L).toFixed(3) + ' D/mm</b><br><br>' +
-      'astigmat artış hızı = <b>2 ×</b> güç değişim hızı<br>' +
-      '&nbsp;&nbsp;= ' + (2 * gradPrem).toFixed(3) + ' D/mm  (premium profilde)<br><br>' +
-      'net yarı-genişlik = 0.50 ÷ astigmat artış hızı<br>' +
-      '&nbsp;&nbsp;= <b>' + (THRESHOLD / (2 * gradPrem)).toFixed(2) + ' mm</b><br><br>' +
-      'NET KORİDOR = <b>' + narrowestWidth(p.L, p.add, TIERS[0].w).toFixed(1) + ' mm</b> genişlik';
+    // Minkwitz adimlari
+    var k0 = peakSlopeNorm(TIERS[0].w);
+    var rate = p.add / p.L;
+    var gradPrem = rate * k0;
+    el.steps.innerHTML =
+      adim(1, "Güç değişim hızı = adisyon ÷ koridor", rate.toFixed(3) + " D/mm") +
+      adim(2, "Astigmat artış hızı = 2 × bunun", (2 * gradPrem).toFixed(3) + " D/mm") +
+      adim(3, "Net yarı-genişlik = 0.50 ÷ artış hızı", (THRESHOLD / (2 * gradPrem)).toFixed(2) + " mm") +
+      adim(4, "Net alan genişliği (premium)", widest.toFixed(1) + " mm", true);
 
-    // tablo
-    var base = narrowestWidth(p.L, p.add, TIERS[2].w);
-    el.tiertable.innerHTML = TIERS.map(function (t) {
-      var k = peakSlopeNorm(t.w);
-      var wmm = narrowestWidth(p.L, p.add, t.w);
-      var rel = ((wmm / base - 1) * 100);
-      return '<tr>' +
-        '<td>' + t.ad + '</td>' +
-        '<td class="n">' + ((p.add / p.L) * k).toFixed(3) + ' D/mm</td>' +
-        '<td class="n">' + wmm.toFixed(1) + ' mm</td>' +
-        '<td class="n">' + (rel > 0.5 ? "+%" + Math.round(rel) : "—") + '</td>' +
-        '<td>' + t.bedel + '</td>' +
-      '</tr>';
-    }).join("");
-
-    // hukum
-    verdict(p);
+    verdict(p, widest);
   }
 
-  function verdict(p) {
-    var rate = p.add / p.L;                       // D/mm, nominal
-    var wPrem = narrowestWidth(p.L, p.add, TIERS[0].w);
+  function adim(n, t, v, son) {
+    return '<div class="step' + (son ? " is-final" : "") + '">' +
+      '<span class="step-n">' + n + '</span>' +
+      '<span class="step-t">' + t + '</span>' +
+      '<span class="step-v">' + v + '</span></div>';
+  }
+
+  function verdict(p, wPrem) {
+    var rate = p.add / p.L;
     var wBase = narrowestWidth(p.L, p.add, TIERS[2].w);
     var okuma = p.fh - p.L;
-
-    var seviye, baslik, metin, pickIdx;
+    var seviye, baslik, metin, pick;
 
     if (rate <= 0.13) {
-      seviye = "ok";  pickIdx = 2;
+      seviye = "ok"; pick = 2;
       baslik = "Başlangıç kademesi yeterli";
-      metin = "Güç değişim hızı düşük (" + rate.toFixed(3) + " D/mm). Bu reçetede net koridor " +
-              "başlangıç tasarımında bile " + wBase.toFixed(1) + " mm — rahat kullanılır genişlikte. " +
-              "Üst kademe " + (wPrem - wBase).toFixed(1) + " mm daha kazandırır; hasta bunu çoğu zaman fark etmez.";
+      metin = "Güç değişim hızı düşük (" + rate.toFixed(3) + " D/mm). Bu reçetede net alan başlangıç " +
+              "tasarımında bile " + wBase.toFixed(1) + " mm. Üst kademe " + (wPrem - wBase).toFixed(1) +
+              " mm daha kazandırır; hasta bunu çoğu zaman fark etmez.";
     } else if (rate <= 0.18) {
-      seviye = "ok";  pickIdx = 1;
+      seviye = "ok"; pick = 1;
       baslik = "Orta kademe yeterli, premium konfor katar";
       metin = "Güç değişim hızı orta seviyede (" + rate.toFixed(3) + " D/mm). Başlangıç tasarımında net " +
-              "koridor " + wBase.toFixed(1) + " mm'ye iniyor — dar. Orta kademe bunu makul genişliğe " +
-              "çıkarıyor. Hasta ekran/okuma yoğun çalışıyorsa premium farkı hissedilir.";
+              "alan " + wBase.toFixed(1) + " mm'ye iniyor — dar. Orta kademe bunu makul genişliğe çıkarıyor. " +
+              "Hasta ekran veya okuma yoğun çalışıyorsa premium farkı hissedilir.";
     } else if (rate <= 0.24) {
-      seviye = "warn"; pickIdx = 0;
+      seviye = "warn"; pick = 0;
       baslik = "Premium tasarım önerilir";
-      metin = "Güç değişim hızı yüksek (" + rate.toFixed(3) + " D/mm — 0.18 üstü). Minkwitz gereği yanal " +
-              "bozulma belirgin. Başlangıç tasarımında net koridor sadece " + wBase.toFixed(1) + " mm; " +
-              "hasta okurken başını sürekli çevirmek zorunda kalır. Premium " + wPrem.toFixed(1) + " mm veriyor.";
+      metin = "Güç değişim hızı yüksek (" + rate.toFixed(3) + " D/mm — 0.18 üstü). Yanal bozulma belirgin. " +
+              "Başlangıç tasarımında net alan sadece " + wBase.toFixed(1) + " mm; hasta okurken başını " +
+              "sürekli çevirmek zorunda kalır. Premium " + wPrem.toFixed(1) + " mm veriyor.";
     } else {
-      seviye = "bad"; pickIdx = 0;
-      // Iki secenegi IDDIA etmek yerine hesapla: kademe atlamak mi, koridoru uzatmak mi?
+      seviye = "bad"; pick = 0;
       var kademeKazanc = wPrem - wBase;
       var uzunL = Math.min(p.L + 2, 20);
       var koridorKazanc = narrowestWidth(uzunL, p.add, TIERS[2].w) - wBase;
@@ -966,49 +787,43 @@
           kademeKazanc.toFixed(1) + " mm'ye karşı +" + koridorKazanc.toFixed(1) + " mm)."
         : "Koridoru " + uzunL + " mm'ye çıkarmak kademe yükseltmekten daha çok kazandırıyor (+" +
           koridorKazanc.toFixed(1) + " mm'ye karşı +" + kademeKazanc.toFixed(1) + " mm).";
-      baslik = "Premium tasarım şart — ve bu reçete zaten zorlu";
-      metin = "Güç değişim hızı çok yüksek (" + rate.toFixed(3) + " D/mm). Bu reçetede hiçbir tasarım " +
-              "geniş bir net koridor veremez; premiumda bile " + wPrem.toFixed(1) + " mm. " + hangisi +
-              " İkisini birden yapabiliyorsanız en iyisi o. Hastayı baştan uyarın: yanal alanlarda " +
-              "bulanıklık olacak, bu bir üretim hatası değil, fiziğin sınırı.";
+      baslik = "Premium şart — bu reçete zaten zorlu";
+      metin = "Güç değişim hızı çok yüksek (" + rate.toFixed(3) + " D/mm). Hiçbir tasarım geniş bir net " +
+              "alan veremez; premiumda bile " + wPrem.toFixed(1) + " mm. " + hangisi +
+              " Hastayı baştan uyarın: yanal alanlarda bulanıklık olacak, bu üretim hatası değil, fiziğin sınırı.";
     }
 
     var uyari = "";
     if (okuma < 4) {
       uyari = '<p class="small" style="color:var(--bad); margin-top:.7rem;"><b>Çerçeve uyarısı:</b> ' +
-              'odak yüksekliği ' + p.fh + ' mm, koridor ' + p.L + ' mm — okuma alanı sadece ' +
-              okuma + ' mm kalıyor. Rahat okuma için en az 4-5 mm gerekir. Odak yüksekliği en az ' +
-              (p.L + 5) + ' mm, çerçeve yüksekliği (B) en az ' + (p.L + 14) + ' mm olan bir çerçeve seçin.</p>';
+        'odak yüksekliği ' + p.fh + ' mm, koridor ' + p.L + ' mm — okuma alanı sadece ' + okuma +
+        ' mm kalıyor. Rahat okuma için en az 4-5 mm gerekir. Odak yüksekliği en az ' + (p.L + 5) +
+        ' mm, çerçeve boyu (B) en az ' + (p.L + 14) + ' mm olan bir çerçeve seçin.</p>';
     }
 
     el.verdict.className = "panel verdict" + (seviye === "warn" ? " is-warn" : seviye === "bad" ? " is-bad" : "");
     el.verdictBody.innerHTML =
       '<h2 style="margin-bottom:.5rem;">' + baslik + '</h2>' +
-      '<p style="max-width:70ch;">' + metin + '</p>' +
-      uyari +
-      '<dl class="kv" style="margin-top:1rem;">' +
-        '<dt>Güç değişim hızı</dt><dd>' + rate.toFixed(3) + ' D/mm' +
-          (rate > 0.18 ? '  ← eşik 0.18 aşıldı' : '') + '</dd>' +
+      '<p style="max-width:70ch;">' + metin + '</p>' + uyari +
+      '<dl class="kv">' +
+        '<dt>Güç değişim hızı</dt><dd>' + rate.toFixed(3) + ' D/mm' + (rate > 0.18 ? '   eşik 0.18 aşıldı' : '') + '</dd>' +
         '<dt>Okuma alanı</dt><dd>' + okuma + ' mm</dd>' +
-        '<dt>Net koridor aralığı</dt><dd>' + wBase.toFixed(1) + ' – ' + wPrem.toFixed(1) + ' mm</dd>' +
+        '<dt>Net alan aralığı</dt><dd>' + wBase.toFixed(1) + ' – ' + wPrem.toFixed(1) + ' mm</dd>' +
       '</dl>';
 
     cards.forEach(function (c, i) {
-      c.root.classList.toggle("is-pick", i === pickIdx);
-      c.flag.hidden = i !== pickIdx;
+      c.root.classList.toggle("is-pick", i === pick);
+      c.flag.hidden = i !== pick;
     });
   }
 
-  ["add", "kor", "fh", "bh"].forEach(function (k) {
-    el[k].addEventListener("input", render);
-  });
-
+  ["add", "kor", "fh", "bh"].forEach(function (k) { el[k].addEventListener("input", render); });
+  window.addEventListener("resize", render);
   if (window.matchMedia) {
     var mq = window.matchMedia("(prefers-color-scheme: dark)");
     if (mq.addEventListener) mq.addEventListener("change", render);
   }
-  var mo = new MutationObserver(render);
-  mo.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  new MutationObserver(render).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
 
   render();
 })();

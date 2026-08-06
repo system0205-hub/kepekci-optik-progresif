@@ -431,6 +431,38 @@ function gosterKoridorOnerisi(koridor) {
   if (value) value.textContent = koridor.idealKoridor;
   if (reason) reason.textContent = koridor.koridorAd + " - " + koridor.aciklama;
   if (note) note.textContent = "Minimum odak yuksekligi: " + koridor.minFittingHeight + " mm";
+
+  guncelleSimulasyonLinki(koridor);
+}
+
+// Simulasyon sayfasini hastanin KENDI degerleriyle acar.
+// simulasyon.html ?add=&kor=&fh=&b= parametrelerini okuyup kaydiricilara oturtuyor.
+function guncelleSimulasyonLinki(koridor) {
+  var link = document.getElementById("simulasyon-link");
+  if (!link) return;
+
+  var recete = window._sonRecete;
+  var addMax = 0;
+  if (recete) {
+    var addSag = parseFloat(recete.sag && recete.sag.add) || 0;
+    var addSol = parseFloat(recete.sol && recete.sol.add) || 0;
+    addMax = Math.max(addSag, addSol);
+  }
+
+  function oku(id) {
+    var e = document.getElementById(id);
+    var v = e ? parseFloat(e.value) : NaN;
+    return isFinite(v) && v > 0 ? v : null;
+  }
+
+  var params = [];
+  if (addMax > 0) params.push("add=" + addMax);
+  if (koridor && koridor.idealKoridor) params.push("kor=" + koridor.idealKoridor);
+  var fh = oku("fitting_height"); if (fh !== null) params.push("fh=" + fh);
+  var b  = oku("b_measure");      if (b  !== null) params.push("b=" + b);
+
+  // Formda hasta ismi alani yok; simulasyondaki "ad" parametresi bos birakiliyor.
+  link.setAttribute("href", "simulasyon.html" + (params.length ? "?" + params.join("&") : ""));
 }
 
 // ===== YAKIN GOZLUK NUMARASI =====
