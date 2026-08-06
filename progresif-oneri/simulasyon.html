@@ -1,0 +1,1015 @@
+<title>Progresif Cam Simülasyonu — Kepekçi Optik</title>
+
+<style>
+  :root {
+    --bg:        #EDF1EF;
+    --surface:   #FFFFFF;
+    --surface-2: #F5F8F6;
+    --ink:       #0E1A1C;
+    --ink-2:     #4A5D60;
+    --ink-3:     #78898B;
+    --line:      #CFDAD7;
+    --line-soft: #E3EBE8;
+    --accent:    #0B7F78;
+    --accent-2:  #0E8C84;
+    --warn:      #B4541B;
+    --bad:       #9E2434;
+    --good:      #26734A;
+
+    --shadow: 0 1px 2px rgba(14,26,28,.05), 0 8px 24px -12px rgba(14,26,28,.18);
+
+    --mono: ui-monospace, "Cascadia Mono", "SF Mono", Consolas, "Roboto Mono", monospace;
+    --sans: ui-sans-serif, -apple-system, "Segoe UI Variable Text", "Segoe UI", Roboto, system-ui, sans-serif;
+
+    --step--1: clamp(.72rem, .70rem + .10vw, .78rem);
+    --step-0:  clamp(.90rem, .87rem + .14vw, 1.00rem);
+    --step-1:  clamp(1.06rem, 1.00rem + .28vw, 1.24rem);
+    --step-2:  clamp(1.32rem, 1.18rem + .60vw, 1.72rem);
+    --step-3:  clamp(1.70rem, 1.40rem + 1.30vw, 2.60rem);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:        #09100F;
+      --surface:   #0F1A19;
+      --surface-2: #14211F;
+      --ink:       #E4EEEB;
+      --ink-2:     #93A8A6;
+      --ink-3:     #6B807E;
+      --line:      #22322F;
+      --line-soft: #1A2725;
+      --accent:    #35C9BC;
+      --accent-2:  #4FDCCE;
+      --warn:      #E4903F;
+      --bad:       #E4586A;
+      --good:      #4FC98A;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 10px 30px -14px rgba(0,0,0,.7);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg:        #09100F;
+    --surface:   #0F1A19;
+    --surface-2: #14211F;
+    --ink:       #E4EEEB;
+    --ink-2:     #93A8A6;
+    --ink-3:     #6B807E;
+    --line:      #22322F;
+    --line-soft: #1A2725;
+    --accent:    #35C9BC;
+    --accent-2:  #4FDCCE;
+    --warn:      #E4903F;
+    --bad:       #E4586A;
+    --good:      #4FC98A;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 10px 30px -14px rgba(0,0,0,.7);
+  }
+  :root[data-theme="light"] {
+    --bg:        #EDF1EF;
+    --surface:   #FFFFFF;
+    --surface-2: #F5F8F6;
+    --ink:       #0E1A1C;
+    --ink-2:     #4A5D60;
+    --ink-3:     #78898B;
+    --line:      #CFDAD7;
+    --line-soft: #E3EBE8;
+    --accent:    #0B7F78;
+    --accent-2:  #0E8C84;
+    --warn:      #B4541B;
+    --bad:       #9E2434;
+    --good:      #26734A;
+    --shadow: 0 1px 2px rgba(14,26,28,.05), 0 8px 24px -12px rgba(14,26,28,.18);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: var(--step-0);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: clamp(1.1rem, 3vw, 2.6rem) clamp(.85rem, 3vw, 2rem) 4rem; }
+
+  /* ---------- typography ---------- */
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: var(--step--1);
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 .5rem;
+  }
+  h1 {
+    font-size: var(--step-3);
+    line-height: 1.04;
+    letter-spacing: -.025em;
+    font-weight: 660;
+    margin: 0 0 .6rem;
+    text-wrap: balance;
+  }
+  h2 {
+    font-size: var(--step-2);
+    line-height: 1.15;
+    letter-spacing: -.018em;
+    font-weight: 640;
+    margin: 0 0 .35rem;
+    text-wrap: balance;
+  }
+  h3 {
+    font-size: var(--step-1);
+    line-height: 1.25;
+    letter-spacing: -.012em;
+    font-weight: 620;
+    margin: 0;
+  }
+  .lede { color: var(--ink-2); max-width: 62ch; margin: 0; font-size: var(--step-1); line-height: 1.45; }
+  p { margin: 0 0 .8rem; }
+  p:last-child { margin-bottom: 0; }
+  .muted { color: var(--ink-2); }
+  .small { font-size: var(--step--1); line-height: 1.5; }
+  .num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+  header.masthead {
+    display: flex; flex-direction: column; gap: .9rem;
+    padding-bottom: 1.6rem; margin-bottom: 1.6rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  /* ---------- panels ---------- */
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    box-shadow: var(--shadow);
+  }
+  .panel-hd {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 1rem;
+    padding: .85rem 1.1rem; border-bottom: 1px solid var(--line-soft);
+    flex-wrap: wrap;
+  }
+  .panel-bd { padding: 1.1rem; }
+
+  section { margin-top: clamp(1.6rem, 4vw, 2.8rem); }
+
+  /* ---------- prescription controls ---------- */
+  .rx-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(178px, 1fr));
+    gap: 1.15rem 1.4rem;
+  }
+  .ctrl { display: flex; flex-direction: column; gap: .3rem; }
+  .ctrl > label {
+    font-family: var(--mono);
+    font-size: var(--step--1);
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    display: flex; justify-content: space-between; align-items: baseline; gap: .5rem;
+  }
+  .ctrl-val {
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 1.02rem;
+    font-weight: 640;
+    color: var(--ink);
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  input[type="range"] {
+    -webkit-appearance: none; appearance: none;
+    width: 100%; height: 26px; background: transparent; cursor: pointer; margin: 0;
+  }
+  input[type="range"]::-webkit-slider-runnable-track {
+    height: 3px; background: var(--line); border-radius: 2px;
+  }
+  input[type="range"]::-moz-range-track {
+    height: 3px; background: var(--line); border-radius: 2px;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 20px; height: 20px; margin-top: -8.5px;
+    border-radius: 50%; background: var(--accent);
+    border: 3px solid var(--surface);
+    box-shadow: 0 0 0 1px var(--accent);
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--accent); border: 3px solid var(--surface);
+    box-shadow: 0 0 0 1px var(--accent);
+  }
+  input[type="range"]:focus-visible { outline: none; }
+  input[type="range"]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 1px var(--accent), 0 0 0 4px color-mix(in srgb, var(--accent) 35%, transparent); }
+  input[type="range"]:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 1px var(--accent), 0 0 0 4px color-mix(in srgb, var(--accent) 35%, transparent); }
+  .tick { display: flex; justify-content: space-between; font-family: var(--mono); font-size: .68rem; color: var(--ink-3); margin-top: -.15rem; }
+
+  /* ---------- lens cards ---------- */
+  .lenses {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+  }
+  .lens-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    box-shadow: var(--shadow);
+    transition: border-color .18s ease;
+  }
+  .lens-card.is-pick { border-color: var(--accent); box-shadow: var(--shadow), 0 0 0 1px var(--accent); }
+  .lens-hd { padding: .8rem .9rem .6rem; border-bottom: 1px solid var(--line-soft); }
+  .lens-name { display: flex; align-items: baseline; justify-content: space-between; gap: .5rem; }
+  .lens-sub { font-family: var(--mono); font-size: .70rem; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); margin-top: .15rem; }
+  .pick-flag {
+    font-family: var(--mono); font-size: .64rem; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--surface); background: var(--accent);
+    padding: .17rem .42rem; border-radius: 3px; white-space: nowrap;
+  }
+  .lens-canvas-box { position: relative; background: var(--surface-2); }
+  .lens-canvas-box canvas { display: block; width: 100%; height: auto; }
+  .lens-metrics { padding: .75rem .9rem .9rem; display: flex; flex-direction: column; gap: .55rem; margin-top: auto; }
+  .metric { display: flex; align-items: baseline; justify-content: space-between; gap: .6rem; }
+  .metric-k { font-size: var(--step--1); color: var(--ink-2); }
+  .metric-v { font-family: var(--mono); font-variant-numeric: tabular-nums; font-weight: 640; font-size: 1.02rem; }
+  .bar { height: 5px; border-radius: 3px; background: var(--line-soft); overflow: hidden; }
+  .bar > i { display: block; height: 100%; background: var(--accent); border-radius: 3px; transition: width .25s ease; }
+
+  /* ---------- legend ---------- */
+  .legend { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; font-size: var(--step--1); color: var(--ink-2); }
+  .ramp { height: 9px; width: 168px; border-radius: 2px; border: 1px solid var(--line);
+    background: linear-gradient(90deg,
+      rgba(255,255,255,0) 0%,
+      rgba(255,206,92,.40) 22%,
+      rgba(255,168,46,.66) 40%,
+      rgba(233,109,44,.82) 62%,
+      rgba(197,52,44,.90) 82%,
+      rgba(126,26,48,.95) 100%); }
+  .swatch { display: inline-block; width: 11px; height: 11px; border-radius: 2px; vertical-align: -1px; margin-right: .3rem; }
+
+  /* ---------- minkwitz ---------- */
+  .mink-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 1.4rem; align-items: start; }
+  .formula {
+    font-family: var(--mono);
+    background: var(--surface-2);
+    border: 1px solid var(--line-soft);
+    border-radius: 5px;
+    padding: .8rem .9rem;
+    font-size: .92rem;
+    line-height: 1.75;
+    overflow-x: auto;
+  }
+  .formula b { color: var(--accent); font-weight: 640; }
+  .xsec-box { background: var(--surface-2); border: 1px solid var(--line-soft); border-radius: 5px; }
+  .xsec-box canvas { display: block; width: 100%; height: auto; }
+
+  /* ---------- verdict ---------- */
+  .verdict { border-left: 3px solid var(--accent); }
+  .verdict.is-warn { border-left-color: var(--warn); }
+  .verdict.is-bad { border-left-color: var(--bad); }
+  .verdict-num { font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: var(--step-2); font-weight: 660; letter-spacing: -.01em; }
+
+  .kv { display: grid; grid-template-columns: auto 1fr; gap: .3rem 1rem; font-size: var(--step--1); }
+  .kv dt { color: var(--ink-2); }
+  .kv dd { margin: 0; font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+  table { width: 100%; border-collapse: collapse; font-size: var(--step--1); }
+  th, td { text-align: left; padding: .5rem .6rem; border-bottom: 1px solid var(--line-soft); }
+  th { font-family: var(--mono); font-size: .68rem; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); font-weight: 500; }
+  td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; }
+  th.n { text-align: right; }
+  .scroll-x { overflow-x: auto; }
+
+  .source-note {
+    font-size: var(--step--1); color: var(--ink-2);
+    border-top: 1px solid var(--line); padding-top: 1.1rem; margin-top: 2.4rem;
+  }
+  .source-note b { color: var(--ink); font-weight: 620; }
+
+  @media (max-width: 860px) {
+    .lenses { grid-template-columns: 1fr; }
+    .mink-grid { grid-template-columns: 1fr; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div>
+      <p class="eyebrow">Kepekçi Optik · Geçiş bölgesi simülasyonu</p>
+      <h1>Aynı reçete, üç tasarım kademesi</h1>
+    </div>
+    <p class="lede">
+      Progresif camda bulanıklık yok edilemez — sadece yeri değiştirilebilir. Bu sayfa,
+      hastanın kendi adisyonu ve koridoruyla o bulanıklığın nereye düştüğünü hesaplar.
+      Pazarlama yüzdesi yok; her sayı Minkwitz teoreminden çıkıyor.
+    </p>
+  </header>
+
+  <!-- ============ REÇETE ============ -->
+  <div class="panel">
+    <div class="panel-hd">
+      <h3>Hasta değerleri</h3>
+      <span class="small muted">Kaydırıcıları oynatın — üç cam da anında yeniden çizilir</span>
+    </div>
+    <div class="panel-bd">
+      <div class="rx-grid">
+
+        <div class="ctrl">
+          <label for="add">Adisyon (ADD)<span class="ctrl-val" id="add-v">+2.25 D</span></label>
+          <input type="range" id="add" min="0.75" max="3.50" step="0.25" value="2.25">
+          <div class="tick"><span>+0.75</span><span>+3.50</span></div>
+        </div>
+
+        <div class="ctrl">
+          <label for="kor">Koridor uzunluğu<span class="ctrl-val" id="kor-v">16 mm</span></label>
+          <input type="range" id="kor" min="10" max="20" step="1" value="16">
+          <div class="tick"><span>10</span><span>20</span></div>
+        </div>
+
+        <div class="ctrl">
+          <label for="fh">Odak yüksekliği<span class="ctrl-val" id="fh-v">22 mm</span></label>
+          <input type="range" id="fh" min="14" max="32" step="1" value="22">
+          <div class="tick"><span>14</span><span>32</span></div>
+        </div>
+
+        <div class="ctrl">
+          <label for="bh">Çerçeve yüksekliği (B)<span class="ctrl-val" id="bh-v">34 mm</span></label>
+          <input type="range" id="bh" min="22" max="48" step="1" value="34">
+          <div class="tick"><span>22</span><span>48</span></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ ÜÇ CAM ============ -->
+  <section>
+    <div class="panel-hd" style="padding-left:0; padding-right:0; border-bottom:1px solid var(--line); margin-bottom:1rem;">
+      <div>
+        <h2>Camın üzerinde bulanıklık nereye düşüyor</h2>
+        <p class="small muted" style="margin:.15rem 0 0;">İstenmeyen astigmat haritası. Beyaz çerçeve çizgisi = gözlüğün gerçek açıklığı; dışında kalan bulanıklık hastaya ulaşmaz.</p>
+      </div>
+      <div class="legend">
+        <span>net</span>
+        <span class="ramp" role="img" aria-label="Bulanıklık ölçeği: 0 diyoptriden 2 diyoptri ve üzerine"></span>
+        <span>2.00 D+</span>
+      </div>
+    </div>
+
+    <div class="lenses" id="lenses"></div>
+
+    <p class="small muted" style="margin-top:.85rem;">
+      <span class="swatch" style="background:var(--accent)"></span>Kesikli çizgi <b>0.50 D eşiği</b> — optik olarak "net" kabul edilen sınır.
+      İçinde kalan alan hastanın rahat gördüğü yer.
+    </p>
+  </section>
+
+  <!-- ============ MINKWITZ ============ -->
+  <section>
+    <div class="panel">
+      <div class="panel-hd">
+        <div>
+          <p class="eyebrow" style="margin-bottom:.2rem;">Teoremin kendisi</p>
+          <h2 style="margin:0;">Minkwitz: net koridorun genişliği neden bu kadar</h2>
+        </div>
+      </div>
+      <div class="panel-bd">
+        <div class="mink-grid">
+
+          <div>
+            <p>
+              Minkwitz teoremi tek bir şey söyler: koridorun ortasından yana doğru gidildiğinde
+              <b>istenmeyen astigmat, gücün dikeydeki artış hızının tam iki katı hızla büyür.</b>
+              Bu bir tasarım tercihi değil, yüzey geometrisinin zorunlu sonucu. Hiçbir marka bundan kaçamaz.
+            </p>
+            <div class="formula" id="formula"></div>
+            <p class="small muted" style="margin-top:.8rem;">
+              Yani net koridoru genişletmenin fizikte sadece iki yolu var: <b>adisyonu düşürmek</b>
+              (elimizde değil) veya <b>koridoru uzatmak</b> (çerçeve izin verdiği kadar).
+              Tasarım kademesi üçüncü bir yol açar — aşağıda.
+            </p>
+          </div>
+
+          <div>
+            <div class="xsec-box">
+              <canvas id="xsec" width="620" height="400" role="img"
+                      aria-label="Koridorun en dar noktasında yatay kesit: astigmatın merkezden uzaklaştıkça artışı"></canvas>
+            </div>
+            <p class="small muted" style="margin-top:.5rem;">
+              Koridorun <b>en dar seviyesinden</b> alınan yatay kesit. Çizgi ne kadar dik yükseliyorsa
+              net alan o kadar erken bitiyor.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ KADEME NE YAPIYOR ============ -->
+  <section>
+    <div class="panel">
+      <div class="panel-hd">
+        <div>
+          <p class="eyebrow" style="margin-bottom:.2rem;">Paranın karşılığı</p>
+          <h2 style="margin:0;">Üst kademe bulanıklığı azaltmaz — yayar</h2>
+        </div>
+      </div>
+      <div class="panel-bd">
+        <p style="max-width:68ch;">
+          Toplam astigmat miktarı adisyonla sabittir. Tasarım kademesinin değiştirdiği şey,
+          gücün koridor boyunca <b>ne kadar düzgün dağıtıldığı</b>. Başlangıç tasarımı gücün çoğunu
+          koridorun ortasındaki kısa bir aralığa sıkıştırır; o seviyede eğim ikiye katlanır ve
+          Minkwitz gereği net koridor o noktada yarıya iner. Üst kademe aynı gücü koridorun
+          tamamına yayar — en dar nokta genişler.
+        </p>
+        <div class="scroll-x">
+          <table id="tiertable">
+            <thead>
+              <tr>
+                <th>Kademe</th>
+                <th class="n">Tepe güç eğimi</th>
+                <th class="n">En dar net koridor</th>
+                <th class="n">Başlangıca göre</th>
+                <th>Bedeli</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p class="small muted" style="margin-top:.9rem;">
+          Üst kademenin ikinci avantajı tabloda yok çünkü sayıya dökülemez: freeform tasarım
+          kalan astigmatı <b>çerçevenin dışına</b> itebilir. Yukarıdaki haritalarda beyaz çerçeve
+          çizgisinin dışında kalan renk, hastanın hiç görmediği bulanıklıktır.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HÜKÜM ============ -->
+  <section>
+    <div class="panel verdict" id="verdict">
+      <div class="panel-bd">
+        <p class="eyebrow" style="margin-bottom:.35rem;">Bu hasta için</p>
+        <div id="verdict-body"></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="source-note">
+    <p><b>Hesaplanmış olan:</b> güç değişim hızı, Minkwitz eğimi, net koridor genişliği ve
+    0.50 D eşik konturu — hepsi yukarıdaki adisyon ve koridor değerlerinden türetildi.
+    Marka verisi kullanılmadı.</p>
+    <p><b>Şematik olan:</b> kademeler arası fark tek bir mekanizmayla modellendi — gücün koridora
+    yayılma düzgünlüğü (yumuşak/sert tasarım). Gerçek bir modelin ölçülmüş haritası değildir;
+    kademeler arası ilişkiyi gösterir.</p>
+    <p><b>Kasıtlı olarak yapılmayan:</b> markaların ilan ettiği yüzdeler (Nikon %42, Novax %14,6 gibi)
+    bu sayfaya konmadı. Her üretici kendi referans camına göre, farklı koşullarda ölçüyor —
+    yan yana koymak sahte bir kesinlik üretirdi.</p>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ============================================================
+     FİZİK
+     ------------------------------------------------------------
+     Minkwitz:  dA/dx = 2 · dP/dy
+     A = istenmeyen astigmat (D), P = güç (D), x = yatay, y = dikey (mm)
+
+     Koridor boyunca güç profili:  P(y) = ADD · S(y/L)
+     S(0)=0, S(1)=1.  S'(t) profilin o noktadaki normalize eğimi.
+
+     Kademe farkı = S'in düzgünlüğü:
+       S_w(t) = (1-w)·t  +  w·smootherstep(t)
+       smootherstep(t) = 6t^5 - 15t^4 + 10t^3,  tepe eğimi 1.875
+       -> tepe eğim katsayısı k = (1-w) + 1.875w
+     ============================================================ */
+
+  var THRESHOLD = 0.50;          // "net" sınırı, D
+  var SAT_FACTOR = 1.0;          // lateral astigmatın doyum seviyesi ≈ ADD
+
+  var TIERS = [
+    { id: "premium",   ad: "Premium",   alt: "Freeform kişiye özel", w: 0.20,
+      bedel: "En yüksek fiyat" },
+    { id: "orta",      ad: "Orta",      alt: "Gelişmiş tasarım",     w: 0.60,
+      bedel: "Dengeli" },
+    { id: "baslangic", ad: "Başlangıç", alt: "Standart tasarım",     w: 1.00,
+      bedel: "En ekonomik" }
+  ];
+
+  function smootherstep(t) { return t * t * t * (t * (t * 6 - 15) + 10); }
+  function dSmootherstep(t) { return 30 * t * t * (t - 1) * (t - 1); }
+
+  // normalize profil eğimi S'(t)
+  function slopeNorm(t, w) {
+    if (t <= 0 || t >= 1) return 0;
+    return (1 - w) * 1 + w * dSmootherstep(t);
+  }
+  function peakSlopeNorm(w) { return (1 - w) * 1 + w * 1.875; }
+
+  // y (mm, montaj haçından aşağı) noktasındaki güç değişim hızı, D/mm
+  function gradAt(y, L, add, w) {
+    if (y <= 0 || y >= L) return 0;
+    return (add / L) * slopeNorm(y / L, w);
+  }
+
+  // Astigmat lateral loblari koridorun altinda da devam eder:
+  // o yuksekligie kadar gorulen en buyuk egim tasinir.
+  function gradEffAt(y, L, add, w) {
+    if (y <= 0) return 0;
+    var yy = Math.min(y, L);
+    var best = 0, N = 24;
+    for (var i = 0; i <= N; i++) {
+      var g = gradAt((yy * i) / N, L, add, w);
+      if (g > best) best = g;
+    }
+    return best;
+  }
+
+  function astig(x, y, L, add, w) {
+    var g = gradEffAt(y, L, add, w);
+    if (g <= 0) return 0;
+    var a = 2 * g * Math.abs(x);          // Minkwitz
+    var sat = add * SAT_FACTOR;
+    return a < sat ? a : sat;             // doyum
+  }
+
+  // en dar net koridor genisligi (mm)
+  function narrowestWidth(L, add, w) {
+    var k = peakSlopeNorm(w);
+    return (THRESHOLD * L) / (add * k);
+  }
+
+  /* ============================================================
+     RENK
+     ============================================================ */
+  var STOPS = [
+    { a: 0.00, c: [255, 255, 255], o: 0.00 },
+    { a: 0.25, c: [255, 206,  92], o: 0.40 },
+    { a: 0.50, c: [255, 168,  46], o: 0.66 },
+    { a: 1.00, c: [233, 109,  44], o: 0.82 },
+    { a: 1.50, c: [197,  52,  44], o: 0.90 },
+    { a: 2.50, c: [126,  26,  48], o: 0.95 }
+  ];
+
+  function rampColor(a) {
+    if (a <= 0) return [0, 0, 0, 0];
+    for (var i = 1; i < STOPS.length; i++) {
+      if (a <= STOPS[i].a || i === STOPS.length - 1) {
+        var lo = STOPS[i - 1], hi = STOPS[i];
+        var t = (a - lo.a) / (hi.a - lo.a);
+        if (t < 0) t = 0; if (t > 1) t = 1;
+        return [
+          Math.round(lo.c[0] + (hi.c[0] - lo.c[0]) * t),
+          Math.round(lo.c[1] + (hi.c[1] - lo.c[1]) * t),
+          Math.round(lo.c[2] + (hi.c[2] - lo.c[2]) * t),
+          Math.round(255 * (lo.o + (hi.o - lo.o) * t))
+        ];
+      }
+    }
+    return [126, 26, 48, 242];
+  }
+
+  function cssVar(n) {
+    return getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  }
+
+  /* ============================================================
+     LENS HARİTASI
+     ============================================================ */
+  var MM_X = 26;        // yariçap, mm  (-26 .. +26)
+  var MM_TOP = 16;      // hacin ustu, mm
+  var MM_BOT = 30;      // hacin alti, mm
+
+  function drawLens(canvas, p, tier) {
+    var W = canvas.width, H = canvas.height;
+    var ctx = canvas.getContext("2d");
+    var accent = cssVar("--accent");
+    var ink3 = cssVar("--ink-3");
+
+    ctx.clearRect(0, 0, W, H);
+
+    var pxPerMmX = W / (MM_X * 2);
+    var pxPerMmY = H / (MM_TOP + MM_BOT);
+    function sx(xmm) { return (xmm + MM_X) * pxPerMmX; }
+    function sy(ymm) { return (ymm + MM_TOP) * pxPerMmY; }
+
+    // --- net alan zemini (pozitif olarak ciziliyor) ---
+    ctx.save();
+    ctx.fillStyle = accent;
+    ctx.globalAlpha = 0.07;
+    ctx.fillRect(0, 0, W, H);
+    ctx.restore();
+
+    // --- astigmat alani ---
+    var img = ctx.createImageData(W, H);
+    var d = img.data;
+    for (var py = 0; py < H; py++) {
+      var ymm = py / pxPerMmY - MM_TOP;
+      for (var px = 0; px < W; px++) {
+        var xmm = px / pxPerMmX - MM_X;
+        var a = astig(xmm, ymm, p.L, p.add, tier.w);
+        var c = rampColor(a);
+        var o = (py * W + px) * 4;
+        d[o] = c[0]; d[o + 1] = c[1]; d[o + 2] = c[2]; d[o + 3] = c[3];
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+
+    // --- 0.50 D kontur cizgisi ---
+    ctx.save();
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 1.6;
+    ctx.setLineDash([4, 3]);
+    ctx.globalAlpha = 0.95;
+    [1, -1].forEach(function (sign) {
+      ctx.beginPath();
+      var started = false;
+      for (var yy = 0; yy <= MM_BOT; yy += 0.25) {
+        var g = gradEffAt(yy, p.L, p.add, tier.w);
+        if (g <= 0) continue;
+        var xc = THRESHOLD / (2 * g);
+        if (xc > MM_X) xc = MM_X;
+        var X = sx(sign * xc), Y = sy(yy);
+        if (!started) { ctx.moveTo(X, Y); started = true; } else { ctx.lineTo(X, Y); }
+      }
+      if (started) ctx.stroke();
+    });
+    ctx.restore();
+
+    // --- koridor merkez cizgisi ---
+    ctx.save();
+    ctx.strokeStyle = accent;
+    ctx.globalAlpha = 0.5;
+    ctx.lineWidth = 1;
+    ctx.setLineDash([2, 4]);
+    ctx.beginPath(); ctx.moveTo(sx(0), sy(0)); ctx.lineTo(sx(0), sy(p.L)); ctx.stroke();
+    ctx.restore();
+
+    // --- montaj haci ---
+    ctx.save();
+    ctx.strokeStyle = accent; ctx.lineWidth = 1.4; ctx.globalAlpha = 0.9;
+    ctx.beginPath();
+    ctx.moveTo(sx(-2.6), sy(0)); ctx.lineTo(sx(2.6), sy(0));
+    ctx.moveTo(sx(0), sy(-2.6)); ctx.lineTo(sx(0), sy(2.6));
+    ctx.stroke();
+    ctx.restore();
+
+    // --- yakin referans noktasi ---
+    ctx.save();
+    ctx.strokeStyle = accent; ctx.lineWidth = 1.3; ctx.globalAlpha = 0.9;
+    ctx.beginPath(); ctx.arc(sx(0), sy(p.L), 4.2, 0, Math.PI * 2); ctx.stroke();
+    ctx.restore();
+
+    // --- cerceve acikligi ---
+    var topMm = -(p.B - p.fh);
+    var botMm = p.fh;
+    if (topMm < -MM_TOP) topMm = -MM_TOP;
+    if (botMm > MM_BOT) botMm = MM_BOT;
+    ctx.save();
+    ctx.strokeStyle = cssVar("--ink");
+    ctx.globalAlpha = 0.55;
+    ctx.lineWidth = 2;
+    var rx = 21, ry0 = sy(topMm), ry1 = sy(botMm);
+    var rr = Math.min(16, (ry1 - ry0) / 2.4);
+    ctx.beginPath();
+    if (ctx.roundRect) {
+      ctx.roundRect(sx(-rx), ry0, sx(rx) - sx(-rx), ry1 - ry0, rr);
+    } else {
+      ctx.rect(sx(-rx), ry0, sx(rx) - sx(-rx), ry1 - ry0);
+    }
+    ctx.stroke();
+    ctx.restore();
+
+    // --- etiketler ---
+    ctx.save();
+    ctx.fillStyle = ink3;
+    ctx.font = "500 11px ui-monospace, Consolas, monospace";
+    ctx.textAlign = "left";
+    ctx.fillText("montaj haçı", sx(3.4), sy(0) + 4);
+    ctx.fillText("yakın referans", sx(6), sy(p.L) + 4);
+    ctx.restore();
+  }
+
+  /* ============================================================
+     KESİT GRAFİĞİ
+     ============================================================ */
+  function drawXSection(canvas, p) {
+    var W = canvas.width, H = canvas.height;
+    var ctx = canvas.getContext("2d");
+    var ink = cssVar("--ink"), ink2 = cssVar("--ink-2"), ink3 = cssVar("--ink-3");
+    var line = cssVar("--line"), accent = cssVar("--accent");
+
+    ctx.clearRect(0, 0, W, H);
+
+    var padL = 52, padR = 16, padT = 22, padB = 44;
+    var plotW = W - padL - padR, plotH = H - padT - padB;
+
+    var xMax = 9;                                  // mm
+    var yMax = Math.max(1.5, p.add * 0.95);        // D
+
+    function px(xmm) { return padL + (xmm / xMax) * plotW; }
+    function py(a) { return padT + plotH - (a / yMax) * plotH; }
+
+    // izgara
+    ctx.save();
+    ctx.strokeStyle = line; ctx.lineWidth = 1; ctx.globalAlpha = 0.8;
+    ctx.font = "500 10px ui-monospace, Consolas, monospace";
+    ctx.fillStyle = ink3;
+    for (var gx = 0; gx <= xMax; gx += 3) {
+      ctx.beginPath(); ctx.moveTo(px(gx), padT); ctx.lineTo(px(gx), padT + plotH); ctx.stroke();
+      ctx.textAlign = "center";
+      ctx.fillText(gx + " mm", px(gx), padT + plotH + 15);
+    }
+    var stepY = yMax > 2 ? 0.5 : 0.25;
+    for (var gy = 0; gy <= yMax + 0.001; gy += stepY) {
+      ctx.beginPath(); ctx.moveTo(padL, py(gy)); ctx.lineTo(padL + plotW, py(gy)); ctx.stroke();
+      ctx.textAlign = "right";
+      ctx.fillText(gy.toFixed(2), padL - 8, py(gy) + 3.5);
+    }
+    ctx.restore();
+
+    // 0.50 D esigi
+    ctx.save();
+    ctx.strokeStyle = accent; ctx.lineWidth = 1.6; ctx.setLineDash([5, 4]);
+    ctx.beginPath(); ctx.moveTo(padL, py(THRESHOLD)); ctx.lineTo(padL + plotW, py(THRESHOLD)); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = accent;
+    ctx.font = "600 10px ui-monospace, Consolas, monospace";
+    ctx.textAlign = "left";
+    ctx.fillText("0.50 D — net sınırı", padL + 6, py(THRESHOLD) - 6);
+    ctx.restore();
+
+    // egriler
+    var styles = [
+      { dash: [],      alpha: 1.00, lw: 2.6 },
+      { dash: [7, 4],  alpha: 0.82, lw: 2.0 },
+      { dash: [2, 3],  alpha: 0.70, lw: 2.0 }
+    ];
+
+    TIERS.forEach(function (tier, i) {
+      var k = peakSlopeNorm(tier.w);
+      var slope = 2 * (p.add / p.L) * k;    // D per mm
+
+      ctx.save();
+      ctx.strokeStyle = ink;
+      ctx.globalAlpha = styles[i].alpha;
+      ctx.lineWidth = styles[i].lw;
+      ctx.setLineDash(styles[i].dash);
+      ctx.beginPath();
+      var first = true;
+      for (var xm = 0; xm <= xMax; xm += 0.1) {
+        var a = Math.min(slope * xm, p.add * SAT_FACTOR);
+        if (a > yMax) a = yMax;
+        if (first) { ctx.moveTo(px(xm), py(a)); first = false; } else { ctx.lineTo(px(xm), py(a)); }
+      }
+      ctx.stroke();
+      ctx.restore();
+
+      // esik kesisimi
+      var xc = THRESHOLD / slope;
+      if (xc <= xMax) {
+        ctx.save();
+        ctx.fillStyle = ink;
+        ctx.globalAlpha = styles[i].alpha;
+        ctx.beginPath(); ctx.arc(px(xc), py(THRESHOLD), 3.6, 0, Math.PI * 2); ctx.fill();
+        ctx.globalAlpha = 1;
+        ctx.font = "600 10.5px ui-monospace, Consolas, monospace";
+        ctx.textAlign = "center";
+        ctx.fillStyle = ink2;
+        ctx.fillText(tier.ad, px(xc), py(THRESHOLD) + 20 + i * 13);
+        ctx.restore();
+      }
+    });
+
+    // eksen basliklari
+    ctx.save();
+    ctx.fillStyle = ink2;
+    ctx.font = "500 10.5px ui-monospace, Consolas, monospace";
+    ctx.textAlign = "center";
+    ctx.fillText("koridor merkezinden yana uzaklık", padL + plotW / 2, H - 8);
+    ctx.translate(13, padT + plotH / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText("istenmeyen astigmat (D)", 0, 0);
+    ctx.restore();
+  }
+
+  /* ============================================================
+     ARAYÜZ
+     ============================================================ */
+  var el = {
+    add: document.getElementById("add"),
+    kor: document.getElementById("kor"),
+    fh:  document.getElementById("fh"),
+    bh:  document.getElementById("bh"),
+    addV: document.getElementById("add-v"),
+    korV: document.getElementById("kor-v"),
+    fhV:  document.getElementById("fh-v"),
+    bhV:  document.getElementById("bh-v"),
+    lenses: document.getElementById("lenses"),
+    xsec: document.getElementById("xsec"),
+    formula: document.getElementById("formula"),
+    tiertable: document.querySelector("#tiertable tbody"),
+    verdict: document.getElementById("verdict"),
+    verdictBody: document.getElementById("verdict-body")
+  };
+
+  // kart iskeletleri
+  var cards = TIERS.map(function (tier) {
+    var card = document.createElement("div");
+    card.className = "lens-card";
+    card.innerHTML =
+      '<div class="lens-hd">' +
+        '<div class="lens-name"><h3>' + tier.ad + '</h3><span class="pick-flag" hidden>Bu hastaya</span></div>' +
+        '<div class="lens-sub">' + tier.alt + '</div>' +
+      '</div>' +
+      '<div class="lens-canvas-box"><canvas width="340" height="300"></canvas></div>' +
+      '<div class="lens-metrics">' +
+        '<div class="metric"><span class="metric-k">En dar net koridor</span><span class="metric-v m-w"></span></div>' +
+        '<div class="bar"><i></i></div>' +
+        '<div class="metric"><span class="metric-k">Tepe güç eğimi</span><span class="metric-v m-g"></span></div>' +
+        '<div class="metric"><span class="metric-k">Çerçeve içi bulanık alan</span><span class="metric-v m-b"></span></div>' +
+      '</div>';
+    el.lenses.appendChild(card);
+    return {
+      tier: tier,
+      root: card,
+      canvas: card.querySelector("canvas"),
+      flag: card.querySelector(".pick-flag"),
+      w: card.querySelector(".m-w"),
+      g: card.querySelector(".m-g"),
+      b: card.querySelector(".m-b"),
+      bar: card.querySelector(".bar > i")
+    };
+  });
+
+  // cerceve icinde 0.50 D ustu alanin orani
+  function blurShare(p, tier) {
+    var top = -(p.B - p.fh), bot = p.fh, halfW = 21;
+    var stepsY = 60, stepsX = 40, hit = 0, tot = 0;
+    for (var i = 0; i < stepsY; i++) {
+      var y = top + ((bot - top) * (i + 0.5)) / stepsY;
+      for (var j = 0; j < stepsX; j++) {
+        var x = -halfW + ((2 * halfW) * (j + 0.5)) / stepsX;
+        tot++;
+        if (astig(x, y, p.L, p.add, tier.w) >= THRESHOLD) hit++;
+      }
+    }
+    return tot ? hit / tot : 0;
+  }
+
+  function render() {
+    var p = {
+      add: parseFloat(el.add.value),
+      L:   parseFloat(el.kor.value),
+      fh:  parseFloat(el.fh.value),
+      B:   parseFloat(el.bh.value)
+    };
+
+    el.addV.textContent = "+" + p.add.toFixed(2) + " D";
+    el.korV.textContent = p.L.toFixed(0) + " mm";
+    el.fhV.textContent  = p.fh.toFixed(0) + " mm";
+    el.bhV.textContent  = p.B.toFixed(0) + " mm";
+
+    var widest = narrowestWidth(p.L, p.add, TIERS[0].w);
+
+    cards.forEach(function (c) {
+      drawLens(c.canvas, p, c.tier);
+      var wmm = narrowestWidth(p.L, p.add, c.tier.w);
+      var k = peakSlopeNorm(c.tier.w);
+      var grad = (p.add / p.L) * k;
+      c.w.textContent = wmm.toFixed(1) + " mm";
+      c.g.textContent = grad.toFixed(3) + " D/mm";
+      c.b.textContent = "%" + Math.round(blurShare(p, c.tier) * 100);
+      c.bar.style.width = Math.round((wmm / widest) * 100) + "%";
+    });
+
+    drawXSection(el.xsec, p);
+
+    // formul
+    var kPrem = peakSlopeNorm(TIERS[0].w);
+    var gradPrem = (p.add / p.L) * kPrem;
+    el.formula.innerHTML =
+      'güç değişim hızı = ADD ÷ koridor<br>' +
+      '&nbsp;&nbsp;= ' + p.add.toFixed(2) + ' ÷ ' + p.L.toFixed(0) + ' = <b>' + (p.add / p.L).toFixed(3) + ' D/mm</b><br><br>' +
+      'astigmat artış hızı = <b>2 ×</b> güç değişim hızı<br>' +
+      '&nbsp;&nbsp;= ' + (2 * gradPrem).toFixed(3) + ' D/mm  (premium profilde)<br><br>' +
+      'net yarı-genişlik = 0.50 ÷ astigmat artış hızı<br>' +
+      '&nbsp;&nbsp;= <b>' + (THRESHOLD / (2 * gradPrem)).toFixed(2) + ' mm</b><br><br>' +
+      'NET KORİDOR = <b>' + narrowestWidth(p.L, p.add, TIERS[0].w).toFixed(1) + ' mm</b> genişlik';
+
+    // tablo
+    var base = narrowestWidth(p.L, p.add, TIERS[2].w);
+    el.tiertable.innerHTML = TIERS.map(function (t) {
+      var k = peakSlopeNorm(t.w);
+      var wmm = narrowestWidth(p.L, p.add, t.w);
+      var rel = ((wmm / base - 1) * 100);
+      return '<tr>' +
+        '<td>' + t.ad + '</td>' +
+        '<td class="n">' + ((p.add / p.L) * k).toFixed(3) + ' D/mm</td>' +
+        '<td class="n">' + wmm.toFixed(1) + ' mm</td>' +
+        '<td class="n">' + (rel > 0.5 ? "+%" + Math.round(rel) : "—") + '</td>' +
+        '<td>' + t.bedel + '</td>' +
+      '</tr>';
+    }).join("");
+
+    // hukum
+    verdict(p);
+  }
+
+  function verdict(p) {
+    var rate = p.add / p.L;                       // D/mm, nominal
+    var wPrem = narrowestWidth(p.L, p.add, TIERS[0].w);
+    var wBase = narrowestWidth(p.L, p.add, TIERS[2].w);
+    var okuma = p.fh - p.L;
+
+    var seviye, baslik, metin, pickIdx;
+
+    if (rate <= 0.13) {
+      seviye = "ok";  pickIdx = 2;
+      baslik = "Başlangıç kademesi yeterli";
+      metin = "Güç değişim hızı düşük (" + rate.toFixed(3) + " D/mm). Bu reçetede net koridor " +
+              "başlangıç tasarımında bile " + wBase.toFixed(1) + " mm — rahat kullanılır genişlikte. " +
+              "Üst kademe " + (wPrem - wBase).toFixed(1) + " mm daha kazandırır; hasta bunu çoğu zaman fark etmez.";
+    } else if (rate <= 0.18) {
+      seviye = "ok";  pickIdx = 1;
+      baslik = "Orta kademe yeterli, premium konfor katar";
+      metin = "Güç değişim hızı orta seviyede (" + rate.toFixed(3) + " D/mm). Başlangıç tasarımında net " +
+              "koridor " + wBase.toFixed(1) + " mm'ye iniyor — dar. Orta kademe bunu makul genişliğe " +
+              "çıkarıyor. Hasta ekran/okuma yoğun çalışıyorsa premium farkı hissedilir.";
+    } else if (rate <= 0.24) {
+      seviye = "warn"; pickIdx = 0;
+      baslik = "Premium tasarım önerilir";
+      metin = "Güç değişim hızı yüksek (" + rate.toFixed(3) + " D/mm — 0.18 üstü). Minkwitz gereği yanal " +
+              "bozulma belirgin. Başlangıç tasarımında net koridor sadece " + wBase.toFixed(1) + " mm; " +
+              "hasta okurken başını sürekli çevirmek zorunda kalır. Premium " + wPrem.toFixed(1) + " mm veriyor.";
+    } else {
+      seviye = "bad"; pickIdx = 0;
+      // Iki secenegi IDDIA etmek yerine hesapla: kademe atlamak mi, koridoru uzatmak mi?
+      var kademeKazanc = wPrem - wBase;
+      var uzunL = Math.min(p.L + 2, 20);
+      var koridorKazanc = narrowestWidth(uzunL, p.add, TIERS[2].w) - wBase;
+      var hangisi = kademeKazanc >= koridorKazanc
+        ? "Kademe yükseltmek burada koridoru uzatmaktan daha çok kazandırıyor (+" +
+          kademeKazanc.toFixed(1) + " mm'ye karşı +" + koridorKazanc.toFixed(1) + " mm)."
+        : "Koridoru " + uzunL + " mm'ye çıkarmak kademe yükseltmekten daha çok kazandırıyor (+" +
+          koridorKazanc.toFixed(1) + " mm'ye karşı +" + kademeKazanc.toFixed(1) + " mm).";
+      baslik = "Premium tasarım şart — ve bu reçete zaten zorlu";
+      metin = "Güç değişim hızı çok yüksek (" + rate.toFixed(3) + " D/mm). Bu reçetede hiçbir tasarım " +
+              "geniş bir net koridor veremez; premiumda bile " + wPrem.toFixed(1) + " mm. " + hangisi +
+              " İkisini birden yapabiliyorsanız en iyisi o. Hastayı baştan uyarın: yanal alanlarda " +
+              "bulanıklık olacak, bu bir üretim hatası değil, fiziğin sınırı.";
+    }
+
+    var uyari = "";
+    if (okuma < 4) {
+      uyari = '<p class="small" style="color:var(--bad); margin-top:.7rem;"><b>Çerçeve uyarısı:</b> ' +
+              'odak yüksekliği ' + p.fh + ' mm, koridor ' + p.L + ' mm — okuma alanı sadece ' +
+              okuma + ' mm kalıyor. Rahat okuma için en az 4-5 mm gerekir. Odak yüksekliği en az ' +
+              (p.L + 5) + ' mm, çerçeve yüksekliği (B) en az ' + (p.L + 14) + ' mm olan bir çerçeve seçin.</p>';
+    }
+
+    el.verdict.className = "panel verdict" + (seviye === "warn" ? " is-warn" : seviye === "bad" ? " is-bad" : "");
+    el.verdictBody.innerHTML =
+      '<h2 style="margin-bottom:.5rem;">' + baslik + '</h2>' +
+      '<p style="max-width:70ch;">' + metin + '</p>' +
+      uyari +
+      '<dl class="kv" style="margin-top:1rem;">' +
+        '<dt>Güç değişim hızı</dt><dd>' + rate.toFixed(3) + ' D/mm' +
+          (rate > 0.18 ? '  ← eşik 0.18 aşıldı' : '') + '</dd>' +
+        '<dt>Okuma alanı</dt><dd>' + okuma + ' mm</dd>' +
+        '<dt>Net koridor aralığı</dt><dd>' + wBase.toFixed(1) + ' – ' + wPrem.toFixed(1) + ' mm</dd>' +
+      '</dl>';
+
+    cards.forEach(function (c, i) {
+      c.root.classList.toggle("is-pick", i === pickIdx);
+      c.flag.hidden = i !== pickIdx;
+    });
+  }
+
+  ["add", "kor", "fh", "bh"].forEach(function (k) {
+    el[k].addEventListener("input", render);
+  });
+
+  if (window.matchMedia) {
+    var mq = window.matchMedia("(prefers-color-scheme: dark)");
+    if (mq.addEventListener) mq.addEventListener("change", render);
+  }
+  var mo = new MutationObserver(render);
+  mo.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+  render();
+})();
+</script>
