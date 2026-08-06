@@ -6,6 +6,22 @@ window.LENS_DB_VERSION = "2026-03";
 window.LENS_DATABASE = {
   markalar: {
     // ==================== OPAK LENS (ONCELIK 1) ====================
+    //
+    // KORIDOR TERIMI NOTU (5 Agustos 2026 - Muzaffer Bey karari)
+    // Opak katalogunda bu alanin basligi "M. Montaj Yuksekligi" ve gravur
+    // tablosunda (s.24) rakam kodu M.M.Y. olarak geciyor (4=14mm ... 0=20mm).
+    // Opak'in kendi terminolojisi bu; ama ANLAM OLARAK koridordur.
+    //
+    // Dayanak - katalog s.28: "Montaj yuksekligi kesinlikle cerceve
+    // buyuklugune gore secilmemelidir." Secim tablosu adisyon + toplam
+    // diyoptriye gore veriliyor. Yani cercevede ne kadar yer oldugunu degil,
+    // recetenin hangi tasarimi gerektirdigini anlatan bir parametre.
+    //
+    // Pratik teyit: Opak'a "16 koridor yapalim" denildiginde dogru cam
+    // geliyor. Yani asagidaki 14-20 degerleri KORIDOR olarak dogrudur,
+    // motorun idealKoridor degeriyle dogrudan karsilastirilabilir.
+    // Donusum/kaydirma YOK. Novax'taki gibi bir olcek farki soz konusu degil.
+    //
     opakLens: {
       ad: "Opak Lens",
       kisaAd: "Opak",
@@ -165,7 +181,11 @@ window.LENS_DATABASE = {
           ad: "Extra",
           seviye: "baslangic",
           tasarim: "freeform",
-          koridorlar: [14, 16, 17, 18, 20],
+          // Katalog s.17: spec alani "14-15-16-17-18-19-20mm" basiyor.
+          // Ayni kutudaki madde isareti "5 degisik koridor yapisi" diyor - katalog
+          // kendi icinde celisiyor. Etiketli spec alani esas alindi (7 deger).
+          // Onceki deger [14,16,17,18,20] katalogun hicbir yerinde gecmiyordu.
+          koridorlar: [14, 15, 16, 17, 18, 19, 20],
           minFittingHeight: 14,
           teknolojiler: [],
           ozellikler: {
@@ -527,8 +547,8 @@ window.LENS_DATABASE = {
           seviye: "premium",
           tasarim: "freeform-morphing",
           ozelAmac: null,
-          koridorlar: [],
-          minFittingHeight: 14,
+          koridorlar: [10, 12, 14, 16], // Novax gravur skalasi 5-7-9-11 -> standart mm (+5)
+          minFittingHeight: 14, // katalog s.51 montaj yuksekligi
           uyumGarantisi: false,
           vrGerektirir: true,
           teknolojiler: ["Gaze Analyzer", "Stabilis", "DuoBalance", "OptiPure", "DigitAll", "MidPoint Plus", "SlimEdge", "AutoFit", "Morphing Tasarim"],
@@ -551,8 +571,8 @@ window.LENS_DATABASE = {
           seviye: "premium",
           tasarim: "freeform-personalized",
           ozelAmac: null,
-          koridorlar: [],
-          minFittingHeight: 14,
+          koridorlar: [12, 14, 16], // Novax gravur skalasi 7-9-11 -> standart mm (+5)
+          minFittingHeight: 16, // katalog s.51 montaj yuksekligi
           uyumGarantisi: false,
           teknolojiler: ["Front Surface Innovation", "Rayform AI", "AmplifEye", "Stabilis", "DuoBalance", "DigitAll", "MidPoint Plus", "FlexiFit"],
           ozellikler: {
@@ -574,8 +594,8 @@ window.LENS_DATABASE = {
           seviye: "premium",
           tasarim: "freeform-personalized",
           ozelAmac: null,
-          koridorlar: [],
-          minFittingHeight: 14,
+          koridorlar: [10, 12, 14, 16], // Novax gravur skalasi 5-7-9-11 -> standart mm (+5)
+          minFittingHeight: 14, // katalog s.51 montaj yuksekligi
           uyumGarantisi: false,
           teknolojiler: ["AmplifEye", "Stabilis", "DuoBalance", "OptiPure", "DigitAll", "MidPoint Plus", "SlimEdge"],
           ozellikler: {
@@ -597,8 +617,8 @@ window.LENS_DATABASE = {
           seviye: "premium",
           tasarim: "freeform-personalized",
           ozelAmac: null,
-          koridorlar: [],
-          minFittingHeight: 14,
+          koridorlar: [10, 12, 14, 16], // Novax gravur skalasi 5-7-9-11 -> standart mm (+5)
+          minFittingHeight: 14, // katalog s.51 montaj yuksekligi
           uyumGarantisi: false,
           teknolojiler: ["Rayform AI", "Stabilis", "DuoBalance", "DigitAll", "MidPoint Plus"],
           ozellikler: {
@@ -621,8 +641,8 @@ window.LENS_DATABASE = {
           seviye: "premium",
           tasarim: "freeform-morphing-degresif",
           ozelAmac: "ofis",
-          koridorlar: [],
-          minFittingHeight: 14,
+          koridorlar: [10], // Novax gravur skalasi 5 -> standart mm (+5)
+          minFittingHeight: 14, // katalog s.51 montaj yuksekligi
           uyumGarantisi: false,
           vrGerektirir: true,
           teknolojiler: ["Gaze Analyzer", "OptiPure", "MidPoint Plus", "SlimEdge"],
@@ -645,8 +665,8 @@ window.LENS_DATABASE = {
           seviye: "premium",
           tasarim: "freeform-degresif",
           ozelAmac: "ofis",
-          koridorlar: [],
-          minFittingHeight: 14,
+          koridorlar: [10, 14], // Novax gravur skalasi 5-9 -> standart mm (+5)
+          minFittingHeight: 14, // katalog s.51 montaj yuksekligi
           uyumGarantisi: false,
           teknolojiler: ["Front Surface Innovation", "Rayform AI", "MidPoint Plus"],
           ozellikler: {
@@ -668,8 +688,8 @@ window.LENS_DATABASE = {
           seviye: "premium",
           tasarim: "freeform-personalized",
           ozelAmac: "drive",
-          koridorlar: [],
-          minFittingHeight: 14,
+          koridorlar: [12, 14], // Novax gravur skalasi 7-9 -> standart mm (+5)
+          minFittingHeight: 16, // katalog s.51 montaj yuksekligi
           uyumGarantisi: false,
           teknolojiler: ["Front Surface Innovation", "Rayform AI", "Stabilis", "DuoBalance", "DigitAll", "MidPoint Plus", "FlexiFit"],
           ozellikler: {
@@ -691,8 +711,8 @@ window.LENS_DATABASE = {
           seviye: "premium",
           tasarim: "freeform-personalized",
           ozelAmac: "sport",
-          koridorlar: [],
-          minFittingHeight: 14,
+          koridorlar: [12, 14], // Novax gravur skalasi 7-9 -> standart mm (+5)
+          minFittingHeight: 16, // katalog s.51 montaj yuksekligi
           uyumGarantisi: false,
           teknolojiler: ["Front Surface Innovation", "Rayform AI", "Stabilis", "DuoBalance", "DigitAll", "MidPoint Plus", "FlexiFit"],
           ozellikler: {
@@ -714,8 +734,8 @@ window.LENS_DATABASE = {
           seviye: "premium",
           tasarim: "freeform-personalized-dual-near",
           ozelAmac: "pilot",
-          koridorlar: [],
-          minFittingHeight: 14,
+          koridorlar: [12, 14], // Novax gravur skalasi 7-9 -> standart mm (+5)
+          minFittingHeight: 16, // katalog s.51 montaj yuksekligi
           uyumGarantisi: false,
           teknolojiler: ["Rayform AI", "Stabilis", "DuoBalance", "DigitAll", "MidPoint Plus", "FlexiFit"],
           ozellikler: {
@@ -737,8 +757,8 @@ window.LENS_DATABASE = {
           seviye: "premium",
           tasarim: "freeform-morphing-antifatigue",
           ozelAmac: "antifatigue",
-          koridorlar: [],
-          minFittingHeight: null,
+          koridorlar: [12], // Novax gravur skalasi 7 -> standart mm (+5)
+          minFittingHeight: 16, // katalog s.51 montaj yuksekligi
           uyumGarantisi: false,
           vrGerektirir: true,
           teknolojiler: ["Gaze Analyzer", "Stabilis", "OptiPure", "MidPoint Plus", "SlimEdge"],
@@ -762,8 +782,8 @@ window.LENS_DATABASE = {
           seviye: "premium",
           tasarim: "double-asferik-antifatigue",
           ozelAmac: "antifatigue",
-          koridorlar: [],
-          minFittingHeight: null,
+          koridorlar: [14], // Novax gravur skalasi 9 -> standart mm (+5)
+          minFittingHeight: 18, // katalog s.51 montaj yuksekligi
           uyumGarantisi: false,
           teknolojiler: ["Rayform AI", "Stabilis", "MidPoint Plus"],
           ozellikler: {
@@ -787,8 +807,8 @@ window.LENS_DATABASE = {
           seviye: "orta",
           tasarim: "freeform",
           ozelAmac: null,
-          koridorlar: [],
-          minFittingHeight: 14,
+          koridorlar: [10, 12, 14, 16], // Novax gravur skalasi 5-7-9-11 -> standart mm (+5)
+          minFittingHeight: 14, // katalog s.51 montaj yuksekligi
           uyumGarantisi: false,
           teknolojiler: ["Rayform AI", "DuoBalance", "DigitAll", "MidPoint Plus"],
           ozellikler: { genisMesafe: true, genisYakin: true, genisOrta: true, yuzmeEtkisiAzaltma: false, dijitalCihazOptimize: true, surusOptimize: false },
@@ -803,8 +823,8 @@ window.LENS_DATABASE = {
           seviye: "orta",
           tasarim: "freeform",
           ozelAmac: null,
-          koridorlar: [],
-          minFittingHeight: 14,
+          koridorlar: [12, 14, 16], // Novax gravur skalasi 7-9-11 -> standart mm (+5)
+          minFittingHeight: 16, // katalog s.51 montaj yuksekligi
           uyumGarantisi: false,
           teknolojiler: ["Rayform AI", "DuoBalance", "DigitAll", "MidPoint"],
           ozellikler: { genisMesafe: true, genisYakin: true, genisOrta: true, yuzmeEtkisiAzaltma: false, dijitalCihazOptimize: false, surusOptimize: true },
@@ -819,8 +839,8 @@ window.LENS_DATABASE = {
           seviye: "baslangic",
           tasarim: "freeform",
           ozelAmac: null,
-          koridorlar: [],
-          minFittingHeight: 14,
+          koridorlar: [12, 14, 16], // Novax gravur skalasi 7-9-11 -> standart mm (+5)
+          minFittingHeight: 16, // katalog s.51 montaj yuksekligi
           uyumGarantisi: false,
           teknolojiler: ["DuoBalance", "MidPoint"],
           ozellikler: { genisMesafe: false, genisYakin: true, genisOrta: true, yuzmeEtkisiAzaltma: false, dijitalCihazOptimize: true, surusOptimize: false },
@@ -835,8 +855,8 @@ window.LENS_DATABASE = {
           seviye: "baslangic",
           tasarim: "freeform",
           ozelAmac: null,
-          koridorlar: [],
-          minFittingHeight: 14,
+          koridorlar: [12, 14, 16], // Novax gravur skalasi 7-9-11 -> standart mm (+5)
+          minFittingHeight: 16, // katalog s.51 montaj yuksekligi
           uyumGarantisi: false,
           teknolojiler: ["Rayform AI", "DuoBalance", "MidPoint"],
           ozellikler: { genisMesafe: true, genisYakin: true, genisOrta: true, yuzmeEtkisiAzaltma: false, dijitalCihazOptimize: false, surusOptimize: false },
@@ -852,8 +872,8 @@ window.LENS_DATABASE = {
           seviye: "orta",
           tasarim: "freeform-personalized",
           ozelAmac: "sport",
-          koridorlar: [],
-          minFittingHeight: 14,
+          koridorlar: [17], // Novax gravur skalasi 12 -> standart mm (+5)
+          minFittingHeight: 21, // katalog s.51 montaj yuksekligi
           uyumGarantisi: false,
           teknolojiler: ["Rayform AI", "Stabilis", "DuoBalance", "DigitAll", "MidPoint Plus"],
           ozellikler: { genisMesafe: true, genisYakin: true, genisOrta: true, yuzmeEtkisiAzaltma: true, dijitalCihazOptimize: false, surusOptimize: true },
@@ -868,8 +888,8 @@ window.LENS_DATABASE = {
           seviye: "orta",
           tasarim: "freeform-personalized",
           ozelAmac: "drive",
-          koridorlar: [],
-          minFittingHeight: 14,
+          koridorlar: [17], // Novax gravur skalasi 12 -> standart mm (+5)
+          minFittingHeight: 21, // katalog s.51 montaj yuksekligi
           uyumGarantisi: false,
           standartKaplama: "novax-pixar-drive",
           teknolojiler: ["Rayform AI", "Stabilis", "DuoBalance", "DigitAll", "MidPoint Plus"],
@@ -885,8 +905,8 @@ window.LENS_DATABASE = {
           seviye: "baslangic",
           tasarim: "degresif",
           ozelAmac: "ofis",
-          koridorlar: [],
-          minFittingHeight: 14,
+          koridorlar: [14], // Novax gravur skalasi 9 -> standart mm (+5)
+          minFittingHeight: 18, // katalog s.51 montaj yuksekligi
           uyumGarantisi: false,
           teknolojiler: [],
           ozellikler: { genisMesafe: false, genisYakin: true, genisOrta: true, yuzmeEtkisiAzaltma: true, dijitalCihazOptimize: true, surusOptimize: false },
@@ -901,8 +921,8 @@ window.LENS_DATABASE = {
           seviye: "baslangic",
           tasarim: "tek-odakli-antifatigue",
           ozelAmac: "antifatigue",
-          koridorlar: [],
-          minFittingHeight: null,
+          koridorlar: [14], // Novax gravur skalasi 9 -> standart mm (+5)
+          minFittingHeight: 18, // katalog s.51 montaj yuksekligi
           uyumGarantisi: false,
           teknolojiler: ["MidPoint"],
           ozellikler: { genisMesafe: true, genisYakin: true, genisOrta: false, yuzmeEtkisiAzaltma: false, dijitalCihazOptimize: true, surusOptimize: false },
@@ -1177,9 +1197,12 @@ window.LENS_DATABASE = {
           ad: "RelaxSee Neo",
           seviye: "orta",
           tasarim: "freeform",
-          koridorlar: [10, 12, 14],
+          // Katalog s.27: RelaxSee Neo fiyat tablosunda 10/12/14 koridor basligi YOK.
+          // Diger tum Nikon progresiflerinde bu baslik var. Bu bir progresif degil,
+          // anti-fatigue (Air/Lite/Neo/Super destek kademeleri). Katalog koridor yayinlamiyor.
+          koridorlar: [],
           koridorMm: null,
-          minFittingHeight: 14,
+          minFittingHeight: null,
           teknolojiler: ["Ikiz Teknoloji (Net + Rahat Bolge)", "Dijital Gorme Destegi", "Yuksek Baz Uyum"],
           ozellikler: {
             genisMesafe: true,
@@ -1393,7 +1416,7 @@ window.LENS_DATABASE = {
           seviye: "premium",
           tasarim: "freeform",
           koridorlar: [15, 17], // katalog montaj semasi: Intuitiv Max 17 / Mio 15 / Mini 15,
-          minFittingHeight: 14,
+          minFittingHeight: 19, // en kisa koridor 15 + 4 (katalog minFH yayinlamiyor)
           uyumGarantisi: true,
           teknolojiler: ["Cerceve Parametreleri ile Uretim", "Kisisellestirilmis Tasarim"],
           ozellikler: {
@@ -1413,10 +1436,18 @@ window.LENS_DATABASE = {
         {
           id: "va-anateo",
           ad: "Anateo Max / Mio",
+          // KORIDOR COZULDU (6 Agustos 2026). Katalog s.13 montaj semasinda iki sayi
+          // yan yana: Max 17-13 / Mio 16-12 / Mini 15-11. Farklari hep 4.
+          // Bu 4 mm = montaj haci ile prizma referans noktasi (PRP) arasi mesafe.
+          // Kodak eseli bunu acikca yaziyor: "Fitting Cross Above PRP: 4 mm".
+          // Buyuk sayi = montaj hacindan yakin referansa = SEKTOR KORIDOR TANIMI.
+          // Kucuk sayi = ayni mesafe, 4mm asagidaki PRP'den olculmus hali.
+          // Teyit: Intuitiv/Sirus/Quadro semalarinda tek sayi var ve o da "0"
+          // (montaj haci) cizgisinden olculuyor; veritabaninda zaten oyle girili.
           seviye: "premium",
           tasarim: "freeform",
-          koridorlar: [],
-          minFittingHeight: 14,
+          koridorlar: [15, 16, 17], // katalog s.13: Anateo Max 17 / Mio 16 / Mini 15
+          minFittingHeight: 19,     // en kisa koridor 15 + 4
           uyumGarantisi: true,
           teknolojiler: ["Kisisellestirilmis Tasarim"],
           ozellikler: {
@@ -1439,7 +1470,7 @@ window.LENS_DATABASE = {
           seviye: "orta",
           tasarim: "freeform",
           koridorlar: [16, 18], // katalog montaj semasi: Sirus Max 18 / Mio 16 / Mini 16,
-          minFittingHeight: 14,
+          minFittingHeight: 20, // en kisa koridor 16 + 4 (katalog minFH yayinlamiyor)
           uyumGarantisi: true,
           teknolojiler: [],
           ozellikler: {
@@ -1462,7 +1493,7 @@ window.LENS_DATABASE = {
           seviye: "baslangic",
           tasarim: "standart",
           koridorlar: [16, 18], // katalog montaj semasi: Quadro 18 / Mini 16,
-          minFittingHeight: 16,
+          minFittingHeight: 20, // en kisa koridor 16 + 4 (katalog minFH yayinlamiyor)
           uyumGarantisi: false,
           teknolojiler: [],
           ozellikler: {
@@ -1485,8 +1516,11 @@ window.LENS_DATABASE = {
           seviye: "orta",
           tasarim: "dijital",
           ozelAmac: "ofis",
-          koridorlar: [],
-          minFittingHeight: 14,
+          // Katalog s.15 semasi: + isaretinden 4mm asagida x, x'ten 8mm asagida
+          // yakin daire, toplam 12. Anateo ile ayni yapi (4 = hac-PRP mesafesi).
+          // Buyuk sayi alindi -> koridor 12 mm. Ofis cami icin kisa koridor normal.
+          koridorlar: [12],
+          minFittingHeight: 16, // 12 + 4
           uyumGarantisi: false,
           teknolojiler: ["Dijital Yuzey Isleme", "Ofis Optimizasyonu"],
           ozellikler: {
